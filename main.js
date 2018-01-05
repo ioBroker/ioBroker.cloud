@@ -24,6 +24,8 @@ var connectTimer  = null;
 var statesAI      = null;
 var uuid          = null;
 var pack          = require(__dirname + '/io-package.json');
+var alexaDisabled = false;
+var googleDisabled = false;
 
 var adapter       = new utils.Adapter({
     name: 'cloud',
@@ -33,8 +35,12 @@ var adapter       = new utils.Adapter({
             if (recalcTimeout) clearTimeout(recalcTimeout);
             recalcTimeout = setTimeout(function () {
                 recalcTimeout = null;
-                alexaSH2.updateDevices();
-                alexaSH3.updateDevices();
+                alexaSH2.updateDevices(function () {
+                    adapter.setState('smart.updates', true, true);
+                });
+                alexaSH3.updateDevices(function () {
+                    adapter.setState('smart.updates3', true, true);
+                });
             }, 1000);
         } else if (id === 'system.config' && obj && !translate) {
             lang = obj.common.language;
@@ -52,6 +58,15 @@ var adapter       = new utils.Adapter({
                     ack: false
                 });
             } else {
+                if (state && !state.ack) {
+                    if (id === adapter.namespace + '.smart.googleDisabled') {
+                        googleDisabled = state.val === 'true' || state.val === true;
+                        adapter.setState('smart.googleDisabled', googleDisabled, true);
+                    } else if (id === adapter.namespace + '.smart.alexaDisabled') {
+                        alexaDisabled = state.val === 'true' || state.val === true;
+                        adapter.setState('smart.alexaDisabled', alexaDisabled, true);
+                    }
+                }
                 socket.emit('stateChange', id, state);
             }
         }
@@ -80,6 +95,7 @@ var adapter       = new utils.Adapter({
                     if (obj.callback) {
                         adapter.log.info('Request devices');
                         adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
+                        adapter.setState('smart.updates', false, true);
                     }
                     break;
 
@@ -87,6 +103,7 @@ var adapter       = new utils.Adapter({
                     if (obj.callback) {
                         adapter.log.info('Request V3 devices');
                         adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
+                        adapter.setState('smart.updates3', false, true);
                     }
                     break;
 
@@ -281,7 +298,7 @@ function pingConnection() {
                         checkPing();
                     }
                 }
-            }, 5000);
+            }, adapter.config.pingTimeout);
         }
     }
 }
@@ -534,11 +551,11 @@ function connect() {
     socket.on('alexa', function (request, callback) {
         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
         if (request && request.directive) {
-            alexaSH3.process(request, callback);
+            alexaSH3.process(request, !alexaDisabled, callback);
         } if (request && !request.header) {
-            alexaCustom.process(request, callback);
+            alexaCustom.process(request, !alexaDisabled, callback);
         } else {
-            alexaSH2.process(request, callback);
+            alexaSH2.process(request, !alexaDisabled, callback);
         }
     });
 
@@ -562,7 +579,7 @@ function connect() {
             callback && callback({error: 'no name'});
         } else
         if (data.name === 'ifttt' && adapter.config.iftttKey) {
-            processIfttt(data.data, callback);
+            processIfttt(data.data, true, callback);
         } else {
             var isCustom = false;
             if (data.name.match(/^custom_/)) {
@@ -669,6 +686,11 @@ function connect() {
 }
 
 function main() {
+    adapter.config.pingTimeout = parseInt(adapter.config.pingTimeout, 10) || 5000;
+    if (adapter.config.pingTimeout < 3000) {
+        adapter.config.pingTimeout = 3000;
+    }
+
     if (adapter.config.deviceOffLevel === undefined) adapter.config.deviceOffLevel = 30;
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
     adapter.config.concatWord = (adapter.config.concatWord || '').toString().trim();
@@ -698,8 +720,11 @@ function main() {
         alexaSH2.updateDevices();
         alexaSH3.setLanguage(lang, translate);
         alexaSH3.updateDevices();
+        alexaCustom.setLanguage(lang);
     });
+
     adapter.subscribeForeignObjects('*');
+
     if (adapter.config.allowAI && false) {
         createAiConnection();
     }
@@ -710,7 +735,7 @@ function main() {
     }
 
     adapter.setState('info.connection', false, true);
-    adapter.config.cloudUrl  = adapter.config.cloudUrl || 'https://iobroker.net:10555';
+    adapter.config.cloudUrl = adapter.config.cloudUrl || 'https://iobroker.net:10555';
 
     if (!adapter.config.apikey) {
         adapter.log.error('No api-key found. Please get one on https://iobroker.net');
@@ -738,6 +763,25 @@ function main() {
             }
         });
     }
+
+    adapter.subscribeStates('smart.*');
+
+    adapter.getState('smart.alexaDisabled', function (err, state) {
+        if (!state || state.val === null || state.val === 'null') {
+            // init value with false
+            adapter.setState('smart.alexaDisabled', alexaDisabled, true);
+        } else {
+            alexaDisabled = state.val === true || state.val === 'true';
+        }
+    });
+    adapter.getState('smart.googleDisabled', function (err, state) {
+        if (!state || state.val === null || state.val === 'null') {
+            // init value with false
+            adapter.setState('smart.googleDisabled', googleDisabled, true);
+        } else {
+            googleDisabled = state.val === true || state.val === 'true';
+        }
+    });
 
     adapter.log.info('Connecting with ' + adapter.config.cloudUrl + ' with "' + adapter.config.apikey + '"');
 
