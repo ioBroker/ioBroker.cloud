@@ -270,7 +270,7 @@
                 }
 
                 var $smartTable = $('#smart_table');
-                $smartTable.html(text).find('.button-delete').click(function () {
+                $smartTable.html(text).find('.button-delete').on('click', function () {
                     var $this = $(this);
                     var id = $this.data('id');
 
@@ -281,7 +281,6 @@
                                 disableSmartName(obj);
                                 socket.emit('setObject', id, obj, function (err) {
                                     informInstance(id);
-                                    //updateDevices(2000);
                                     if (err) {
                                         window.alert(err);
                                     }
@@ -291,7 +290,7 @@
                     });
                 });
 
-                $smartTable.find('.by-on-edit').change(function () {
+                $smartTable.find('.by-on-edit').on('change', function () {
                     var $this = $(this);
                     var id    = $this.data('id');
                     var val   = $this.val();
@@ -307,7 +306,7 @@
                     });
                 });
                 
-                $smartTable.find('.type-edit').change(function () {
+                $smartTable.find('.type-edit').on('change', function () {
                     var $this = $(this);
                     var id    = $this.data('id');
                     var val   = $this.val();
@@ -323,7 +322,7 @@
                     });
                 });
 
-                $smartTable.find('.button-edit').click(function () {
+                $smartTable.find('.button-edit').on('click', function () {
                     var $this = $(this);
                     var $editDialog = $('#dialog-name-edit');
                     $editDialog.data('id', $this.data('id'));
@@ -570,7 +569,7 @@
                 }
 
                 var $smartTable = $('#smart_m_table');
-                $smartTable.html(text).find('.smart-enabled').change(function () {
+                $smartTable.html(text).find('.smart-enabled').on('change',function () {
                     var $this = $(this);
                     var id = $this.data('id');
 
@@ -604,7 +603,7 @@
                     }
                 });
 
-                $smartTable.find('.button-edit').click(function () {
+                $smartTable.find('.button-edit').on('click', function () {
                     var $this = $(this);
                     var $editDialog = $('#dialog-name-edit');
                     $editDialog.data('id', $this.data('id'));
@@ -677,6 +676,7 @@
                 var text = '<tr><th>' + _('Rooms') + '</th><th>' + _('Functions') + '</th></tr>';
                 var rooms = [];
                 var funcs = [];
+                var name;
                 for (var j = 0; j < list.length; j++) {
                     if (list[j].id.match(/^enum\.rooms\./)) {
                         rooms.push(list[j]);
@@ -696,20 +696,28 @@
                         if (smartName && typeof smartName === 'object') {
                             smartName = smartName[language] || smartName.en || '';
                         }
-                        text += '<td><input class="smart-enable" type="checkbox" data-id="' + rooms[i].id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' :'') + '/>' +
-                            rooms[i].name + (smartName ? ' (' + smartName + ')' : '') +
+                        name = rooms[i].name;
+                        if (typeof name === 'object') {
+                            name = name[language] || name.en || '';
+                        }
+                        text += '<td><input class="smart-enable filled-in" type="checkbox" data-id="' + rooms[i].id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' :'') + '/><span></span>' +
+                            name + (smartName ? ' (' + smartName + ')' : '') +
                             '<a ' + (smartName !== false && smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit btn-floating waves-effect waves-light red btn-small" data-id="' + rooms[i].id + '" data-value="' + (smartName === undefined ? '' : smartName) + '" data-name="' + (rooms[i].name || '') + '"><i class="material-icons">delete</i></a></td>';
                     } else {
                         text += '<td></td>';
                     }
                     if (funcs[i]) {
                         smartName = getSmartName(funcs[i]);
+                        name = funcs[i].name;
+                        if (typeof name === 'object') {
+                            name = name[language] || name.en || '';
+                        }
                         // convert old format
                         if (smartName && typeof smartName === 'object') {
                             smartName = smartName[language] || smartName.en || '';
                         }
-                        text += '<td><input class="smart-enable" type="checkbox" data-id="' + funcs[i].id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' :'') + '/>' +
-                            funcs[i].name + (smartName ? ' (' + smartName + ')' : '') +
+                        text += '<td><input class="smart-enable filled-in" type="checkbox" data-id="' + funcs[i].id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' :'') + '/><span></span>' +
+                            name + (smartName ? ' (' + smartName + ')' : '') +
                             '<a ' + (smartName !== false && smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit btn-floating waves-effect waves-light btn-small" data-id="' + funcs[i].id + '" data-value="' + (smartName === undefined ? '' : smartName) + '" data-name="' + (funcs[i].name || '') + '"><i class="material-icons">edit</i></a></td>';
                     } else {
                         text += '<td></td>';
@@ -723,7 +731,7 @@
                 $smart_enums
                     .html(text)
                         .find('.smart-enable')
-                        .change(function () {
+                        .on('change',function () {
                             var id = $(this).data('id');
                             var $this = $(this);
                             $this.parent().addClass('smart-changed');
@@ -752,7 +760,7 @@
                             }
                         });
 
-                $smart_enums.find('.smart-edit').click(function () {
+                $smart_enums.find('.smart-edit').on('click', function () {
                     var $this = $(this);
                     var $editDialog = $('#dialog-name-edit');
                     $editDialog.data('id', $this.data('id'));
@@ -789,6 +797,14 @@
                         });
                     });
                     $editDialog.dialog('open');
+                });
+
+                // workaround for materialize checkbox problem
+                $smart_enums.find('input[type="checkbox"]+span').off('click').on('click', function () {
+                    var $input = $(this).prev();
+                    if (!$input.prop('disabled')) {
+                        $input.prop('checked', !$input.prop('checked')).trigger('change');
+                    }
                 });
             }
         });
@@ -882,12 +898,12 @@
     function load(settings, onChange) {
         if (!settings) return;
 
-        if (settings.allowAdmin === undefined) settings.allowAdmin = '';
-        if (settings.responseOID === undefined) settings.responseOID = '';
+        if (settings.allowAdmin          === undefined) settings.allowAdmin = '';
+        if (settings.responseOID         === undefined) settings.responseOID = '';
         if (settings.restartOnDisconnect === undefined) settings.restartOnDisconnect = false;
-        if (settings.text2command === undefined) settings.text2command = '';
-        if (settings.noCommon === undefined) settings.noCommon = false;
-        if (settings.pingTimeout === undefined) settings.pingTimeout = 5000;
+        if (settings.text2command        === undefined) settings.text2command = '';
+        if (settings.noCommon            === undefined) settings.noCommon = false;
+        if (settings.pingTimeout         === undefined) settings.pingTimeout = 5000;
 
         noCommon = settings.noCommon;
 
@@ -908,7 +924,7 @@
                     $instance.append('<option value="' + res[t]._id + '">' + res[t].common.name + ' [' + res[t]._id.replace('system.adapter.', '') + ']</option>');
                 }
                 if (!--count) {
-                    $instance.val(settings.instance).change(function () {
+                    $instance.val(settings.instance).on('change',function () {
                         checkAuthForInstance('instance', $(this).val());
                     });
                     checkAuthForInstance('instance', settings.instance);
@@ -923,7 +939,7 @@
             for (var t = 0; t < res.length; t++) {
                 text += '<option value="' + res[t]._id + '">' + res[t].common.name + ' [' + res[t]._id.replace('system.adapter.', '') + ']</option>';
             }
-            $('#allowAdmin').html(text).val(settings.allowAdmin).change(function () {
+            $('#allowAdmin').html(text).val(settings.allowAdmin).on('change',function () {
                 checkAuthForInstance('allowAdmin', $(this).val());
             }).select();
             checkAuthForInstance('allowAdmin', settings.allowAdmin);
@@ -944,19 +960,19 @@
             var key = $(this).attr('id');
             var $value = $('#' + key + '.value');
             if ($value.attr('type') === 'checkbox') {
-                $value.prop('checked', settings[key]).change(function() {
+                $value.prop('checked', settings[key]).on('change',function() {
                     onChange();
                     var id = $(this).attr('id');
                     if (id === 'functionFirst' || id === 'concatWord') $('#' + id + 'Hint').show();
                 });
             } else {
-                $value.val(settings[key]).change(function() {
+                $value.val(settings[key]).on('change',function() {
                     onChange();
                     var id = $(this).attr('id');
                     if (id === 'language') language = $(this).val();
                     if (id === 'functionFirst' || id === 'concatWord') $('#' + id + 'Hint').show();
                     if (id === 'apikey') updateIfttt();
-                }).keyup(function() {
+                }).on('keyup',function() {
                     $(this).trigger('change');
                 });
             }
@@ -1006,9 +1022,6 @@
         setTimeout(function () {
             if (typeof localStorage !== 'undefined' && localStorage['cloud-adapter'] !== undefined) {
                 $tabs.mtabs('select', localStorage['cloud-adapter']);
-                if (localStorage['cloud-adapter'] === 'tab-smart-devices') updateDevices();
-                if (localStorage['cloud-adapter'] === 'tab-smart-enums')   updateEnums();
-                if (localStorage['cloud-adapter'] === 'tab-smart-media')   updateMDevices();
             }
         }, 300);
 
@@ -1097,7 +1110,7 @@
             });
         });
 
-        $('#apikey').on('change', updateUrl).keyup(function () {
+        $('#apikey').on('change', updateUrl).on('keyup',function () {
             $(this).trigger('change');
         });
 
@@ -1343,7 +1356,7 @@
                 </div>
                 <div class="row">
                     <div class="col s12">
-                        <input type="checkbox" class="value" id="allowSelfSignedCertificate" data-link="allow-self-signed-certificates"/>
+                        <input type="checkbox" class="value filled-in" id="allowSelfSignedCertificate" data-link="allow-self-signed-certificates"/>
                         <span for="allowSelfSignedCertificate" class="translate">Allow self-signed certificates:</span>
                     </div>
                 </div>
@@ -1359,7 +1372,7 @@
                 </div>
                 <div class="row">
                     <div class="col s12">
-                        <input type="checkbox" class="value" id="functionFirst" data-link="place-function-in-names-first"/>
+                        <input type="checkbox" class="value filled-in" id="functionFirst" data-link="place-function-in-names-first"/>
                         <span for="functionFirst" class="translate">Place function in names first:</span>
                     </div>
                     <div class="col s12">
@@ -1398,7 +1411,7 @@
                 </div>
                 <div class="row">
                     <div class="col s12">
-                        <input class="value" id="restartOnDisconnect" type="checkbox"/>
+                        <input class="value filled-in" id="restartOnDisconnect" type="checkbox"/>
                         <span for="restartOnDisconnect" class="translate">Restart on disconnect:</span>
                     </div>
                 </div>
@@ -1413,7 +1426,7 @@
                 </div>
                 <div class="row">
                     <div class="col s12">
-                        <input class="value" data-link="true" id="noCommon" type="checkbox"/>
+                        <input class="value filled-in" data-link="true" id="noCommon" type="checkbox"/>
                         <span for="noCommon" class="translate">Personal settings (only pro):</span>
                     </div>
                 </div>
