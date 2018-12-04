@@ -64,8 +64,8 @@ Blockly.Blocks['ifttt'] = {
                 }                
             }
             if (options.length === 0) {
-                for (var u = 0; u <= 4; u++) {
-                    options.push(['cloud.' + u, '.' + u]);
+                for (var k = 0; k <= 4; k++) {
+                    options.push(['cloud.' + k, '.' + k]);
                 }
             }
         } else {
