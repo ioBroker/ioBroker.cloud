@@ -193,6 +193,7 @@
             "Cloud",
             "communication"
         ],
+        "compact": true,
         "enabled": false,
         "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.cloud/master/admin/cloud.png",
         "type": "communication",

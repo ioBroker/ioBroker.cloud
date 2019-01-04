@@ -3,13 +3,13 @@
 /* jslint node: true */
 'use strict';
 
-let utils         = require(__dirname + '/lib/utils'); // Get common adapter utils
+let utils         = require('./lib/utils'); // Get common adapter utils
 //let IOSocket      = require(utils.appName + '.socketio/lib/socket.js');
-let IOSocket      = require(__dirname + '/lib/socket.js'); // temporary
+let IOSocket      = require('./lib/socket.js'); // temporary
 let request       = require('request');
-let AlexaSH2      = require(__dirname + '/lib/alexaSmartHomeV2');
-let AlexaSH3      = require(__dirname + '/lib/alexaSmartHomeV3');
-let AlexaCustom   = require(__dirname + '/lib/alexaCustom');
+let AlexaSH2      = require('./lib/alexaSmartHomeV2');
+let AlexaSH3      = require('./lib/alexaSmartHomeV3');
+let AlexaCustom   = require('./lib/alexaCustom');
 let socket        = null;
 let ioSocket      = null;
 let recalcTimeout = null;
@@ -18,6 +18,7 @@ let translate     = false;
 let alexaSH2      = null;
 let alexaSH3      = null;
 let alexaCustom   = null;
+const adapterName = require('./package.json').name.split('.').pop();
 
 let detectDisconnect = null;
 let pingTimer     = null;
@@ -25,131 +26,137 @@ let connected     = false;
 let connectTimer  = null;
 //let statesAI      = null;
 let uuid          = null;
-let pack          = require(__dirname + '/io-package.json');
+let pack          = require('./io-package.json');
 let alexaDisabled = false;
 let googleDisabled = false;
 let waiting       = false;
 
 let TEXT_PING_TIMEOUT = 'Ping timeout';
 
-let adapter       = new utils.Adapter({
-    name: 'cloud',
-    objectChange: function (id, obj) {
-        if (ioSocket) {
-            ioSocket.send(socket, 'objectChange', id, obj);
-        }
+let adapter;
+function startAdapter(options) {
+    options = options || {};
+    Object.assign(options,{
+        name:         adapterName,
+        objectChange: function (id, obj) {
+            if (ioSocket) {
+                ioSocket.send(socket, 'objectChange', id, obj);
+            }
 
-        if (id === 'system.config' && obj && !translate) {
-            lang = obj.common.language;
-            if (lang !== 'en' && lang !== 'de') lang = 'en';
-            alexaSH2.setLanguage(lang, false);
-            alexaSH3.setLanguage(lang, false);
-        }
-    },
-    stateChange:  function (id, state) {
-        if (socket) {
-            if (id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
-                sendDataToIFTTT({
-                    id: id,
-                    val: state.val,
-                    ack: false
-                });
-            } else {
-                if (state && !state.ack) {
-                    if (id === adapter.namespace + '.smart.googleDisabled') {
-                        googleDisabled = state.val === 'true' || state.val === true;
-                        adapter.setState('smart.googleDisabled', googleDisabled, true);
-                    } else if (id === adapter.namespace + '.smart.alexaDisabled') {
-                        alexaDisabled = state.val === 'true' || state.val === true;
-                        adapter.setState('smart.alexaDisabled', alexaDisabled, true);
+            if (id === 'system.config' && obj && !translate) {
+                lang = obj.common.language;
+                if (lang !== 'en' && lang !== 'de') lang = 'en';
+                alexaSH2.setLanguage(lang, false);
+                alexaSH3.setLanguage(lang, false);
+            }
+        },
+        stateChange:  function (id, state) {
+            if (socket) {
+                if (id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
+                    sendDataToIFTTT({
+                        id: id,
+                        val: state.val,
+                        ack: false
+                    });
+                } else {
+                    if (state && !state.ack) {
+                        if (id === adapter.namespace + '.smart.googleDisabled') {
+                            googleDisabled = state.val === 'true' || state.val === true;
+                            adapter.setState('smart.googleDisabled', googleDisabled, true);
+                        } else if (id === adapter.namespace + '.smart.alexaDisabled') {
+                            alexaDisabled = state.val === 'true' || state.val === true;
+                            adapter.setState('smart.alexaDisabled', alexaDisabled, true);
+                        }
+                    }
+                    if (ioSocket) {
+                        ioSocket.send(socket, 'stateChange', id, state);
                     }
                 }
-                if (ioSocket) {
-	                ioSocket.send(socket, 'stateChange', id, state);
-	            }
             }
-        }
-    },
-    unload:       function (callback) {
-        if (pingTimer) {
-            clearInterval(pingTimer);
-            pingTimer = null;
-        }
-        if (detectDisconnect) {
-            clearTimeout(detectDisconnect);
-            detectDisconnect = null;
-        }
-        try {
-            if (socket) {
-                socket.close();
+        },
+        unload:       function (callback) {
+            if (pingTimer) {
+                clearInterval(pingTimer);
+                pingTimer = null;
             }
-            ioSocket = null;
-            callback();
-        } catch (e) {
-            callback();
-        }
-    },
-    message:      function (obj) {
-        if (obj) {
-            switch (obj.command) {
-                case 'update':
-                    if (recalcTimeout) clearTimeout(recalcTimeout);
-
-                    recalcTimeout = setTimeout(function () {
-                        recalcTimeout = null;
-                        alexaSH2.updateDevices(function () {
-                            adapter.setState('smart.updates', true, true);
-                        });
-                        alexaSH3.updateDevices(function () {
-                            adapter.setState('smart.updates3', true, true);
-                        });
-                    }, 1000);
-                    break;
-
-                case 'browse':
-                    if (obj.callback) {
-                        adapter.log.info('Request devices');
-                        alexaSH2.updateDevices(function () {
-                            adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
-                            adapter.setState('smart.updates', false, true);
-                        });
-                    }
-                    break;
-
-                case 'browse3':
-                    if (obj.callback) {
-                        adapter.log.info('Request V3 devices');
-                        alexaSH3.updateDevices(function () {
-                            adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
-                            adapter.setState('smart.updates3', false, true);
-                        });
-                    }
-                    break;
-
-                case 'enums':
-                    if (obj.callback) {
-                        adapter.log.info('Request enums');
-                        alexaSH2.updateDevices(function () {
-                            adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
-                            adapter.setState('smart.updates', false, true);
-                        });
-                    }
-                    break;
-
-                case 'ifttt':
-                    sendDataToIFTTT(obj.message);
-                    break;
-
-                default:
-                    adapter.log.warn('Unknown command: ' + obj.command);
-                    break;
+            if (detectDisconnect) {
+                clearTimeout(detectDisconnect);
+                detectDisconnect = null;
             }
-        }
-    },
-    ready:        function () {
-        createInstancesStates(main);
-    }
-});
+            try {
+                if (socket) {
+                    socket.close();
+                }
+                ioSocket = null;
+                callback();
+            } catch (e) {
+                callback();
+            }
+        },
+        message:      function (obj) {
+            if (obj) {
+                switch (obj.command) {
+                    case 'update':
+                        if (recalcTimeout) clearTimeout(recalcTimeout);
+
+                        recalcTimeout = setTimeout(function () {
+                            recalcTimeout = null;
+                            alexaSH2.updateDevices(function () {
+                                adapter.setState('smart.updates', true, true);
+                            });
+                            alexaSH3.updateDevices(function () {
+                                adapter.setState('smart.updates3', true, true);
+                            });
+                        }, 1000);
+                        break;
+
+                    case 'browse':
+                        if (obj.callback) {
+                            adapter.log.info('Request devices');
+                            alexaSH2.updateDevices(function () {
+                                adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
+                                adapter.setState('smart.updates', false, true);
+                            });
+                        }
+                        break;
+
+                    case 'browse3':
+                        if (obj.callback) {
+                            adapter.log.info('Request V3 devices');
+                            alexaSH3.updateDevices(function () {
+                                adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
+                                adapter.setState('smart.updates3', false, true);
+                            });
+                        }
+                        break;
+
+                    case 'enums':
+                        if (obj.callback) {
+                            adapter.log.info('Request enums');
+                            alexaSH2.updateDevices(function () {
+                                adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
+                                adapter.setState('smart.updates', false, true);
+                            });
+                        }
+                        break;
+
+                    case 'ifttt':
+                        sendDataToIFTTT(obj.message);
+                        break;
+
+                    default:
+                        adapter.log.warn('Unknown command: ' + obj.command);
+                        break;
+                }
+            }
+        },
+        ready:        function () {createInstancesStates(main);}
+    });
+
+    adapter = new utils.Adapter(options);
+
+    return adapter;
+}
 
 function sendDataToIFTTT(obj) {
     if (!obj) {
@@ -443,7 +450,7 @@ function onDisconnect(event) {
 
         if (adapter.config.restartOnDisconnect) {
             // simulate scheduled restart
-            setTimeout(() => process.exit(-100), 10000);
+            setTimeout(() => adapter.terminate ? adapter.terminate(-100): process.exit(-100), 10000);
         } else {
             startConnect();
         }
@@ -536,6 +543,7 @@ function onCloudRedirect(data) {
 function onCloudError(error) {
     adapter.log.error('Cloud says: ' + error);
 }
+
 function onCloudStop(data) {
     adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
         if (err) adapter.log.error('[getForeignObject]: ' + err);
@@ -544,11 +552,11 @@ function onCloudStop(data) {
             setTimeout(() => {
                 adapter.setForeignObject(obj._id, obj, err => {
                     if (err) adapter.log.error('[setForeignObject]: ' + err);
-                    process.exit();
+                    adapter.terminate ? adapter.terminate(): process.exit();
                 });
             }, 5000);
         } else {
-            process.exit();
+            adapter.terminate ? adapter.terminate(): process.exit();
         }
     });
 }
@@ -903,4 +911,12 @@ function main() {
         }
         startConnect(true);
     });
+}
+
+// If started as allInOne/compact mode => return function to create instance
+if (typeof module !== undefined && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
 }
