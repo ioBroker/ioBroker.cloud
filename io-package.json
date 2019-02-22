@@ -12,7 +12,8 @@
             "fr": "Connexion au cloud",
             "it": "Connessione cloud",
             "es": "Conexión a la nube",
-            "pl": "Połączenie w chmurze"
+            "pl": "Połączenie w chmurze",
+            "zh-cn": "云连接"
         },
         "desc": {
             "en": "Connects your ioBroker server to the ioBroker cloud",
@@ -21,7 +22,10 @@
             "pt": "Conecta seu servidor ioBroker à nuvem ioBroker",
             "nl": "Verbindt uw ioBroker-server met de ioBroker-cloud",
             "fr": "Connecte votre serveur ioBroker au cloud ioBroker",
-            "it": "Collega il tuo server ioBroker al cloud ioBroker"
+            "it": "Collega il tuo server ioBroker al cloud ioBroker",
+            "es": "Conecta tu ioBroker servidor a la ioBroker en la nube",
+            "pl": "Łączy serwer ioBroker na ioBroker chmura",
+            "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
             "2.7.1": {
@@ -33,7 +37,8 @@
                 "fr": "Améliorations pour les Custom Skill",
                 "it": "Miglioramenti per Custom Skill",
                 "es": "Mejoras para Custom Skill",
-                "pl": "Rozszerzenia dla Custom Skill"
+                "pl": "Rozszerzenia dla Custom Skill",
+                "zh-cn": "增强对定义的技术人员"
             },
             "2.7.0": {
                 "en": "Multilingual names were corrected",
@@ -44,7 +49,8 @@
                 "fr": "Les noms multilingues ont été corrigés",
                 "it": "I nomi multilingue sono stati corretti",
                 "es": "Los nombres multilingües fueron corregidos",
-                "pl": "Poprawiono wielojęzyczne nazwy"
+                "pl": "Poprawiono wielojęzyczne nazwy",
+                "zh-cn": "多语种的名称进行了修正"
             },
             "2.6.2": {
                 "en": "Several fixes",
@@ -55,7 +61,8 @@
                 "fr": "Plusieurs corrections",
                 "it": "Diverse correzioni",
                 "es": "Varias correcciones",
-                "pl": "Kilka poprawek"
+                "pl": "Kilka poprawek",
+                "zh-cn": "几个补丁"
             },
             "2.6.1": {
                 "en": "Support of custom alexa skill",
@@ -66,7 +73,8 @@
                 "fr": "Prise en charge de la compétence alexa personnalisée",
                 "it": "Supporto dell'abilità di alexa personalizzata",
                 "es": "Soporte de habilidad personalizada de alexa",
-                "pl": "Obsługa niestandardowych umiejętności alexa"
+                "pl": "Obsługa niestandardowych umiejętności alexa",
+                "zh-cn": "支持的定义alexa的技术人员"
             },
             "2.5.0": {
                 "en": "Added actions on commands from server: wait, stop, redirect",
@@ -77,7 +85,8 @@
                 "fr": "Actions ajoutées sur les commandes du serveur: attente, arrêt, redirection",
                 "it": "Aggiunte azioni sui comandi dal server: attendere, arrestare, reindirizzare",
                 "es": "Acciones agregadas en los comandos del servidor: esperar, detener, redirigir",
-                "pl": "Dodano akcje na komendach z serwera: wait, stop, przekierowanie"
+                "pl": "Dodano akcje na komendach z serwera: wait, stop, przekierowanie",
+                "zh-cn": "加入行动的命令从服务器等等，停下，重定向"
             },
             "2.4.7": {
                 "en": "Small changes in the configuration dialog\nInformation about the expiring of remote access was added",
@@ -88,7 +97,8 @@
                 "fr": "Petits changements dans la boîte de dialogue de configuration\nInformations sur l'expiration de l'accès à distance a été ajouté",
                 "it": "Piccole modifiche nella finestra di configurazione\nSono state aggiunte informazioni sulla scadenza dell'accesso remoto",
                 "es": "Pequeños cambios en el diálogo de configuración\nSe agregó información sobre el vencimiento del acceso remoto",
-                "pl": "Małe zmiany w oknie konfiguracji\nDodano informację o wygaśnięciu dostępu zdalnego"
+                "pl": "Małe zmiany w oknie konfiguracji\nDodano informację o wygaśnięciu dostępu zdalnego",
+                "zh-cn": "小变化，在配置话\n信息有关的到期的远程访问加入"
             },
             "2.4.6": {
                 "en": "Adding of new devices is fixed",
@@ -99,7 +109,8 @@
                 "fr": "L'ajout de nouveaux appareils est fixé",
                 "it": "L'aggiunta di nuovi dispositivi è stata corretta",
                 "es": "Se fija la adición de nuevos dispositivos",
-                "pl": "Dodawanie nowych urządzeń zostało naprawione"
+                "pl": "Dodawanie nowych urządzeń zostało naprawione",
+                "zh-cn": "添加新的设备是固定的"
             },
             "2.4.5": {
                 "en": "Changes for Admin 3 ",
@@ -110,7 +121,8 @@
                 "fr": "Changements pour l'Admin 3",
                 "it": "Modifiche per l'Admin 3",
                 "es": "Cambios para Admin 3",
-                "pl": "Zmiany dla Admin 3"
+                "pl": "Zmiany dla Admin 3",
+                "zh-cn": "改变管理员3 "
             },
             "2.4.4": {
                 "en": "The errors by controlling of temperature are caught now",
@@ -121,7 +133,8 @@
                 "fr": "Les erreurs en contrôlant de la température sont prises maintenant",
                 "it": "Gli errori controllando la temperatura vengono catturati ora",
                 "es": "Los errores por control de temperatura se detectan ahora",
-                "pl": "Błędy poprzez kontrolę temperatury są teraz wychwytywane"
+                "pl": "Błędy poprzez kontrolę temperatury są teraz wychwytywane",
+                "zh-cn": "该错误通过控制的温度现在抓住了"
             },
             "2.4.2": {
                 "en": "Do not subscribe all objects",
@@ -132,7 +145,8 @@
                 "fr": "Ne pas abonner tous les objets",
                 "it": "Non iscrivere tutti gli oggetti",
                 "es": "No suscribas todos los objetos",
-                "pl": "Nie subskrybuj wszystkich obiektów"
+                "pl": "Nie subskrybuj wszystkich obiektów",
+                "zh-cn": "不赞同所有对象"
             },
             "2.2.0": {
                 "en": "Better update of the devices in configuration dialog",
@@ -141,42 +155,94 @@
                 "pt": "Melhor atualização dos dispositivos no diálogo de configuração",
                 "nl": "Betere update van de apparaten in configuratiedialoog",
                 "fr": "Meilleure mise à jour des périphériques dans la boîte de dialogue de configuration",
-                "it": "Migliore aggiornamento dei dispositivi nella finestra di configurazione"
+                "it": "Migliore aggiornamento dei dispositivi nella finestra di configurazione",
+                "es": "Mejor actualización de los dispositivos en el cuadro de diálogo de configuración",
+                "pl": "Lepiej zaktualizować urządzeń w oknie dialogowym ustawienia",
+                "zh-cn": "更好的新的设备配置的对话"
             },
             "2.1.1": {
                 "en": "add settings for the ping timeout\nupdate readme for IFTTT\ncorrected some spelling mistakes",
                 "de": "Ping Timeout Einstellungen hinzugefügt",
-                "ru": "Добавлены настройки для таймаута пинга"
+                "ru": "Добавлены настройки для таймаута пинга",
+                "pt": "adicionar configurações para o tempo limite de ping\natualização leiame para o IFTTT\ncorrigido alguns erros de ortografia",
+                "nl": "voeg instellingen voor de ping timeout\nupdate leesmij-bestand voor IFTTT\ngecorrigeerd spelfouten",
+                "fr": "ajouter des paramètres pour les de ping timeout\nmise à jour de fichier lisez-moi pour IFTTT\ncorrection de quelques fautes d'orthographe",
+                "it": "aggiungere le impostazioni per il ping timeout\naggiornamento readme per IFTTT\ncorretti alcuni errori di ortografia",
+                "es": "agregar la configuración para el tiempo de espera de ping\nactualizar el archivo léame para IFTTT\ncorregido algunos errores de ortografía",
+                "pl": "dodać ustawienia do ping timeout \naktualizacja informacji dla IFTTT\nnaprawiono niektóre błędy ortograficzne",
+                "zh-cn": "添加设置的平超时\n更新自述为过\n纠正一些拼写错误"
             },
             "2.1.0": {
                 "en": "Allow to disable alexa service by state",
                 "de": "Erlaube das Alexaservice zu deaktivieren",
-                "ru": "Возможность выключить сервис alexa через состояние"
+                "ru": "Возможность выключить сервис alexa через состояние",
+                "pt": "Permitir desabilitar alexa serviço pelo estado",
+                "nl": "Laten uitschakelen alexa service van de door de staat",
+                "fr": "Permettent de désactiver alexa service de l'état",
+                "it": "Permettono di disabilitare alexa servizio di stato",
+                "es": "Permite deshabilitar el servicio alexa por el estado",
+                "pl": "Pozwalają wyłączyć Alexa służby państwowej",
+                "zh-cn": "允许以禁止alexa服务的状态"
             },
             "2.0.8": {
                 "en": "Translations",
                 "de": "Übersetzungen",
-                "ru": "Перевод"
+                "ru": "Перевод",
+                "pt": "Traduções",
+                "nl": "Vertalingen",
+                "fr": "Traductions",
+                "it": "Traduzioni",
+                "es": "Traducciones",
+                "pl": "Tłumaczenie",
+                "zh-cn": "翻译"
             },
             "2.0.7": {
                 "en": "Changes for socket-io",
                 "de": "Änderungen für socket-io",
-                "ru": "Изменения для socket-io"
+                "ru": "Изменения для socket-io",
+                "pt": "Alterações para o soquete-io",
+                "nl": "Wijzigingen voor socket-io",
+                "fr": "Des changements pour le socket-io",
+                "it": "Modifiche per presa io",
+                "es": "Cambios de socket-io",
+                "pl": "Zmiany do gniazda-Io",
+                "zh-cn": "改变socket-io"
             },
             "2.0.6": {
                 "en": "Fix small error in configuration\nSend uuid to cloud for authentication",
                 "de": "Kleine Fehler in Einstellungen korrigiert\nSende System UUID zur Cloud",
-                "ru": "Поправлена маленькая ошибка в диалоге настроек\nОтсылка UUID при соединении"
+                "ru": "Поправлена маленькая ошибка в диалоге настроек\nОтсылка UUID при соединении",
+                "pt": "Corrigir um pequeno erro na configuração\nEnviar uuid para a nuvem, para autenticação",
+                "nl": "Fix kleine fout in configuratie\nStuur uuid in de cloud voor verificatie",
+                "fr": "Fix petite erreur dans la configuration\nEnvoyer uuid de cloud pour l'authentification",
+                "it": "Fix piccolo errore di configurazione\nInviare uuid cloud per l'autenticazione",
+                "es": "Corregir pequeños errores en la configuración\nEnviar uuid en la nube para la autenticación",
+                "pl": "Poprawiono drobne błędy w konfiguracji\nWyślij UUID do chmury dla uwierzytelniania",
+                "zh-cn": "修复小的错误配置\n送:云为身份验证"
             },
             "2.0.5": {
                 "en": "The small custom service reaction improvement",
                 "de": "Kleine Verbesserung für die benutzerdefinierten Services",
-                "ru": "Небольшое улучшение клиентских сервисов"
+                "ru": "Небольшое улучшение клиентских сервисов",
+                "pt": "O pequeno serviço personalizado reação de melhoria",
+                "nl": "De kleine maat gemaakte service verbetering reactie",
+                "fr": "Le petit service personnalisé réaction d'amélioration de la",
+                "it": "Il piccolo servizio personalizzato reazione di miglioramento",
+                "es": "El pequeño servicio a la medida de la reacción de mejora",
+                "pl": "Mały użytkownika ulepszenie serwisu reakcję ",
+                "zh-cn": "小的定制服务的改善反应"
             },
             "2.0.4": {
                 "en": "Allow access to admin via iobroker.pro\nAdd settings for the connection timeout",
                 "de": "Erlaube den Zugriff auf Admin via iobroker.pro\nVerbindungs-Timeout Einstellungen",
-                "ru": "Доступ к admin через iobroker.pro\nДобавлены настройки таймаута соединения"
+                "ru": "Доступ к admin через iobroker.pro\nДобавлены настройки таймаута соединения",
+                "pt": "Permitir o acesso ao administrador, através de iobroker.pro\nAdicionar configurações para o tempo limite de conexão",
+                "nl": "Toegang tot admin via iobroker.pro\nVoeg instellingen voor de time-out van verbinding",
+                "fr": "Permettre l'accès à l'admin via iobroker.pro\nAjouter des paramètres pour le délai d'attente de connexion",
+                "it": "Consentire l'accesso all'admin via iobroker.pro\nAggiungere le impostazioni per la connessione in timeout",
+                "es": "Permitir el acceso de administrador a través de iobroker.pro\nAgregar configuración de la conexión de tiempo de espera",
+                "pl": "Zezwalaj na dostęp do panelu administracyjnego przez iobroker.o\nDodaj ustawienia limitu czasu połączenia ",
+                "zh-cn": "允许接入管理通过iobroker的。pro\n添加设置连接的超时"
             }
         },
         "authors": [
