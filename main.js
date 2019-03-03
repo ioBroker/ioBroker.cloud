@@ -3,7 +3,7 @@
 /* jslint node: true */
 'use strict';
 
-let utils         = require('./lib/utils'); // Get common adapter utils
+let utils = require('@iobroker/adapter-core'); // Get common adapter utils
 //let IOSocket      = require(utils.appName + '.socketio/lib/socket.js');
 let IOSocket      = require('./lib/socket.js'); // temporary
 let request       = require('request');
