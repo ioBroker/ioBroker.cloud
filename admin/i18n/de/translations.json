@@ -1,6 +1,6 @@
 {
-    "(Set to 0 if behavior not desired)": "(Auf 0 setzten, falls das Verhalten unerwünscht ist)",
-    "(you can separate names with comma)": "Sie können mehrere kommaseparierte Namen eingeben",
+    "(Set to 0 if behavior not desired)": " (Auf 0 setzen, falls dieses Verhalten unerwünscht ist)",
+    "(you can separate names with comma)": "Es können mehrere kommaseparierte Namen eingeben werden",
     "APP-KEY:": "APP-KEY",
     "Active": "aktiv",
     "Add device": "Gerät hinzufügen",
@@ -35,7 +35,7 @@
     "Instance:": "Instanz",
     "Invalid object": "Ungültiges Objekt",
     "Language:": "Sprache",
-    "OFF level for switches:": "OFF level for switches",
+    "OFF level for switches:": "Aus-Pegel für Schalter",
     "Off": "aus",
     "Ok": "Ok",
     "On": "an",
