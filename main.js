@@ -3,33 +3,33 @@
 /* jslint node: true */
 'use strict';
 
-let utils = require('@iobroker/adapter-core'); // Get common adapter utils
+const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 //let IOSocket      = require(utils.appName + '.socketio/lib/socket.js');
-let IOSocket      = require('./lib/socket.js'); // temporary
-let request       = require('request');
-let AlexaSH2      = require('./lib/alexaSmartHomeV2');
-let AlexaSH3      = require('./lib/alexaSmartHomeV3');
-let AlexaCustom   = require('./lib/alexaCustom');
-let socket        = null;
-let ioSocket      = null;
-let recalcTimeout = null;
-let lang          = 'de';
-let translate     = false;
-let alexaSH2      = null;
-let alexaSH3      = null;
-let alexaCustom   = null;
-const adapterName = require('./package.json').name.split('.').pop();
+const IOSocket      = require('./lib/socket.js'); // temporary
+const request       = require('request');
+const AlexaSH2      = require('./lib/alexaSmartHomeV2');
+const AlexaSH3      = require('./lib/alexaSmartHomeV3');
+const AlexaCustom   = require('./lib/alexaCustom');
+let socket          = null;
+let ioSocket        = null;
+let recalcTimeout   = null;
+let lang            = 'de';
+let translate       = false;
+let alexaSH2        = null;
+let alexaSH3        = null;
+let alexaCustom     = null;
+const pack          = require('./io-package.json');
+const adapterName   = require('./package.json').name.split('.').pop();
 
 let detectDisconnect = null;
-let pingTimer     = null;
-let connected     = false;
-let connectTimer  = null;
-//let statesAI      = null;
-let uuid          = null;
-let pack          = require('./io-package.json');
-let alexaDisabled = false;
-let googleDisabled = false;
-let waiting       = false;
+let pingTimer       = null;
+let connected       = false;
+let connectTimer    = null;
+//let statesAI        = null;
+let uuid            = null;
+let alexaDisabled   = false;
+let googleDisabled  = false;
+let waiting         = false;
 
 let TEXT_PING_TIMEOUT = 'Ping timeout';
 
