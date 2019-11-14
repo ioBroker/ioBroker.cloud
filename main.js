@@ -472,13 +472,13 @@ function onConnect() {
     }
 }
 
-function onCloudConnect() {
-    adapter.log.info('User accessed from cloud');
+function onCloudConnect(clientId) {
+    adapter.log.info('User accessed from cloud: ' + (clientId || ''));
     adapter.setState('info.userOnCloud', true, true);
 }
 
-function onCloudDisconnect() {
-    adapter.log.info('User disconnected from cloud');
+function onCloudDisconnect(clientId, name) {
+    adapter.log.info('User disconnected from cloud: ' + (clientId || '') + ' ' + (name || ''));
     adapter.setState('info.userOnCloud', false, true);
 }
 
