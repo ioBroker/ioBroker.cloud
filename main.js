@@ -10,6 +10,9 @@ const request       = require('request');
 const AlexaSH2      = require('./lib/alexaSmartHomeV2');
 const AlexaSH3      = require('./lib/alexaSmartHomeV3');
 const AlexaCustom   = require('./lib/alexaCustom');
+const pack          = require('./io-package.json');
+const adapterName   = require('./package.json').name.split('.').pop();
+
 let socket          = null;
 let ioSocket        = null;
 let recalcTimeout   = null;
@@ -18,17 +21,13 @@ let translate       = false;
 let alexaSH2        = null;
 let alexaSH3        = null;
 let alexaCustom     = null;
-const pack          = require('./io-package.json');
-const adapterName   = require('./package.json').name.split('.').pop();
 
 let detectDisconnect = null;
 let pingTimer       = null;
 let connected       = false;
 let connectTimer    = null;
-//let statesAI        = null;
 let uuid            = null;
 let alexaDisabled   = false;
-let googleDisabled  = false;
 let waiting         = false;
 
 let TEXT_PING_TIMEOUT = 'Ping timeout';
@@ -45,9 +44,11 @@ function startAdapter(options) {
 
             if (id === 'system.config' && obj && !translate) {
                 lang = obj.common.language;
-                if (lang !== 'en' && lang !== 'de') lang = 'en';
-                alexaSH2.setLanguage(lang, false);
-                alexaSH3.setLanguage(lang, false);
+                if (lang !== 'en' && lang !== 'de') {
+                    lang = 'en';
+                }
+                alexaSH2 && alexaSH2.setLanguage(lang, false);
+                alexaSH3 && alexaSH3.setLanguage(lang, false);
             }
         },
         stateChange:  function (id, state) {
@@ -60,17 +61,16 @@ function startAdapter(options) {
                     });
                 } else {
                     if (state && !state.ack) {
-                        if (id === adapter.namespace + '.smart.googleDisabled') {
-                            googleDisabled = state.val === 'true' || state.val === true;
-                            adapter.setState('smart.googleDisabled', googleDisabled, true);
-                        } else if (id === adapter.namespace + '.smart.alexaDisabled') {
+                        if (id === adapter.namespace + '.smart.alexaDisabled') {
                             alexaDisabled = state.val === 'true' || state.val === true;
-                            adapter.setState('smart.alexaDisabled', alexaDisabled, true);
+                            if (!alexaDisabled && !adapter.config.apikey || !adapter.config.apikey.toString().startsWith('@pro_')) {
+                                adapter.setState('smart.alexaDisabled', true, true);
+                            } else {
+                                adapter.setState('smart.alexaDisabled', alexaDisabled, true);
+                            }
                         }
                     }
-                    if (ioSocket) {
-                        ioSocket.send(socket, 'stateChange', id, state);
-                    }
+                    ioSocket && ioSocket.send(socket, 'stateChange', id, state);
                 }
             }
         },
@@ -97,23 +97,22 @@ function startAdapter(options) {
             if (obj) {
                 switch (obj.command) {
                     case 'update':
-                        if (recalcTimeout) clearTimeout(recalcTimeout);
+                        recalcTimeout && clearTimeout(recalcTimeout);
 
-                        recalcTimeout = setTimeout(function () {
+                        recalcTimeout = setTimeout(() => {
                             recalcTimeout = null;
-                            alexaSH2.updateDevices(function () {
-                                adapter.setState('smart.updates', true, true);
-                            });
-                            alexaSH3.updateDevices(function () {
-                                adapter.setState('smart.updates3', true, true);
-                            });
+                            alexaSH2 && alexaSH2.updateDevices(() =>
+                                adapter.setState('smart.updates', true, true));
+
+                            alexaSH3 && alexaSH3.updateDevices(() =>
+                                adapter.setState('smart.updates3', true, true));
                         }, 1000);
                         break;
 
                     case 'browse':
                         if (obj.callback) {
                             adapter.log.info('Request devices');
-                            alexaSH2.updateDevices(function () {
+                            alexaSH2 && alexaSH2.updateDevices(() => {
                                 adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
                                 adapter.setState('smart.updates', false, true);
                             });
@@ -123,7 +122,7 @@ function startAdapter(options) {
                     case 'browse3':
                         if (obj.callback) {
                             adapter.log.info('Request V3 devices');
-                            alexaSH3.updateDevices(function () {
+                            alexaSH3 && alexaSH3.updateDevices(() => {
                                 adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
                                 adapter.setState('smart.updates3', false, true);
                             });
@@ -133,7 +132,7 @@ function startAdapter(options) {
                     case 'enums':
                         if (obj.callback) {
                             adapter.log.info('Request enums');
-                            alexaSH2.updateDevices(function () {
+                            alexaSH2 && alexaSH2.updateDevices(() => {
                                 adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
                                 adapter.setState('smart.updates', false, true);
                             });
@@ -150,7 +149,7 @@ function startAdapter(options) {
                 }
             }
         },
-        ready:        function () {createInstancesStates(main);}
+        ready:        () => createInstancesStates(main)
     });
 
     adapter = new utils.Adapter(options);
@@ -196,115 +195,13 @@ function sendDataToIFTTT(obj) {
     }
 }
 
-/*function createAiConnection() {
-    let tools  = require(utils.controllerDir + '/lib/tools');
-    let fs     = require('fs');
-    let config = null;
-    let getConfigFileName = tools.getConfigFileName;
-
-    if (fs.existsSync(getConfigFileName())) {
-        config = JSON.parse(fs.readFileSync(getConfigFileName()));
-        if (!config.states)  config.states  = {type: 'file'};
-        if (!config.objects) config.objects = {type: 'file'};
-    } else {
-        adapter.log.warn('Cannot find ' + getConfigFileName());
-        return;
-    }
-    let States;
-    if (config.states && config.states.type) {
-        if (config.states.type === 'file') {
-            States = require(utils.controllerDir + '/lib/states/statesInMemClient');
-        } else if (config.states.type === 'redis') {
-            States = require(utils.controllerDir + '/lib/states/statesInRedis');
-        } else {
-            throw 'Unknown objects type: ' + config.states.type;
-        }
-    } else {
-        States  = require(utils.controllerDir + '/lib/states');
-    }
-
-    statesAI = new States({
-        namespace:  adapter.namespace + 'ai',
-        connection: config.states,
-        connected: function () {
-            statesAI.subscribe('*');
-        },
-        logger: adapter.log,
-        change: function (id, state) {
-            adapter.inputCount++;
-            if (typeof id !== 'string' || !id || state === 'null' || !state) {
-                return;
-            }
-
-            // do not send "system. ..."
-            if (id.match(/^system\./)) {
-                return;
-            }
-
-            if (id.match(/^smartmeter\./) || id.match(/^b-control-em/)) return;
-
-            let type = typeof state.val;
-
-            if (type === 'string') {
-                let f = parseFloat(state.val);
-                if (f.toString() === state.val) {
-                    state.val = f;
-                } else if (state.val === 'true') {
-                    state.val = true;
-                } else if (state.val === 'false') {
-                    state.val = false;
-                } else {
-                    // ignore strings
-                    return;
-                }
-            }
-
-            if (type !== 'number' && type !== 'boolean') {
-                return;
-            } else if (type === 'boolean') {
-                state.val = state.val ? 1 : 0;
-            }
-
-            if (connected) {
-                // extract additional information about this
-                adapter.getForeignObject(id, (err, obj) => {
-                    if (obj && obj.common) {
-                        if (obj.common.unit === '°C' || obj.common.unit === 'C°' || (obj.common.unit === '%' && obj.common.max !== 1)) {
-                            // we do not need exact information
-                            state.val = Math.round(state.val);
-                        }
-                        if (state.from) {
-                            state.from = state.from.replace(/^system\.adapter\./, '');
-                        }
-                        if (!state.ts) {
-                            state.ts = new Date().getTime();
-                        }
-
-                        if (type)
-
-        //              if (sentStates[id] && sentStates[id].timer) {
-        //                  clearTimeout(sentStates[id].timer);
-        //              }
-        //              sentStates[id] = sentStates[id] || {};
-        //              sentStates[id].timer = setTimeout(function (_id, _state))
-        //
-                        delete state.lc;
-                        delete state.q;
-                        ioSocket.send(socket, 'ai', id, state);
-                    }
-                });
-            }
-        }
-    });
-}*/
-
 function pingConnection() {
     if (!detectDisconnect) {
         if (connected && ioSocket) {
             // cannot use "ping" because reserved by socket.io
             ioSocket.send(socket, 'pingg');
 
-            detectDisconnect = setTimeout(function () {
+            detectDisconnect = setTimeout(() => {
                 detectDisconnect = null;
                 adapter.log.error(TEXT_PING_TIMEOUT);
                 onDisconnect(TEXT_PING_TIMEOUT);
@@ -315,9 +212,7 @@ function pingConnection() {
 
 function checkPing() {
     if (connected) {
-        if (!pingTimer) {
-            pingTimer = setInterval(pingConnection, 30000);
-        }
+        pingTimer = pingTimer || setInterval(pingConnection, 30000);
     } else {
         if (pingTimer) {
             clearInterval(pingTimer);
@@ -346,7 +241,9 @@ function controlState(id, data, callback) {
                 if (!obj || !obj.common) {
                     callback && callback('Unknown ID: ' + data.id);
                 } else {
-                    if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
+                    if (typeof data.val === 'string') {
+                        data.val = data.val.replace(/^@ifttt\s?/, '');
+                    }
                     if (obj.common.type === 'boolean') {
                         data.val = data.val === true || data.val === 'true' || data.val === 'on' || data.val === 'ON' || data.val === 1 || data.val === '1';
                     } else if (obj.common.type === 'number') {
@@ -357,14 +254,20 @@ function controlState(id, data, callback) {
                 }
             });
         } else if (data.val !== undefined) {
-            if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
+            if (typeof data.val === 'string') {
+                data.val = data.val.replace(/^@ifttt\s?/, '');
+            }
             adapter.setState(id, data.val, data.ack !== undefined ? data.ack : true, callback);
         } else {
-            if (typeof data === 'string') data = data.replace(/^@ifttt\s?/, '');
+            if (typeof data === 'string') {
+                data = data.replace(/^@ifttt\s?/, '');
+            }
             adapter.setState(id, JSON.stringify(data), true, callback);
         }
     } else {
-        if (typeof data === 'string') data = data.replace(/^@ifttt\s?/, '');
+        if (typeof data === 'string') {
+            data = data.replace(/^@ifttt\s?/, '');
+        }
         adapter.setState(id, data, true, callback);
     }
 }
@@ -394,7 +297,6 @@ function processIfttt(data, callback) {
                         data = data.data;
                     }
                 }
-
             } catch (e) {
                 adapter.log.debug('Cannot parse: ' + data);
             }
@@ -410,19 +312,18 @@ function processIfttt(data, callback) {
                     if (!obj) {
                         // create state
                         adapter.setObject('services.' + id, {
-                            type: 'state',
-                            common: {
-                                name: 'IFTTT value',
-                                write: false,
-                                role: 'state',
-                                read: true,
-                                type: 'mixed',
-                                desc: 'Custom state'
+                                type: 'state',
+                                common: {
+                                    name: 'IFTTT value',
+                                    write: false,
+                                    role: 'state',
+                                    read: true,
+                                    type: 'mixed',
+                                    desc: 'Custom state'
+                                },
+                                native: {}
                             },
-                            native: {}
-                        }, function () {
-                            controlState(adapter.namespace + '.services.'  + id, data, callback);
-                        });
+                            () => controlState(adapter.namespace + '.services.'  + id, data, callback));
                     } else {
                         controlState(obj._id, data, callback);
                     }
@@ -440,6 +341,7 @@ function onDisconnect(event) {
     } else {
         adapter.log.info('Connection changed: disconnect');
     }
+
     if (connected) {
         adapter.log.info('Connection lost');
         connected = false;
@@ -466,6 +368,7 @@ function onConnect() {
     } else {
         adapter.log.info('Connection not changed: was connected');
     }
+
     if (connectTimer) {
         clearInterval(connectTimer);
         connectTimer = null;
@@ -549,17 +452,17 @@ function onCloudStop(data) {
         if (err) adapter.log.error('[getForeignObject]: ' + err);
         if (obj) {
             obj.common.enabled = false;
-            setTimeout(() => {
+            setTimeout(() =>
                 adapter.setForeignObject(obj._id, obj, err => {
                     if (err) adapter.log.error('[setForeignObject]: ' + err);
                     adapter.terminate ? adapter.terminate(): process.exit();
-                });
-            }, 5000);
+                }), 5000);
         } else {
             adapter.terminate ? adapter.terminate(): process.exit();
         }
     });
 }
+
 // this is bug of scoket.io
 // sometimes auto-reconnect does not work.
 function startConnect(immediately) {
@@ -592,6 +495,7 @@ function connect() {
     if (waiting) return;
 
     adapter.log.debug('Connection attempt to ' + (adapter.config.cloudUrl || 'https://iobroker.net:10555') + ' ...');
+
     if (socket) {
         socket.off();
         socket.disconnect();
@@ -643,11 +547,11 @@ function connect() {
         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
 
         if (request && request.directive) {
-            alexaSH3.process(request, !alexaDisabled, callback);
+            alexaSH3 && alexaSH3.process(request, !alexaDisabled, callback);
         } if (request && !request.header) {
-            alexaCustom.process(request, !alexaDisabled, callback);
+            alexaCustom && alexaCustom.process(request, !alexaDisabled, callback);
         } else {
-            alexaSH2.process(request, !alexaDisabled, callback);
+            alexaSH2 && alexaSH2.process(request, !alexaDisabled, callback);
         }
     });
 
@@ -825,9 +729,15 @@ function main() {
         }
         adapter.log.debug('Following strings will be replaced in names: ' + text.join(', '));
     }
-    alexaSH2    = new AlexaSH2(adapter);
-    alexaSH3    = new AlexaSH3(adapter);
-    alexaCustom = new AlexaCustom(adapter);
+
+    // cloud could be used only together with pro.
+    // All other users must use iot cloud
+    if (!adapter.config.apikey || !adapter.config.apikey.toString().startsWith('@pro_')) {
+        alexaSH2    = new AlexaSH2(adapter);
+        alexaSH3    = new AlexaSH3(adapter);
+        alexaCustom = new AlexaCustom(adapter);
+        adapter.log.warn('Pleas use ioBroker.iot for alexa control');
+    }
 
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     adapter.getForeignObject('system.config', (err, obj) => {
@@ -837,12 +747,14 @@ function main() {
         } else {
             lang = obj.common.language;
         }
-        if (lang !== 'en' && lang !== 'de' && lang !== 'ru') lang = 'en';
-        alexaSH2.setLanguage(lang, translate);
-        alexaSH2.updateDevices();
-        alexaSH3.setLanguage(lang, translate);
-        alexaSH3.updateDevices();
-        alexaCustom.setLanguage(lang);
+        if (lang !== 'en' && lang !== 'de' && lang !== 'ru') {
+            lang = 'en';
+        }
+        alexaSH2 && alexaSH2.setLanguage(lang, translate);
+        alexaSH2 && alexaSH2.updateDevices();
+        alexaSH3 && alexaSH3.setLanguage(lang, translate);
+        alexaSH3 && alexaSH3.updateDevices();
+        alexaCustom && alexaCustom.setLanguage(lang);
     });
 
     //if (adapter.config.allowAI && false) {
@@ -889,17 +801,19 @@ function main() {
     adapter.getState('smart.alexaDisabled', (err, state) => {
         if (!state || state.val === null || state.val === 'null') {
             // init value with false
-            adapter.setState('smart.alexaDisabled', alexaDisabled, true);
+            if (!alexaDisabled && !adapter.config.apikey || !adapter.config.apikey.toString().startsWith('@pro_')) {
+                adapter.setState('smart.alexaDisabled', true, true);
+            } else {
+                adapter.setState('smart.alexaDisabled', alexaDisabled, true);
+            }
         } else {
             alexaDisabled = state.val === true || state.val === 'true';
-        }
-    });
-    adapter.getState('smart.googleDisabled', (err, state) => {
-        if (!state || state.val === null || state.val === 'null') {
-            // init value with false
-            adapter.setState('smart.googleDisabled', googleDisabled, true);
-        } else {
-            googleDisabled = state.val === true || state.val === 'true';
+
+            if (!alexaDisabled && !adapter.config.apikey || !adapter.config.apikey.toString().startsWith('@pro_')) {
+                adapter.setState('smart.alexaDisabled', true, true);
+            } else {
+                adapter.setState('smart.alexaDisabled', alexaDisabled, true);
+            }
         }
     });
 

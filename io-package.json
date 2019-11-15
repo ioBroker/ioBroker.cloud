@@ -240,19 +240,6 @@
             "native": {}
         },
         {
-            "_id": "smart.googleDisabled",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If Google home service is disabled",
-                "type": "boolean",
-                "def": false,
-                "read": true,
-                "write": true
-            },
-            "native": {}
-        },
-        {
             "_id": "smart.lastFunction",
             "type": "state",
             "common": {
