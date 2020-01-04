@@ -59,7 +59,7 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
-### 3.0.0 (2019-11-xx)
+### 3.0.0 (2020-01-04)
 * (bluefox) Breaking changes: no alexa support. Use ioBroker.iot for that.
 * (bluefox) Support of multiple clients for .pro
 
@@ -224,7 +224,7 @@ You may write "text2command" in white list, you can send POST request to ```http
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2016-2019 bluefox <dogafox@gmail.com>
+Copyright (c) 2016-2020 bluefox <dogafox@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
