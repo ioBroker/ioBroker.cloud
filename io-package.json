@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "3.0.0",
+        "version": "3.0.1",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,17 +28,17 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
-            "3.0.0": {
-                "en": "news",
-                "de": "neues",
-                "ru": "новое",
-                "pt": "novidades",
-                "nl": "nieuws",
-                "fr": "nouvelles",
-                "it": "notizie",
-                "es": "noticias",
-                "pl": "nowości",
-                "zh-cn": "新"
+            "3.0.1": {
+                "en": "Breaking changes: no alexa support. Use ioBroker.iot for that.\nSupport of multiple clients for .pro",
+                "de": "Breaking Changes: Keine Unterstützung von Alexa. Verwenden Sie dazu ioBroker.iot.\nUnterstützung mehrerer Clients für .pro",
+                "ru": "Breaking Changes: нет поддержки alexa. Для этого используйте ioBroker.iot.\nПоддержка нескольких клиентов для .pro",
+                "pt": "Alterações recentes: sem suporte da alexa. Use ioBroker.iot para isso.\nSuporte de vários clientes para .pro",
+                "nl": "Veranderende veranderingen: geen ondersteuning voor Alexa. Gebruik daarvoor ioBroker.iot.\nOndersteuning van meerdere clients voor .pro",
+                "fr": "Changements de rupture: pas de support alexa. Utilisez ioBroker.iot pour cela.\nPrise en charge de plusieurs clients pour .pro",
+                "it": "Cambiamenti di rottura: nessun supporto alexa. Usa ioBroker.iot per questo.\nSupporto di più client per .pro",
+                "es": "Cambios de última hora: no hay soporte de alexa. Use ioBroker.iot para eso.\nSoporte de múltiples clientes para .pro",
+                "pl": "Przełomowe zmiany: brak obsługi Alexa. W tym celu użyj ioBroker.iot.\nObsługa wielu klientów dla .pro",
+                "zh-cn": "重大变化：无Alexa支持。为此使用ioBroker.iot。\n多个客户端支持.pro"
             },
             "2.8.0": {
                 "en": "The multiple client connection via cloud was corrected",
