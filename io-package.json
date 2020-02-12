@@ -165,6 +165,7 @@
         ],
         "preserveSettings": "smartName",
         "blockly": true,
+        "logTransporter": true,
         "config": {
             "width": 1224,
             "height": 700
