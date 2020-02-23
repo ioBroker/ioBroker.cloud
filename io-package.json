@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "3.0.2": {
+                "en": "fix for potential crash with web 3.x",
+                "de": "Behebung eines möglichen Absturzes mit Web 3.x.",
+                "ru": "исправление для возможного сбоя с веб 3.x",
+                "pt": "correção para possível falha com a web 3.x",
+                "nl": "oplossing voor mogelijke crash met web 3.x",
+                "fr": "correction d'un crash potentiel avec web 3.x",
+                "it": "correzione per un potenziale arresto anomalo con il Web 3.x",
+                "es": "solución para un posible bloqueo con web 3.x",
+                "pl": "naprawiono potencjalną awarię w przeglądarce 3.x",
+                "zh-cn": "修复了Web 3.x可能导致的崩溃"
+            },
             "3.0.1": {
                 "en": "Breaking changes: no alexa support. Use ioBroker.iot for that.\nSupport of multiple clients for .pro",
                 "de": "Breaking Changes: Keine Unterstützung von Alexa. Verwenden Sie dazu ioBroker.iot.\nUnterstützung mehrerer Clients für .pro",
