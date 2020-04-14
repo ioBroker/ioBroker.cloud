@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "3.0.2",
+        "version": "3.0.3",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "3.0.3": {
+                "en": "Updated socket.io version",
+                "de": "Aktualisierte Version von socket.io",
+                "ru": "Обновленная версия socket.io",
+                "pt": "Versão socket.io atualizada",
+                "nl": "Bijgewerkte socket.io-versie",
+                "fr": "Version socket.io mise à jour",
+                "it": "Versione socket.io aggiornata",
+                "es": "Versión actualizada de socket.io",
+                "pl": "Zaktualizowana wersja socket.io",
+                "zh-cn": "更新了socket.io版本"
+            },
             "3.0.2": {
                 "en": "fix for potential crash with web 3.x",
                 "de": "Behebung eines möglichen Absturzes mit Web 3.x.",
@@ -172,7 +184,7 @@
         "materialize": true,
         "dependencies": [
             {
-                "js-controller": ">=0.9.0"
+                "js-controller": ">=2.0.0"
             }
         ],
         "preserveSettings": "smartName",
@@ -181,6 +193,11 @@
         "config": {
             "width": 1224,
             "height": 700
+        },
+        "plugins": {
+            "sentry": {
+                "dsn": "https://4e98835e3b074c49a3e31d51a46801a2@sentry.iobroker.net/33"
+            }
         }
     },
     "native": {
