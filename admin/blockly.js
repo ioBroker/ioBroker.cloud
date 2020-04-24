@@ -1,8 +1,19 @@
 'use strict';
 
-goog.provide('Blockly.JavaScript.Sendto');
+if (typeof goog !== 'undefined') {
+    goog.provide('Blockly.JavaScript.Sendto');
 
-goog.require('Blockly.JavaScript');
+    goog.require('Blockly.JavaScript');
+}
+
+Blockly.Translate = Blockly.Translate || function (word, lang) {
+    lang = lang || systemLang;
+    if (Blockly.Words && Blockly.Words[word]) {
+        return Blockly.Words[word][lang] || Blockly.Words[word].en;
+    } else {
+        return word;
+    }
+};
 
 // --- ifttt --------------------------------------------------
 Blockly.Words['ifttt']               = {"en": "Send text to IFTTT",                              "de": "Sende Text zu IFTTT",                             "ru": "Послать текст в IFTTT",                           "pt": "Enviar texto para IFTTT",                         "nl": "Tekst verzenden naar IFTTT",                      "fr": "Envoyer un texte à IFTTT",                        "it": "Inviare messaggi di testo di IFTTT",              "es": "Enviar texto a IFTTT",                            "pl": "Wysłać tekst z iftt",                             "zh-cn": "发短到过"};
@@ -19,8 +30,6 @@ Blockly.Words['ifttt_log_info']      = {"en": "info",                           
 Blockly.Words['ifttt_log_debug']     = {"en": "debug",                                           "de": "debug",                                           "ru": "отлаживать",                                      "pt": "depurar",                                         "nl": "debug",                                           "fr": "debug",                                           "it": "debug",                                           "es": "depurar",                                         "pl": "debugować",                                       "zh-cn": "调试"};
 Blockly.Words['ifttt_log_warn']      = {"en": "warning",                                         "de": "Warnung",                                         "ru": "предупреждение",                                  "pt": "aviso",                                           "nl": "waarschuwing",                                    "fr": "avertissement",                                   "it": "avviso",                                          "es": "advertencia",                                     "pl": "ostrzeżenie",                                     "zh-cn": "警告"};
 Blockly.Words['ifttt_log_error']     = {"en": "error",                                           "de": "Fehler",                                          "ru": "ошибка",                                          "pt": "erro",                                            "nl": "fout",                                            "fr": "erreur",                                          "it": "errore",                                          "es": "error",                                           "pl": "błąd",                                            "zh-cn": "错误"};
-
-
 
 // this is copy of engines.js
 // Blockly.Sendto is global variable and defined in javascript/admin/google-blockly/own/blocks_sendto.js
@@ -64,44 +73,41 @@ Blockly.Blocks['ifttt'] = {
                     options.push(['cloud.' + n, '.' + n]);
                 }                
             }
-            if (options.length === 0) {
-                for (var k = 0; k <= 4; k++) {
-                    options.push(['cloud.' + k, '.' + k]);
-                }
-            }
-        } else {
-            for (var u = 0; u <= 4; u++) {
-                options.push(['cloud.' + u, '.' + u]);
+        }
+
+        if (options.length === 0) {
+            for (var k = 0; k <= 4; k++) {
+                options.push(['cloud.' + k, '.' + k]);
             }
         }
 
         this.appendDummyInput('INSTANCE')
-            .appendField(Blockly.Words['ifttt'][systemLang])
+            .appendField(Blockly.Translate('ifttt'))
             .appendField(new Blockly.FieldDropdown(options), 'INSTANCE');
 
         this.appendValueInput('EVENT')
-            .appendField(Blockly.Words['ifttt_event'][systemLang]);
+            .appendField(Blockly.Translate('ifttt_event'));
 
         var input = this.appendValueInput('VALUE1')
-            .appendField(Blockly.Words['ifttt_value1'][systemLang]);
+            .appendField(Blockly.Translate('ifttt_value1'));
         if (input.connection) input.connection._optional = true;
 
         input = this.appendValueInput('VALUE2')
-            .appendField(Blockly.Words['ifttt_value2'][systemLang]);
+            .appendField(Blockly.Translate('ifttt_value2'));
         if (input.connection) input.connection._optional = true;
 
         input = this.appendValueInput('VALUE3')
-            .appendField(Blockly.Words['ifttt_value3'][systemLang]);
+            .appendField(Blockly.Translate('ifttt_value3'));
         if (input.connection) input.connection._optional = true;
 
         this.appendDummyInput('LOG')
-            .appendField(Blockly.Words['ifttt_log'][systemLang])
+            .appendField(Blockly.Translate('ifttt_log'))
             .appendField(new Blockly.FieldDropdown([
-                [Blockly.Words['ifttt_log_none'][systemLang],  ''],
-                [Blockly.Words['ifttt_log_info'][systemLang],  'log'],
-                [Blockly.Words['ifttt_log_debug'][systemLang], 'debug'],
-                [Blockly.Words['ifttt_log_warn'][systemLang],  'warn'],
-                [Blockly.Words['ifttt_log_error'][systemLang], 'error']
+                [Blockly.Translate('ifttt_log_none'),  ''],
+                [Blockly.Translate('ifttt_log_info'),  'log'],
+                [Blockly.Translate('ifttt_log_debug'), 'debug'],
+                [Blockly.Translate('ifttt_log_warn'),  'warn'],
+                [Blockly.Translate('ifttt_log_error'), 'error']
             ]), 'LOG');
 
         this.setInputsInline(false);
@@ -109,8 +115,8 @@ Blockly.Blocks['ifttt'] = {
         this.setNextStatement(true, null);
 
         this.setColour(Blockly.Sendto.HUE);
-        this.setTooltip(Blockly.Words['ifttt_tooltip'][systemLang]);
-        this.setHelpUrl(Blockly.Words['ifttt_help'][systemLang]);
+        this.setTooltip(Blockly.Translate('ifttt_tooltip'));
+        this.setHelpUrl(Blockly.Translate('ifttt_help'));
     }
 };
 
