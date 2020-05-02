@@ -4,7 +4,8 @@ tasks
 .git
 .github
 node_modules
-.ideatest
+.idea
+test
 .travis.yml
 appveyor.yml
 admin/i18n
