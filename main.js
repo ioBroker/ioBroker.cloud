@@ -736,7 +736,7 @@ function main() {
         alexaSH2    = new AlexaSH2(adapter);
         alexaSH3    = new AlexaSH3(adapter);
         alexaCustom = new AlexaCustom(adapter);
-        adapter.log.warn('Pleas use ioBroker.iot for alexa control');
+        adapter.log.warn('Please use ioBroker.iot for alexa control');
     }
 
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
