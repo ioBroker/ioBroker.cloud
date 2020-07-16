@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "3.0.3",
+        "version": "3.0.4",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "3.0.4": {
+                "en": "crash prevented when socket is not connected (Sentry IOBROKER-CLOUD-8)",
+                "de": "Absturz verhindert, wenn keine Steckdose angeschlossen ist (Sentry IOBROKER-CLOUD-8)",
+                "ru": "предотвращено падение, если розетка не подключена (Sentry IOBROKER-CLOUD-8)",
+                "pt": "falha evitada quando o soquete não está conectado (Sentry IOBROKER-CLOUD-8)",
+                "nl": "crash voorkomen wanneer socket niet is aangesloten (Sentry IOBROKER-CLOUD-8)",
+                "fr": "crash empêché lorsque le socket n'est pas connecté (Sentry IOBROKER-CLOUD-8)",
+                "it": "arresto anomalo impedito quando il socket non è collegato (Sentry IOBROKER-CLOUD-8)",
+                "es": "bloqueo evitado cuando el zócalo no está conectado (Sentry IOBROKER-CLOUD-8)",
+                "pl": "zapobieganie awariom, gdy gniazdo nie jest podłączone (Sentry IOBROKER-CLOUD-8)",
+                "zh-cn": "未连接套接字时防止崩溃（Sentry IOBROKER-CLOUD-8）"
+            },
             "3.0.3": {
                 "en": "Updated socket.io version",
                 "de": "Aktualisierte Version von socket.io",
