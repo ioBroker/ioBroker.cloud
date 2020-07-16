@@ -24,10 +24,11 @@
     "@iobroker/adapter-core": "^2.2.1"
   },
   "devDependencies": {
-    "@types/node": "^13.11.1",
+    "@alcalzone/release-script": "^1.4.1",
+    "@types/node": "^14.0.23",
     "gulp": "^4.0.2",
     "axios": "^0.19.2",
-    "mocha": "^7.1.1",
+    "mocha": "^8.0.1",
     "chai": "^4.2.0"
   },
   "bugs": {
@@ -35,7 +36,8 @@
   },
   "main": "main.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --exit"
+    "test": "node node_modules/mocha/bin/mocha --exit",
+    "release": "release-script"
   },
   "license": "MIT",
   "readmeFilename": "README.md"

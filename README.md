@@ -62,6 +62,10 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) crash prevented when socket is not connected (Sentry IOBROKER-CLOUD-8)
+
 ### 3.0.3 (2020-04-14)
 * (bluefox) Updated socket.io version
 * (bluefox) Added sentry.io reporting

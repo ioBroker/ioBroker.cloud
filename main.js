@@ -38,9 +38,7 @@ function startAdapter(options) {
     Object.assign(options,{
         name:         adapterName,
         objectChange: function (id, obj) {
-            if (ioSocket) {
-                ioSocket.send(socket, 'objectChange', id, obj);
-            }
+            ioSocket && ioSocket.send(socket, 'objectChange', id, obj);
 
             if (id === 'system.config' && obj && !translate) {
                 lang = obj.common.language;
@@ -167,13 +165,13 @@ function sendDataToIFTTT(obj) {
         return;
     }
     if (typeof obj !== 'object') {
-        ioSocket.send(socket, 'ifttt', {
+        ioSocket && ioSocket.send(socket, 'ifttt', {
             id:     adapter.namespace + '.services.ifttt',
             key:    adapter.config.iftttKey,
             val:    obj
         });
     } else if (obj.event) {
-        ioSocket.send(socket, 'ifttt', {
+        ioSocket && ioSocket.send(socket, 'ifttt', {
             event:  obj.event,
             key:    obj.key || adapter.config.iftttKey,
             value1: obj.value1,
@@ -186,7 +184,7 @@ function sendDataToIFTTT(obj) {
             return;
         }
         obj.id = obj.id || (adapter.namespace + '.services.ifttt');
-        ioSocket.send(socket, 'ifttt', {
+        ioSocket && ioSocket.send(socket, 'ifttt', {
             id:  obj.id,
             key: obj.key || adapter.config.iftttKey,
             val: obj.val,
