@@ -63,7 +63,7 @@ You may write "text2command" in white list, you can send POST request to ```http
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 3.0.5 (2020-10-30)
 * (Apollon77) Make sure that subscribe parrerns are strings (Sentry IOBROKER-CLOUD-D)
 
 ### 3.0.4 (2020-07-16)

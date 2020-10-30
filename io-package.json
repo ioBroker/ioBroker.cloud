@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "3.0.4",
+        "version": "3.0.5",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "3.0.5": {
+                "en": "Make sure that subscribe parrerns are strings (Sentry IOBROKER-CLOUD-D)",
+                "de": "Stellen Sie sicher, dass Abonnement-Parrerns Zeichenfolgen sind (Sentry IOBROKER-CLOUD-D).",
+                "ru": "Убедитесь, что параметры подписки являются строками (Sentry IOBROKER-CLOUD-D)",
+                "pt": "Certifique-se de que os parrerns de inscrição são strings (Sentry IOBROKER-CLOUD-D)",
+                "nl": "Zorg ervoor dat abonnementsparrerns strings zijn (Sentry IOBROKER-CLOUD-D)",
+                "fr": "Assurez-vous que les paramètres d'abonnement sont des chaînes (Sentry IOBROKER-CLOUD-D)",
+                "it": "Assicurati che i parrern di iscrizione siano stringhe (Sentry IOBROKER-CLOUD-D)",
+                "es": "Asegúrese de que los parrerns de suscripción sean cadenas (Sentry IOBROKER-CLOUD-D)",
+                "pl": "Upewnij się, że parrerns subskrypcji to ciągi (Sentry IOBROKER-CLOUD-D)",
+                "zh-cn": "确保订阅parrerns是字符串（Sentry IOBROKER-CLOUD-D）"
+            },
             "3.0.4": {
                 "en": "crash prevented when socket is not connected (Sentry IOBROKER-CLOUD-8)",
                 "de": "Absturz verhindert, wenn keine Steckdose angeschlossen ist (Sentry IOBROKER-CLOUD-8)",
