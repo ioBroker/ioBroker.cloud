@@ -586,8 +586,54 @@ function connect() {
                         adapter.log.warn('Received service text2command, but instance is not defined');
                         callback && callback({error: 'but instance is not defined'});
                     }
-                } else if (!isCustom && data.name === 'simpleApi') {
-                    callback && callback({error: 'not implemented'});
+                } else if (!isCustom && (data.name === 'simpleApi' || data.name === 'simpleapi')) {
+                    // GET https://iobroker.net/service/simpleApi/<user-app-key>/get/system.adapter.admin.0.cputime
+                    const parts = (data.data || '').split('/');
+                    if (parts[0] === 'get') {
+                        adapter.getForeignState(parts[1], (error, state) => {
+                            if (error) {
+                                callback && callback({error});
+                            } else {
+                                state.result = 'Ok';
+                                callback && callback(state);
+                            }
+                        });
+                    } else if (parts[0] === 'getPlainValue') {
+                        adapter.getForeignState(parts[1], (error, state) => {
+                            if (error) {
+                                callback && callback({error});
+                            } else {
+                                callback && callback({result: 'Ok', val: state.val, plain: true});
+                            }
+                        });
+                    } else if (parts[0] === 'set') {
+                        // https://iobroker.pro/service/simpleapi/<user-app-key>/set/stateID?value=1
+                        let [id, val] = parts[1].split('?');
+                        val = val.replace(/^value=/, '');
+                        adapter.getForeignObject(id, (error, obj) => {
+                            if (error || !obj) {
+                                callback && callback({error: error || 'not found'});
+                            } else if (obj.type !== 'state') {
+                                callback && callback({error: 'only states could be controlled'});
+                            } else {
+                                if (obj.common && obj.common.type === 'boolean') {
+                                    val = val === 'true' || val === '1' || val === 'ON' || val === 'on';
+                                } else if (obj.common && obj.common.type === 'number') {
+                                    val = parseFloat(val);
+                                }
+                                adapter.setForeignState(id, val, error => {
+                                    if (error) {
+                                        callback && callback({error});
+                                    } else {
+                                        callback && callback({result: 'Ok'});
+                                    }
+                                });
+                            }
+                        });
+
+                    } else {
+                        callback && callback({error: 'not implemented'});
+                    }
                 } else if (isCustom) {
                     adapter.getObject('services.custom_' + data.name, (err, obj) => {
                         if (!obj) {

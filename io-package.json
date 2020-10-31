@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "3.0.4",
+        "version": "3.1.0",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "3.1.0": {
+                "en": "Implemented the easy simpleApi commands (not all)",
+                "de": "Implementierte die einfachen simpleApi-Befehle (nicht alle)",
+                "ru": "Реализованы простые команды simpleApi (не все)",
+                "pt": "Implementado os comandos simpleApi fáceis (não todos)",
+                "nl": "Implementeerde de eenvoudige simpleApi-opdrachten (niet alle)",
+                "fr": "Implémentation des commandes simples simplesApi (pas toutes)",
+                "it": "Implementati i semplici comandi simpleApi (non tutti)",
+                "es": "Implementó los comandos sencillos de simpleApi (no todos)",
+                "pl": "Zaimplementowano proste polecenia simpleApi (nie wszystkie)",
+                "zh-cn": "实现了简单的simpleApi命令（并非全部）"
+            },
             "3.0.4": {
                 "en": "crash prevented when socket is not connected (Sentry IOBROKER-CLOUD-8)",
                 "de": "Absturz verhindert, wenn keine Steckdose angeschlossen ist (Sentry IOBROKER-CLOUD-8)",
