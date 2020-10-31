@@ -60,9 +60,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 
 ### simpleApi
 You can use following commands (only pro):
-```[GET]https://iobroker.pro/service/simpleApi/<user-app-key>/get/stateID``` - to read state value => `{"val":103.516,"ack":true,"ts":1604132484682,"q":0,"from":"system.adapter.admin.0","lc":1604132469672,"result":"OK"}`
-```[GET]https://iobroker.pro/service/simpleApi/<user-app-key>/getPlainValue/stateID``` - to read state value => `103.641`
-```[GET]https://iobroker.pro/service/simpleApi/<user-app-key>/set/stateID?value=1``` - to set state value => `{"result":"OK"}`
+- ```[GET]https://iobroker.pro/service/simpleApi/<user-app-key>/get/stateID``` - to read state value => `{"val":103.516,"ack":true,"ts":1604132484682,"q":0,"from":"system.adapter.admin.0","lc":1604132469672,"result":"OK"}`
+- ```[GET]https://iobroker.pro/service/simpleApi/<user-app-key>/getPlainValue/stateID``` - to read state value => `103.641`
+- ```[GET]https://iobroker.pro/service/simpleApi/<user-app-key>/set/stateID?value=1``` - to set state value => `{"result":"OK"}`
 
 **Don't forget to add `simpleApi` to allowed services in the configuration.**
 
