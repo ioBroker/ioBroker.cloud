@@ -60,9 +60,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 
 ### simpleApi
 You can use following commands (only pro):
-```[GET]https://iobroker.pro/service/simpleApi>/<user-app-key>/get/stateID``` - to read state value => `{"val":103.516,"ack":true,"ts":1604132484682,"q":0,"from":"system.adapter.admin.0","lc":1604132469672,"result":"OK"}`
-```[GET]https://iobroker.pro/service/simpleApi>/<user-app-key>/getPlainValue/stateID``` - to read state value => `103.641`
-```[GET]https://iobroker.pro/service/simpleApi>/<user-app-key>/set/stateID?value=1``` - to set state value => `{"result":"OK"}`
+```[GET]https://iobroker.pro/service/simpleApi/<user-app-key>/get/stateID``` - to read state value => `{"val":103.516,"ack":true,"ts":1604132484682,"q":0,"from":"system.adapter.admin.0","lc":1604132469672,"result":"OK"}`
+```[GET]https://iobroker.pro/service/simpleApi/<user-app-key>/getPlainValue/stateID``` - to read state value => `103.641`
+```[GET]https://iobroker.pro/service/simpleApi/<user-app-key>/set/stateID?value=1``` - to set state value => `{"result":"OK"}`
 
 **Don't forget to add `simpleApi` to allowed services in the configuration.**
 
@@ -71,7 +71,7 @@ You can use following commands (only pro):
 * (bluefox) Implemented the easy simpleApi commands (not all)
 
 ### 3.0.5 (2020-10-30)
-* (Apollon77) Make sure that subscribe parrerns are strings (Sentry IOBROKER-CLOUD-D)
+* (Apollon77) Make sure that subscribe patterns are strings (Sentry IOBROKER-CLOUD-D)
 
 ### 3.0.4 (2020-07-16)
 * (Apollon77) crash prevented when socket is not connected (Sentry IOBROKER-CLOUD-8)
