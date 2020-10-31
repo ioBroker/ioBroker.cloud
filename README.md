@@ -70,6 +70,9 @@ You can use following commands (only pro):
 ### 3.1.0 (2020-10-31)
 * (bluefox) Implemented the easy simpleApi commands (not all)
 
+### 3.0.5 (2020-10-30)
+* (Apollon77) Make sure that subscribe parrerns are strings (Sentry IOBROKER-CLOUD-D)
+
 ### 3.0.4 (2020-07-16)
 * (Apollon77) crash prevented when socket is not connected (Sentry IOBROKER-CLOUD-8)
 
