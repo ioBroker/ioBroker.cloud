@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "3.1.0",
+        "version": "4.0.0",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "4.0.0": {
+                "en": "Breaking change! Alexa was removed from cloud adapter.\nAllowed to use the login and password for authentication.",
+                "de": "Veränderung brechen! Alexa wurde vom Cloud-Adapter entfernt.\nErlaubt die Verwendung des Logins und des Passworts zur Authentifizierung.",
+                "ru": "Критическое изменение! Алекса была удалена из облачного адаптера.\nРазрешено использовать логин и пароль для аутентификации.",
+                "pt": "Quebrando a mudança! Alexa foi removida do adaptador de nuvem.\nTem permissão para usar o login e a senha para autenticação.",
+                "nl": "Verandering doorbreken! Alexa is verwijderd uit de cloudadapter.\nToegestaan om de login en het wachtwoord te gebruiken voor authenticatie.",
+                "fr": "Changement de rupture! Alexa a été supprimée de l'adaptateur cloud.\nAutorisé à utiliser le login et le mot de passe pour l'authentification.",
+                "it": "Rottura del cambiamento! Alexa è stato rimosso dall'adattatore cloud.\nAutorizzato a utilizzare il login e la password per l'autenticazione.",
+                "es": "¡Rompiendo el cambio! Alexa fue eliminada del adaptador de nube.\nSe le permite utilizar el nombre de usuario y la contraseña para la autenticación.",
+                "pl": "Przełomowa zmiana! Alexa została usunięta z adaptera chmury.\nDozwolone jest używanie loginu i hasła do uwierzytelniania.",
+                "zh-cn": "零钱！ Alexa已从云适配器中删除。\n允许使用登录名和密码进行身份验证。"
+            },
             "3.1.0": {
                 "en": "Implemented the easy simpleApi commands (not all)",
                 "de": "Implementierte die einfachen simpleApi-Befehle (nicht alle)",

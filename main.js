@@ -666,7 +666,7 @@ function _createAppKey(cb) {
     request({
         method: 'POST',
         url: `https://${adapter.config.server}:3001/api/v1/appkeys`,
-        headers : {
+        headers: {
             Authorization: 'Basic ' + Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')
         }
     }, (err, state, body) => {
