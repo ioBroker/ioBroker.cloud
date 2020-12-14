@@ -236,8 +236,12 @@
             }
         }
     },
+    "encryptedNative": ["pass"],
     "native": {
         "language": "",
+        "login": "email.com",
+        "pass": "",
+        "server": "iobroker.pro",
         "apikey": "",
         "instance": "web.0",
         "cloudUrl": "https://iobroker.net:10555",
@@ -250,7 +254,6 @@
         "pingTimeout": 5000,
         "iftttKey": "",
         "replaces": "",
-        "allowAI": false,
         "allowedServices": "",
         "text2command": "0",
         "allowAdmin": "",
@@ -299,91 +302,6 @@
                 "role": "state",
                 "name": "Time till pro access is available",
                 "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.alexaDisabled",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If Alexa service is disabled",
-                "type": "boolean",
-                "def": false,
-                "read": true,
-                "write": true
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastFunction",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last controlled function",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastRoom",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last controlled room",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastCommand",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last command",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastResponse",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last textual response",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updates",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If updates of configuration is ready",
-                "type": "boolean",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updates3",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If updates of V3 configuration is ready",
-                "type": "boolean",
                 "read": true,
                 "write": false
             },

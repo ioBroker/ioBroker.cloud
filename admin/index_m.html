@@ -20,8 +20,6 @@
 <script type="text/javascript">
 
     var supportedInstances = ['web'];
-    var subscribed = false;
-    var subscribed3 = false;
     var actionsMapping = {
         turnOn: 'On',
         turnOff: 'Off',
@@ -40,56 +38,9 @@
         setLockState: '🔒',
         getLockState: '🔒?'
     };
-    var enumTimer;
-    var devTimer;
-    var devMTimer;
     var selectId;
-    var filterTimer;
-    var filterMTimer;
-    var idToEdit;
-    var idToNavigate;
     var language;
     var noCommon;
-    var alexaAllowed;
-
-    function getSmartName(states, id) {
-        if (!id) {
-            if (!noCommon) {
-                if (!states.common) {
-                    return states.smartName;
-                } else {
-                    if (states && !states.common) {
-                        return states.smartName;
-                    } else {
-                        return states.common.smartName;
-                    }
-                }
-            } else {
-                if (states && !states.common) {
-                    return states.smartName;
-                } else {
-                    return (states &&
-                        states.common &&
-                        states.common.custom &&
-                        states.common.custom[adapter + '.' + instance]) ?
-                        states.common.custom[adapter + '.' + instance].smartName : undefined;
-                }
-            }
-        } else
-        if (!noCommon) {
-            return states[id].common.smartName;
-        } else {
-            return (states[id] &&
-                states[id].common &&
-                states[id].common.custom &&
-                states[id].common.custom[adapter + '.' + instance]) ?
-                states[id].common.custom[adapter + '.' + instance].smartName || null : null;
-        }
-    }
-
-    function informInstance(id) {
-        sendTo(null, 'update', id);
-    }
 
     function initSelectId(callback) {
         if (selectId) {
@@ -127,859 +78,15 @@
         });
     }
 
-    function initDialog(callback) {
-        var $editDialog = $('#dialog-name-edit');
-        if (!$editDialog.data('inited')) {
-            $editDialog.data('inited', true);
-            $editDialog.modal({
-                dismissible: false
-            });
-
-            $editDialog.find('.btn-set').on('click', function () {
-                var $editDialog = $('#dialog-name-edit');
-                var callback = $editDialog.data('callback');
-                if (typeof callback === 'function') callback();
-                $editDialog.data('callback', null);
-            });
-            $('#edit_name').on('keyup', function (e) {
-                if (e.keyCode === 13) {
-                    setTimeout(function () {
-                        $editDialog.find('.btn-set').trigger('click');
-                    }, 100);
-                }
-            });
-        }
-        $editDialog.data('callback', callback);
-
-        $editDialog.modal('open');
-    }
-
-    function getSelect(id, type) {
-        // type = '-', 'stored', false or number [5-100]
-        if (type !== false) {
-            var text = '<select data-id="' + id + '" class="by-on-edit">';
-            text += '<option value="-" ' + (type === '-' ? 'selected' : '') + '>' + _('Default') + '</option>';
-            text += '<option value="stored" ' + (type === 'stored' ? 'selected' : '') + '>' + _('last value') + '</option>';
-            for (var i = 5; i <= 100; i += 5) {
-                text += '<option value="' + i + '" ' + (type === i.toString() ? 'selected' : '') + '>' + i + '%</option>';
-            }
-            text += '</select>';
-            return text;
-        } else {
-            return '';
-        }
-    }
-
-    var SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA'];
-
-    function getTypeSelect(id, type) {
-        if (type !== false) {
-            var text = '<select data-id="' + id + '" class="type-edit">';
-            text += '<option value="" ' + ((!type) ? 'selected' : '') + '>' + _('no type') + '</option>';
-            for(var i = 0; i < SMARTTYPES.length; i++) {
-                text += '<option value="' + SMARTTYPES[i] + '" ' + (type === SMARTTYPES[i] ? 'selected' : '') + '>' + SMARTTYPES[i] + '</option>';
-            }
-            text += '</select>';
-            return text;
-        } else {
-            return '';
-        }
-    }
-
-    function updateDevices(delay) {
-        if (delay) {
-            if (devTimer) clearTimeout(devTimer);
-            devTimer = setTimeout(function () {
-                devTimer = null;
-                updateDevices();
-            }, delay);
-            return;
-        }
-
-        sendTo(null, 'browse', null, function (list) {
-            $('#add_device').removeClass('disabled');
-            if (list) {
-                var text = '<tr><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '<span style="float: right; padding-right: 130px">' + _('Types') + '</span><span style="float: right; padding-right: 100px">' + _('by ON') + '</span></th></tr>';
-
-                for (var j = 0; j < list.length; j++) {
-                    if (list[j].additionalApplianceDetails.group || !list[j].additionalApplianceDetails.nameModified) {
-                        text += '<tr><td class="smart-name"  style="white-space: nowrap;">' + list[j].friendlyName + '</td>';
-                    } else {
-                        text += '<tr><td class="smart-name"  style="white-space: nowrap; font-style: italic" title="' + _('modified') + '">' + list[j].friendlyName + '</td>';
-                    }
-                    // Type
-                    var actions = [];
-                    if (!list[j].actions) {
-                        console.log('Something went wrong');
-                        continue;
-                        }
-                    for (var a = 0; a < list[j].actions.length; a++) {
-                        if (actionsMapping[list[j].actions[a]]) {
-                            actions.push(actionsMapping[list[j].actions[a]]);
-                        } else {
-                            actions.push(list[j].actions[a]);
-                        }
-                    }
-                    // place ON /OFF first
-                    var pos = actions.indexOf(actionsMapping.turnOff);
-                    if (pos !== -1) {
-                        actions.splice(pos, 1);
-                        actions.unshift(actionsMapping.turnOff)
-                    }
-                    pos = actions.indexOf(actionsMapping.turnOn);
-                    if (pos !== -1) {
-                        actions.splice(pos, 1);
-                        actions.unshift(actionsMapping.turnOn)
-                    }
-
-                    text += '<td style="white-space: nowrap;">' + actions.join(' ') + '</td>';
-
-                    text += '<td>';
-                    text += '<table style="width: 100%" class="smart-table">';
-
-                    if (list[j].additionalApplianceDetails.group) {
-                        var channels   = list[j].additionalApplianceDetails.channels;
-                        var names      = list[j].additionalApplianceDetails.names;
-                        var types      = list[j].additionalApplianceDetails.byONs;
-                        var smarttypes = list[j].additionalApplianceDetails.smartTypes;
-
-                        for (var chan in channels) {
-                            if (channels.hasOwnProperty(chan)) {
-                                for (var i = 0; i < channels[chan].length; i++) {
-                                    var k = channels[chan][i].id;
-                                    text += '<tr><td title="' + k + '">' + (names[k] || k) + '</td>';
-                                    text += '<td class="col-select"><div>' + getSelect(k, types[k]) + '</div></td>';
-                                    text += '<td class="col-types"><div>'  + getTypeSelect(k, smarttypes[k]) + '</div></td>';
-                                    text += '<td class="col-buttons">' +
-                                        '<a data-id="' + k + '" class="btn-floating waves-effect waves-light red btn-small button-delete"><i class="material-icons">delete</i></a>' +
-                                        '</td></tr>';
-                                }
-                            }
-                        }
-                    } else {
-                        var name = list[j].additionalApplianceDetails.name || list[j].additionalApplianceDetails.id;
-                        text += '<tr><td title="' + (list[j].additionalApplianceDetails.id || '') + '">';
-                        text +=  (name || k);
-                        text += '</td>';
-                        text += '<td class="col-select"><div>' + getSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.byON) + '</div></td>';
-                        text += '<td class="col-types"><div>'   + getTypeSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.smartType) + '</div></td>';
-                        text += '<td class="col-buttons">' +
-                            '<a data-value="' + (list[j].additionalApplianceDetails.friendlyNames ? list[j].additionalApplianceDetails.friendlyNames : list[j].friendlyName) + '" data-id="' + list[j].additionalApplianceDetails.id + '" class="button-edit btn-floating waves-effect waves-light btn-small"><i class="material-icons">edit</i></a>' +
-                            '<a data-id="' + list[j].additionalApplianceDetails.id + '" class="btn-floating waves-effect waves-light red btn-small button-delete"><i class="material-icons">delete</i></a>' +
-                            '</td>';
-                        text += '</td></tr>';
-                    }
-                    text += '</table>';
-                    text += '</td></tr>';
-                }
-
-                var $smartTable = $('#smart_table');
-                $smartTable.html(text).find('.button-delete').click(function () {
-                    var $this = $(this);
-                    var id = $this.data('id');
-
-                    confirmMessage(_('Device will be disabled.'), _('Are you sure?'), 'priority_high', function (result) {
-                        if (result) {
-                            $this.closest('tr').addClass('smart-changed');
-                            socket.emit('getObject', id, function (err, obj) {
-                                disableSmartName(obj);
-                                socket.emit('setObject', id, obj, function (err) {
-                                    informInstance(id);
-                                    //updateDevices(2000);
-                                    if (err) {
-                                        window.alert(err);
-                                    }
-                                });
-                            });
-                        }
-                    });
-                });
-
-                $smartTable.find('.by-on-edit').change(function () {
-                    var $this = $(this);
-                    var id    = $this.data('id');
-                    var val   = $this.val();
-                    $this.addClass('smart-changed');
-                    socket.emit('getObject', id, function (err, obj) {
-                        updateSmartName(obj, null, undefined, val);
-                        socket.emit('setObject', id, obj, function (err) {
-                            informInstance(id);
-                            if (err) {
-                                window.alert(err);
-                            }
-                        });
-                    });
-                });
-
-                $smartTable.find('.type-edit').change(function () {
-                    var $this = $(this);
-                    var id    = $this.data('id');
-                    var val   = $this.val();
-                    $this.addClass('smart-changed');
-                    socket.emit('getObject', id, function (err, obj) {
-                        updateSmartName(obj, null, undefined, undefined, val);
-                        socket.emit('setObject', id, obj, function (err) {
-                            informInstance(id);
-                            if (err) {
-                                window.alert(err);
-                            }
-                        });
-                    });
-                });
-
-                $smartTable.find('.button-edit').click(function () {
-                    var $this = $(this);
-                    var $editDialog = $('#dialog-name-edit');
-                    $editDialog.data('id', $this.data('id'));
-                    $('#edit_name').val($this.data('value'));
-
-                    initDialog(function () {
-                        var id = $('#dialog-name-edit').data('id');
-
-                        var $devices = $('#smart_table').find('.button-edit');
-
-                        var val   = $('#edit_name').val();
-                        var found = false;
-                        $devices.each(function () {
-                            if ($(this).data('value') === val && $(this).data('id') !== id) {
-                                found = true;
-                                return false;
-                            }
-                        });
-
-                        if (found) {
-                            showMessage(_('Duplicate name'), _('Error'), 'alert');
-                            return;
-                        }
-
-                        //noinspection JSJQueryEfficiency
-                        $devices.find('[data-id="' + id + '"]').parent().addClass('smart-changed');
-
-                        idToNavigate = id;
-                        socket.emit('getObject', id, function (err, obj) {
-                            updateSmartName(obj, null, $('#edit_name').val());
-                            socket.emit('setObject', id, obj, function (err) {
-                                informInstance(id);
-                                if (err) {
-                                    window.alert(err);
-                                }
-                            });
-                        });
-                    });
-                });
-
-                if (idToEdit) {
-                    $smartTable.find('.button-edit[data-id="' + idToEdit + '"]').trigger('click');
-                    idToEdit = null;
-                }
-                if (idToNavigate) {
-                    var $td = $smartTable.find('.button-edit[data-id="' + idToNavigate + '"]');
-                    // To do find the solution
-                    // $td[0].scrollIntoView();
-
-                    $td.parent().parent().addClass('highlight');
-                    idToNavigate = null;
-                }
-                $('select').select({
-                    dropdownOptions: {
-                        constrainWidth: false
-                    }
-                });
-            }
-            filter();
-        });
-    }
-
-    function disableSmartName(states, id) {
-        var obj;
-        if (!id) {
-            obj = states;
-        } else {
-            obj = states[id];
-        }
-        if (noCommon) {
-            obj.common.custom = obj.common.custom || {};
-            obj.common.custom[adapter + '.' + instance] = obj.common.custom[adapter + '.' + instance] || {};
-            obj.common.custom[adapter + '.' + instance].smartName = false;
-        } else {
-            obj.common.smartName = false;
-        }
-    }
-
-    function enableSmartName(states, id) {
-        var obj;
-        if (!id) {
-            obj = states;
-        } else {
-            obj = states[id];
-        }
-        if (noCommon) {
-            obj.common.custom = obj.common.custom || {};
-            obj.common.custom[adapter + '.' + instance] = obj.common.custom[adapter + '.' + instance] || {};
-            obj.common.custom[adapter + '.' + instance].smartName = {};
-        } else {
-            obj.common.smartName = {};
-        }
-    }
-
-    function removeSmartName(states, id) {
-        var obj;
-        if (!id) {
-            obj = states;
-        } else {
-            obj = states[id];
-        }
-        if (noCommon) {
-            if (obj.common && obj.common.custom && obj.common.custom[adapter + '.' + instance]) {
-                delete obj.common.custom[adapter + '.' + instance];
-            }
-        } else {
-            obj.common.smartName = null;
-        }
-    }
-
-    function updateSmartName(states, id, newSmartName, byON, smartType) {
-        var obj;
-        if (!id) {
-            obj = states;
-        } else {
-            obj = states[id];
-        }
-
-        // convert Old format
-        if (typeof obj.common.smartName === 'string') {
-            var nnn = obj.common.smartName;
-            obj.common.smartName = {};
-            obj.common.smartName[language] = nnn;
-        }
-
-        // convert old settings
-        if (obj.native && obj.native.byON) {
-            delete obj.native.byON;
-            var _smartName = obj.common.smartName;
-
-            if (!_smartName || typeof _smartName !== 'object') {
-                _smartName = {
-                    en:     _smartName
-                };
-                _smartName[language] = _smartName.en;
-            }
-            obj.common.smartName = _smartName;
-        }
-        if (smartType !== undefined) {
-            if (noCommon) {
-                obj.common.custom = obj.common.custom || {};
-                obj.common.custom[adapter + '.' + instance] = obj.common.custom[adapter + '.' + instance] || {};
-                obj.common.custom[adapter + '.' + instance].smartName = obj.common.custom[adapter + '.' + instance].smartName || {};
-                obj.common.custom[adapter + '.' + instance].smartName.smartType = smartType;
-            } else {
-                obj.common.smartName = obj.common.smartName || {};
-                obj.common.smartName.smartType = smartType;
-            }
-        }
-        if (byON !== undefined) {
-            if (noCommon) {
-                obj.common.custom = obj.common.custom || {};
-                obj.common.custom[adapter + '.' + instance] = obj.common.custom[adapter + '.' + instance] || {};
-                obj.common.custom[adapter + '.' + instance].smartName = obj.common.custom[adapter + '.' + instance].smartName || {};
-                obj.common.custom[adapter + '.' + instance].smartName.byON = byON;
-            } else {
-                obj.common.smartName = obj.common.smartName || {};
-                obj.common.smartName.byON = byON;
-            }
-        }
-        if (newSmartName !== undefined) {
-            var smartName;
-            if (noCommon) {
-                obj.common.custom = obj.common.custom || {};
-                obj.common.custom[adapter + '.' + instance] = obj.common.custom[adapter + '.' + instance] || {};
-                obj.common.custom[adapter + '.' + instance].smartName = obj.common.custom[adapter + '.' + instance].smartName || {};
-                smartName = obj.common.custom[adapter + '.' + instance].smartName;
-            } else {
-                obj.common.smartName = obj.common.smartName || {};
-                smartName = obj.common.smartName;
-            }
-            smartName[language] = newSmartName;
-
-            // If smart name deleted
-            if (smartName && (!smartName[language] ||
-			(smartName[language] === obj.common.name &&
-				(!obj.common.role || obj.common.role.indexOf('button') >= 0)))) {
-                delete smartName[language];
-                var empty = true;
-                // Check if structure has any definitions
-                for (var key in smartName) {
-                    if (smartName.hasOwnProperty(key)) {
-                        empty = false;
-                        break;
-                    }
-                }
-                // If empty => delete smartName completely
-                if (empty) {
-                    if (noCommon) {
-                        if (obj.common.custom[adapter + '.' + instance].smartName.byON === undefined) {
-                            delete obj.common.custom[adapter + '.' + instance];
-                        } else {
-                            delete obj.common.custom[adapter + '.' + instance].en;
-                            delete obj.common.custom[adapter + '.' + instance].de;
-                            delete obj.common.custom[adapter + '.' + instance].ru;
-                            delete obj.common.custom[adapter + '.' + instance].nl;
-                            delete obj.common.custom[adapter + '.' + instance].pl;
-                            delete obj.common.custom[adapter + '.' + instance].it;
-                            delete obj.common.custom[adapter + '.' + instance].fr;
-                        }
-                    } else {
-                        if (obj.common.smartName.byON !== undefined) {
-                            delete obj.common.smartName.en;
-                            delete obj.common.smartName.de;
-                            delete obj.common.smartName.ru;
-                            delete obj.common.smartName.nl;
-                            delete obj.common.smartName.pl;
-                            delete obj.common.smartName.it;
-                            delete obj.common.smartName.fr;
-                        } else {
-                            obj.common.smartName = null;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    function updateMDevices(delay) {
-        if (delay) {
-            if (devMTimer) clearTimeout(devMTimer);
-            devMTimer = setTimeout(function () {
-                devMTimer = null;
-                updateMDevices();
-            }, delay);
-            return;
-        }
-        sendTo(null, 'browse3', null, function (list) {
-            $('#add_m_device').removeClass('disabled');
-            if (list) {
-                var text = '<tr><th style="width: 30px">' + _('Active') + '</th><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '</th><th style="width: 70px"></th></tr>';
-
-                for (var j = 0; j < list.length; j++) {
-                    var actions = [];
-                    for (var c = 0; c < list[j].capabilities.length; c++) {
-                        if (list[j].capabilities[c].interface === 'Alexa.Speaker') {
-                            actions.push('vol.');
-                        } else if (list[j].capabilities[c].interface === 'Alexa.PlaybackController') {
-                            actions.push('&#9654;');
-                        }
-                    }
-
-                    text += '<tr class="' + (list[j].enabled ? '' : 'smart-disabled') + '"><td style="text-align: center"><input data-id="' + list[j].cookie.id + '" class="smart-enabled" type="checkbox" ' + (list[j].enabled ? 'checked' : '') + '/></td>';
-                    text += '<td class="smart-name" title="' + (list[j].cookie.id || '') + ' style="white-space: nowrap;">' + list[j].friendlyName + '</td>';
-                    text += '<td>' + actions.join(', ') + '</td>';
-                    text += '<td style="width: 95px" title="' + list[j].cookie.name + '">' + list[j].cookie.id + '</td>';
-                    text += '<td style="width: 95px">' +
-                        '<a data-value="' + (list[j].cookie.friendlyNames ? list[j].cookie.friendlyNames.join(',') : list[j].friendlyName) + '" data-id="' + list[j].cookie.id + '" class="button-edit btn-floating waves-effect waves-light btn-small red"><i class="material-icons">delete</i></a>' +
-                        '</td>';
-                    text += '</td></tr>';
-                }
-
-                var $smartTable = $('#smart_m_table');
-                $smartTable.html(text).find('.smart-enabled').change(function () {
-                    var $this = $(this);
-                    var id = $this.data('id');
-
-                    if (!$(this).prop('checked')) {
-                        confirmMessage(_('Device will be deactivated.'), _('Are you sure?'), 'confirmMessage', function (result) {
-                            if (result) {
-                                $this.parent().addClass('smart-changed');
-                                socket.emit('getObject', id, function (err, obj) {
-                                    disableSmartName(obj);
-                                    socket.emit('setObject', id, obj, function (err) {
-                                        informInstance(id);
-                                        if (err) {
-                                            window.alert(err);
-                                        }
-                                    });
-                                });
-                            }
-                        });
-                    } else {
-                        $this.parent().addClass('smart-changed');
-                        socket.emit('getObject', id, function (err, obj) {
-                            enableSmartName(obj);
-
-                            socket.emit('setObject', id, obj, function (err) {
-                                informInstance(id);
-                                if (err) {
-                                    window.alert(err);
-                                }
-                            });
-                        });
-                    }
-                });
-
-                $smartTable.find('.button-edit').click(function () {
-                    var $this = $(this);
-                    var $editDialog = $('#dialog-name-edit');
-                    $editDialog.data('id', $this.data('id'));
-                    $('#edit_name').val($this.data('value'));
-
-                    initDialog();
-
-                    $editDialog.data('callback', function () {
-                        var id = $('#dialog-name-edit').data('id');
-
-                        var $devices = $('#smart_m_table').find('.button-edit');
-
-                        var val   = $('#edit_name').val();
-                        var found = false;
-                        $devices.each(function () {
-                            if ($(this).data('value') === val && $(this).data('id') !== id) {
-                                found = true;
-                                return false;
-                            }
-                        });
-
-                        if (found) {
-                            showMessage(_('Duplicate name'), _('Error'), 'alert');
-                            return;
-                        }
-
-                        //noinspection JSJQueryEfficiency
-                        $devices.find('[data-id="' + id + '"]').parent().addClass('smart-changed');
-
-                        idToNavigate = id;
-                        socket.emit('getObject', id, function (err, obj) {
-                            updateSmartName(obj, null, $('#edit_name').val());
-                            socket.emit('setObject', id, obj, function (err) {
-                                informInstance(id);
-                                if (err) {
-                                    window.alert(err);
-                                }
-                            });
-                        });
-                    });
-                    $editDialog.dialog('open');
-                });
-
-                if (idToEdit) {
-                    $smartTable.find('.button-edit[data-id="' + idToEdit + '"]').trigger('click');
-                    idToEdit = null;
-                }
-                if (idToNavigate) {
-                    var $td = $smartTable.find('.button-edit[data-id="' + idToNavigate + '"]');
-                    // To do find the solution
-                    // $td[0].scrollIntoView();
-                    $td.parent().parent().addClass('highlight');
-                    idToNavigate = null;
-                }
-            }
-            //filter_m();
-        });
-    }
-
-    // https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
-    function invertColor(hex) {
-        if (hex.indexOf('#') === 0) {
-            hex = hex.slice(1);
-        }
-        // convert 3-digit hex to 6-digits.
-        if (hex.length === 3) {
-            hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-        }
-        if (hex.length !== 6) {
-            return false;
-        }
-        var r = parseInt(hex.slice(0, 2), 16),
-            g = parseInt(hex.slice(2, 4), 16),
-            b = parseInt(hex.slice(4, 6), 16);
-        // http://stackoverflow.com/a/3943023/112731
-        return (r * 0.299 + g * 0.587 + b * 0.114) <= 186;
-    }
-
-    function getIconFromObj(obj, imgPath, classes) {
-        var icon     = '';
-        var alt      = '';
-        var isCommon = obj;
-        obj._id = obj.id;
-
-        if (isCommon) {
-            if (isCommon.icon) {
-                if (!isCommon.icon.match(/^data:image\//)) {
-                    if (isCommon.icon.indexOf('.') !== -1) {
-                        var instance;
-                        if (obj.type === 'instance') {
-                            icon = '/adapter/' + obj.common.name + '/' + obj.common.icon;
-                        } else if (obj._id.match(/^system\.adapter\./)) {
-                            instance = obj._id.split('.', 3);
-                            if (obj.common.icon[0] === '/') {
-                                instance[2] += obj.common.icon;
-                            } else {
-                                instance[2] += '/' + obj.common.icon;
-                            }
-                            icon = '/adapter/' + instance[2];
-                        } else {
-                            instance = obj._id.split('.', 2);
-                            if (obj.common.icon[0] === '/') {
-                                instance[0] += obj.common.icon;
-                            } else {
-                                instance[0] += '/' + obj.common.icon;
-                            }
-                            icon = '/adapter/' + instance[0];
-                        }
-                    } else {
-                        return '<i class="material-icons ' + (classes || 'treetable-icon') + '">' + isCommon.icon + '</i>';
-                    }
-
-                } else {
-                    icon = isCommon.icon;
-                }
-                alt = obj.type;
-            } else {
-                imgPath = imgPath || 'lib/css/fancytree/';
-                if (obj.type === 'device') {
-                    icon = imgPath + 'device.png';
-                    alt  = 'device';
-                } else if (obj.type === 'channel') {
-                    icon = imgPath + 'channel.png';
-                    alt  = 'channel';
-                } else if (obj.type === 'state') {
-                    icon = imgPath + 'state.png';
-                    alt  = 'state';
-                }
-            }
-        }
-
-        if (icon) return '<img class="' + (classes || 'treetable-icon') + '" src="' + icon + '" alt="' + alt + '" />';
-        return '';
-    }
-
-    function getName(obj) {
-        if (obj && obj.common && obj.common.name) {
-            var name = obj.common.name;
-            if (typeof name === 'object') {
-                name = name[systemLang] || name.en;
-            }
-            return name;
-        } else if (obj && obj.name) {
-            var name = obj.name;
-            if (typeof name === 'object') {
-                name = name[systemLang] || name.en;
-            }
-            return name;
-        } else {
-            var parts = obj.id.split('.');
-            var last = parts.pop();
-            return last[0].toUpperCase() + last.substring(1).toLowerCase();
-        }
-    }
-
-    function drawEnum(obj, $page, scrollTop) {
-        var text = '';
-        var en = obj;
-        //var inverted;
-        var style = '';
-        if (en && en.color) {
-            style = 'background: ' + en.color  + '; ';
-            if (invertColor(en.color)) {
-                //inverted = true;
-                style += 'color: white;';
-            }
-        }
-
-        var smartName = getSmartName(obj);
-
-        // convert old format
-        if (smartName && typeof smartName === 'object') {
-            smartName = smartName[language] || smartName.en || '';
-        }
-
-        text += '<li class="collection-item avatar" data-id="' + obj.id + '" style="' + style + '">' +
-            getIconFromObj(obj, null, 'circle') +
-            '<span class="enum-title">' + (smartName ? smartName + ' <span class="enum-subtitle">(' + getName(obj) + ')</span>' : getName(obj)) + '</span>' +
-            '<p>' + obj.id + '</p>';
-
-        text += '<a class="edit-content" data-id="' + obj.id + '"><i class="material-icons">edit</i></a>';
-        text += '<input class="enable-content filled-in" type="checkbox" data-id="' + obj.id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' : '') + '/><span></span>';
-        text += '</li>';
-
-        $page.append(text);
-        scrollTop && $page.find('.enum-collection').scrollTop(scrollTop);
-    }
-
-    function updateEnums(delay) {
-        if (delay) {
-            if (enumTimer) clearTimeout(enumTimer);
-            enumTimer = setTimeout(function () {
-                enumTimer = null;
-                updateEnums();
-            }, delay);
-            return;
-        }
-        sendTo(null, 'enums', null, function (list) {
-            if (list) {
-                var $rooms = $('.smart-enums-rooms').html('');
-                var $funcs = $('.smart-enums-funcs').html('');
-                for (var j = 0; j < list.length; j++) {
-                    if (list[j].id.match(/^enum\.rooms\./)) {
-                        //rooms.push(list[j]);
-                        drawEnum(list[j], $rooms)
-                    } else
-                    if (list[j].id.match(/^enum\.functions\./)) {
-                        //funcs.push(list[j]);
-                        drawEnum(list[j], $funcs)
-                    }
-                }
-
-                if (!$funcs.html()) {
-                    $funcs.hide();
-                    } else {
-                    $funcs.show();
-                    }
-                if (!$rooms.html()) {
-                    $rooms.hide();
-                    } else {
-                    $rooms.show();
-                }
-
-
-                var $smart_enums = $('#tab-smart-enums');
-
-                $smart_enums
-                        .find('.enable-content')
-                        .change(function () {
-                            var id = $(this).data('id');
-                            var $this = $(this);
-                            $this.parent().addClass('smart-changed');
-                            if ($this.prop('checked')) {
-                                $smart_enums.find('.edit-content[data-id="' + id + '"]').prop('disabled', false);
-                                socket.emit('getObject', id, function (err, obj) {
-                                    removeSmartName(obj);
-                                    socket.emit('setObject', id, obj, function (err) {
-                                        informInstance(id);
-                                        setTimeout(function () {
-                                            $this.parent().removeClass('smart-changed');
-                                        }, 500);
-                                    });
-                                });
-                            } else {
-                                $smart_enums.find('.edit-content[data-id="' + id + '"]').prop('disabled', true);
-                                socket.emit('getObject', id, function (err, obj) {
-                                    disableSmartName(obj);
-                                    socket.emit('setObject', id, obj, function (err) {
-                                        informInstance(id);
-                                        setTimeout(function () {
-                                            $this.parent().removeClass('smart-changed');
-                                        }, 500);
-                                    });
-                                });
-                            }
-                        });
-
-                $smart_enums.find('.edit-content').click(function () {
-                    var $this = $(this);
-                    var $editDialog = $('#dialog-name-edit');
-                    $editDialog.data('id', $this.data('id'));
-                    $('#edit_name').val($this.data('value') || $this.data('name'));
-
-                    initDialog(function () {
-                        var id = $('#dialog-name-edit').data('id');
-                        // check if this name used or not
-                        var found  = false;
-                        var $enums = $smart_enums.find('.edit-content');
-                        var val    = $('#edit_name').val();
-                        $enums.each(function () {
-                            if ($(this).data('value') === val && $(this).data('id') !== id) {
-                                found = true;
-                                return false;
-                            }
-                        });
-
-                        if (found) {
-                            showMessage(_('Duplicate name'), _('Error'), 'alert');
-                            return;
-                        }
-
-                        $enums.find('[data-id="' + id + '"]').parent().addClass('smart-changed');
-
-                        socket.emit('getObject', id, function (err, obj) {
-                            updateSmartName(obj, null, $('#edit_name').val());
-                            socket.emit('setObject', id, obj, function (err) {
-                                informInstance(id);
-                                updateEnums(2000);
-                            });
-                        });
-                    });
-                });
-                // workaround for materialize checkbox problem
-                $smart_enums.find('input[type="checkbox"]+span').off('click').on('click', function () {
-                    var $input = $(this).prev();
-                    if (!$input.prop('disabled')) {
-                        $input.prop('checked', !$input.prop('checked')).trigger('change');
-                    }
-                });
-            }
-        });
-    }
-
-    function filter() {
-        var val = $('.filter-input').val().toLowerCase();
-        if (!val) {
-            $('#smart_table').find('tr').show();
-        } else {
-            $('#smart_table').find('tr').each(function () {
-                var $td = $(this).find('.smart-name');
-                if (!$td.length) return;
-                var text = $td.html().toLowerCase();
-                if (text.indexOf(val) !== -1) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        }
-    }
-
-    function filter_m() {
-        var val = $('#filter_m').val().toLowerCase();
-        if (!val) {
-            $('#smart_m_table').find('tr').show();
-        } else {
-            $('#smart_m_table').find('tr').each(function () {
-                var $td = $(this).find('.smart-name');
-                if (!$td.length) return;
-                var text = $td.html().toLowerCase();
-                if (text.indexOf(val) !== -1) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        }
-    }
-
     function updateIfttt() {
         var key = $('#apikey').val().trim();
         $('#ifttt_link').html('https://iobroker.' + (key.match(/^@pro_/) ? 'pro' : 'net') + '/ifttt/' + key);
         $('#service_link').html('https://iobroker.' + (key.match(/^@pro_/) ? 'pro' : 'net') + '/service/custom_&lt;NAME&gt;/' + key + '/&lt;data&gt;');
     }
 
-    function disableAlexa(isDisable) {
-        if (isDisable) {
-            $('.no-alexa').hide();
-            $('.use-iot').show();
-        } else {
-            $('.no-alexa').show();
-            $('.use-iot').show();
-        }
-    }
-
     function updateUrl() {
         var isPro = $('#apikey').val().match(/^@pro_/);
         var $noCommon = $('#noCommon');
-
-        if (!isPro) {
-            disableAlexa(true);
-        } else {
-            disableAlexa(false);
-        }
 
         if (isPro) {
             $('#cloudUrl').prop('disabled', true);
@@ -1046,24 +153,40 @@
         return text.join(' ');
     }
 
+    function onLoginChanged(show) {
+        show = show !== undefined ? show : $('#useCredentials').prop('checked');
+        if (show) {
+            $('.appkey').hide();
+            $('.credentials').show();
+        } else {
+            $('.appkey').show();
+            $('.credentials').hide();
+        }
+        M && M.updateTextFields();
+    }
+
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
         if (!settings) return;
 
-        if (settings.allowAdmin === undefined) settings.allowAdmin = '';
-        if (settings.responseOID === undefined) settings.responseOID = '';
-        if (settings.restartOnDisconnect === undefined) settings.restartOnDisconnect = false;
-        if (settings.text2command === undefined) settings.text2command = '';
-        if (settings.noCommon === undefined) settings.noCommon = false;
-        if (settings.pingTimeout === undefined) settings.pingTimeout = 5000;
+        settings.allowAdmin = settings.allowAdmin || '';
+        settings.responseOID = settings.responseOID || '';
+        settings.restartOnDisconnect = settings.restartOnDisconnect || false;
+        settings.text2command = settings.text2command || '';
+        settings.noCommon = settings.noCommon || false;
+        settings.pingTimeout = settings.pingTimeout ||5000;
+        settings.server = settings.server || 'iobroker.pro';
+        settings.pass = settings.pass || '';
+        settings.login = settings.login || '';
 
         noCommon = settings.noCommon;
 
         actionsMapping.turnOn  = _(actionsMapping.turnOn);
         actionsMapping.turnOff = _(actionsMapping.turnOff);
 
-        if (settings.language === undefined) settings.language = '';
-        if (settings.deviceOffLevel === undefined) settings.deviceOffLevel = 30;
+        if (settings.deviceOffLevel === undefined) {
+            settings.deviceOffLevel = 30;
+        }
 
         list2chips('.allowedServices', settings.allowedServices, onChange);
 
@@ -1146,41 +269,8 @@
 
         var $tabs = $('.tabs');
         $tabs.find('li').on('click', function (tab)  {
-            var id = $(this).find('a').attr('href').substring(1);
-
-            // manage subscribes
-            if (id === 'tab-smart-media') {
-                if (!subscribed3) {
-                    subscribed3 = true;
-                    socket.emit('subscribe', 'cloud.' + instance + '.smart.update3');
-                }
-            } else {
-                if (subscribed3) {
-                    subscribed3 = false;
-                    socket.emit('unsubscribe', 'cloud.' + instance + '.smart.update3');
-                }
-            }
-            if (id === 'tab-smart-devices') {
-                if (!subscribed) {
-                    subscribed = true;
-                    socket.emit('subscribe', 'cloud.' + instance + '.smart.update');
-                }
-            } else {
-                if (subscribed) {
-                    subscribed = false;
-                    socket.emit('unsubscribe', 'cloud.' + instance + '.smart.update');
-                }
-            }
-            // laod data
-            if (id === 'tab-smart-devices') {
-                updateDevices();
-            } else if (id === 'tab-smart-enums') {
-                updateEnums();
-            } else if (id === 'tab-smart-media') {
-                //updateMDevices();
-            }
             if (typeof localStorage !== 'undefined') {
-                localStorage['cloud-adapter'] = id;
+                localStorage['cloud-adapter'] = $(this).find('a').attr('href').substring(1);
             }
         });
 
@@ -1190,82 +280,6 @@
                 $tabs.mtabs('select', localStorage['cloud-adapter']);
             }
         }, 300);
-
-        $('#add_device').on('click', function () {
-            initSelectId(function (sid) {
-                sid.selectId('show', function (newId) {
-                    if (newId) {
-                        //$('#' + id).val(newId || '');
-                        socket.emit('getObject', newId, function (err, obj) {
-                            var name = getName(obj);
-                            updateSmartName(obj, null, (name || _('Device name')).replace(/[-_.]+/g, ' '));
-                            idToEdit = obj._id;
-                            // check if the object is capable to be controlled by cloud
-                            var res = getActions(obj);
-                            if (!res || !res.actions || !res.actions.length) {
-                                showMessage(_('Cannot add this object'));
-                            } else {
-                                socket.emit('setObject', obj._id, obj, function (err) {
-                                    informInstance(obj._id);
-                                    if (err) {
-                                        window.alert(err);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-        }).addClass('disabled');
-
-        $('#add_m_device').on('click', function () {
-            initSelectId(function (sid) {
-                sid.selectId('show', function (newId) {
-                    if (newId) {
-                        //$('#' + id).val(newId || '');
-                        socket.emit('getObject', newId, function (err, obj) {
-                            updateSmartName(obj, null, (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' '));
-                            idToEdit = obj._id;
-                            socket.emit('setObject', obj._id, obj, function (err) {
-                                informInstance(obj._id);
-                                if (err) {
-                                    window.alert(err);
-                                }
-                            });
-                        });
-                    }
-                });
-            });
-        }).addClass('disabled');
-
-        $('.filter-input').on('change', function (){
-            if (filterTimer) clearTimeout(filterTimer);
-            filterTimer = setTimeout(function () {
-                filterTimer = null;
-
-                filter();
-            }, 400);
-        }).on('keyup', function () {
-            $(this).trigger('change');
-        });
-
-        $('#filter_m').on('change', function (){
-            if (filterMTimer) clearTimeout(filterMTimer);
-            filterMTimer = setTimeout(function () {
-                filterMTimer = null;
-
-                filter_m();
-            }, 400);
-        }).on('keyup', function () {
-            $(this).trigger('change');
-        });
-
-        $('.filter-clear').on('click', function () {
-            $('.filter-input').val('').trigger('change');
-        });
-        $('.filter-m-clear').on('click', function () {
-            $('.filter-m-input').val('').trigger('change');
-        });
 
         $('#responseOIDDialog').on('click', function () {
             initSelectId(function (sid) {
@@ -1295,21 +309,28 @@
             });
         });
 
-        if (!settings.apikey || !settings.apikey.toString().startsWith('@pro_')) {
-            disableAlexa(true);
+        $('#instance').on('change', function () {
+            var val = $(this).val();
+            // read settings for this instance
+            socket.emit('getObject', 'system.adapter.' + val, function (err, obj) {
+                if (obj && obj.native && obj.native.secure) {
+                    showError(_('web_error'));
+                }
+            });
+        });
+
+        $('#passRepeat').val(settings.pass);
+
+        if (settings.login) {
+            onLoginChanged();
         }
+        $('#useCredentials').on('change', function () {
+            onLoginChanged($(this)[0].checked);
+        });
 
         updateIfttt();
         updateUrl();
         onChange(false);
-        socket.on('stateChange', function (id, state) {
-            if (!id || !state || !state.val) return;
-            if (id.match(/smart\.updates$/)) {
-                updateDevices();
-            } else if (id.match(/smart\.updates3$/)) {
-                updateMDevices();
-            }
-        });
         M && M.updateTextFields();
     }
 
@@ -1317,6 +338,11 @@
         var obj = {};
         var $apiKey = $('#apikey');
         $apiKey.val($apiKey.val().trim());
+
+        if ($('#passRepeat').val() !== $('#pass').val()) {
+            return showError(_('Passwords are not equal'));
+        }
+
         $('.value').each(function () {
             var $this = $(this);
             if ($this.attr('type') === 'checkbox') {
@@ -1382,19 +408,6 @@
         padding-left:   1em;
     }
 
-    .filter-input {
-        height:         24px !important;
-    }
-
-    .filter-clear {
-        width:          18px !important;
-        height:         18px !important;
-        border:         0 !important;
-    }
-    .filter-clear i {
-        font-size:      0.8rem !important;
-        line-height:    1.2rem !important;
-    }
     a.btn-small {
         line-height:    28px !important;
         height:         28px !important;
@@ -1523,9 +536,6 @@
             <div class="col s12">
                 <ul class="tabs">
                     <li class="tab col s2"><a href="#tab-main" class="translate active">Options</a></li>
-                    <li class="tab col s2"><a href="#tab-smart-devices" class="translate">Smart Devices</a></li>
-                    <li class="tab col s2 no-alexa"><a href="#tab-smart-enums" class="translate">Smart Enums</a></li>
-                    <!--li class="tab col s2"><a href="#tab-smart-media" class="translate">Smart Media</a></li-->
                     <li class="tab col s2"><a href="#tab-advanced" class="translate">Extended options</a></li>
                     <li class="tab col s2"><a href="#tab-services" class="translate">Services and IFTTT</a></li>
                 </ul>
@@ -1533,95 +543,50 @@
             <div id="tab-main" class="col s12 page">
                 <div class="row">
                     <div class="col s6">
-                        <img src="cloud.png" class="logo">
+                        <img src="cloud.png" class="logo" alt="logo"/>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s12 m8">
+                    <div class="input-field col s12 m6 l4">
+                        <input type="checkbox" class="value" id="useCredentials" />
+                        <span for="useCredentials" class="translate">Use login and password</span>
+                    </div>
+                </div>
+                <div class="row credentials">
+                    <div class="input-field col s12 m6 l4">
+                        <select class="value" id="server">
+                            <option value="iobroker.pro">iobroker.pro</option>
+                            <option value="iobroker.net">iobroker.net</option>
+                        </select>
+                        <label for="server" class="translate">Server</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m8 appkey">
                         <input class="value" id="apikey" type="text" style="width: 100%" />
                         <label for="apikey" class="translate">APP-KEY:</label>
                         <span class="translate">help_tip</span>
                     </div>
+                    <div class="input-field col s12 m4 credentials">
+                        <input class="value" id="login" type="text" style="width: 100%" />
+                        <label for="login" class="translate">Login</label>
+                    </div>
+                    <div class="input-field col s12 m4 credentials">
+                        <input class="value" id="pass" type="password" style="width: 100%" />
+                        <label for="pass" class="translate">Password</label>
+                    </div>
+                    <div class="input-field col s12 m4 credentials">
+                        <input id="passRepeat" type="password" style="width: 100%" />
+                        <label for="passRepeat" class="translate">Password repeat</label>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="input-field col s12 m4">
                         <select class="value" id="instance"></select>
                         <label for="instance" class="translate">Instance:</label>
                     </div>
                 </div>
-                <!--div class="row">
-                    <div class="col s12">
-                        <span id="instance_tip" class="tip"></span>
-                    </div>
-                </div-->
-                <div class="col s12 m8 offset-m4 l6 offset-l6 no-alexa">
-                    <div class="card horizontal z-depth-3">
-                        <div class="card-image">
-                            <img src="alexalogo.png">
-                        </div>
-                        <div class="card-stacked">
-                            <div class="card-content center">
-                                <p class="translate">amazon link</p>
-                            </div>
-                            <div class="card-action center">
-                                <a href="http://alexa.amazon.de/spa/index.html#skills/dp/B074LXQQQT/create-review/?ref-suffix=war_dp" target='_blank'>Review</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-
             </div>
-            <div id="tab-smart-devices" class="col s12 page">
-                <div class="use-iot translate" style="display: none">Please use ioBroker.iot</div>
-                <div class="marg no-alexa"></div>
-                <div class="row tab-smart-devices-toolbar no-alexa">
-                    <div class="col s2 m1 l1 center">
-                        <a id="add_device" title="Add device" class="translateT btn-floating waves-effect waves-light btn-small"><i class="material-icons">add</i></a>
-                    </div>
-                    <div class="col s5 m4 l3">
-                        <input id="filter" class="translateP filter-input" placeholder="Filter"/>
-                    </div>
-                    <div class="col s3 m2 l1 left">
-                    <a class="filter-clear btn-floating btn-very-small translateT red lighten-3" title="clear"><i class="material-icons">clear</i></a>
-                    </div>
-                </div>
-                <div class="row no-alexa">
-                    <div class="col s12" id="pre_table">
-                        <table id="smart_table" class="smart-table" style="width: 100%;">
-                            <tr style="padding: 20px; background: rgba(0,0,0,0); text-align: center; color: #f26f6f;">
-                                <td class="translate" style="padding: 20px;">Instance must run to deliver the data</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div id="tab-smart-enums" class="col s12 page no-alexa">
-                <div class="marg no-alexa"></div>
-                <div class="row no-alexa">
-                    <div class="col s6">
-                        <div class="title translate">Rooms</div>
-                        <ul class="collection smart-enums-rooms">
-                        </ul>
-                    </div>
-                    <div class="col s6">
-                        <div class="title translate">Functions</div>
-                        <ul class="collection smart-enums-funcs">
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!--div id="tab-smart-media" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
-                <a id="add_m_device" title="Add device" class="translateT btn-floating btn-small" style="margin-left: 1em; display: inline-block"><i class="material-icons">edit</i></a>
-                <div  style="display: inline-block">
-                    <input style="display: inline-block" class="translateP filter-m-input" placeholder="Filter"/>
-                    <a class="filter-m-clear btn-floating btn-very-small translateT red lighten-3" title="clear"><i class="material-icons">clear</i></a>
-                </div>
-                <div id="pre_m_table" style="width: 100%; height: calc(100% - 40px); overflow-y: scroll;">
-                    <table id="smart_m_table" class="smart-table" style="width: 100%;">
-                        <tr style="padding: 20px; background: rgba(0,0,0,0); text-align: center; color: #f26f6f;"><td class="translate" style="padding: 20px;">Instance must run to deliver the data</td></tr>
-                    </table>
-                </div>
-            </div-->
             <div id="tab-advanced" class="col s12 page">
                 <div class="marg"></div>
                 <div class="row">
@@ -1637,49 +602,14 @@
                         <input class="value" id="pingTimeout" type="number" min="0" />
                         <label for="pingTimeout" class="translate">Ping timeout:</label>
                     </div>
-                    <div class="input-field col s12 m6 l3 no-alexa">
-                        <select class="value" id="language" data-link="true">
-                        <option value=""  class="translate">default</option>
-                        <option value="en">english</option>
-                        <option value="de">deutsch</option>
-                        </select>
-                        <label for="language" class="translate">Language:</label>
-                    </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12 m6 l4">
                         <input type="checkbox" class="value" id="allowSelfSignedCertificate" data-link="allow-self-signed-certificates" />
                         <span for="allowSelfSignedCertificate" class="translate">Allow self-signed certificates:</span>
                     </div>
-                    <div class="input-field col s12 m6 l4 no-alexa">
-                        <input type="checkbox" class="value" id="functionFirst" data-link="place-function-in-names-first" />
-                        <span for="functionFirst" class="translate">Place function in names first:</span>
-                        <span id="functionFirstHint" class="translate" style="display: none; color: rgb(255, 153, 153);">Save settings and the names will be changed</span>
-                    </div>
-                    <div class="input-field col s12 m12 l4 no-alexa">
-                        <input data-link="concatenate-words-with" type="text" class="value" id="concatWord" />
-                        <label for="concatWord" class="translate">Concatenate words with:</label>
-                        <span id="concatWordHint" class="translate" style="display: none; color: rgb(255, 153, 153);">Save settings and the names will be changed</span>
-                    </div>
-                </div>
-                <div class="row no-alexa">
-                    <div class="input-field col s12 m6">
-                        <input class="value" type="text" id="replaces" />
-                        <label for="replaces" class="translate">Replace in names:</label>
-                    </div>
-                    <div class="input-field col s12 m6">
-                        <input class="value" type="text" data-link="off-level-for-switches" id="deviceOffLevel" />
-                        <label for="deviceOffLevel"><span class="translate">OFF level for switches:</span>%(<span class="translate">(Set to 0 if behavior not desired)</span></label>
-                    </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s10 m5 l5 no-alexa">
-                        <input data-link="write-response-to" type="text" class="value" id="responseOID" />
-                        <label for="responseOID" class="translate">Write response to:</label>
-                    </div>
-                    <div class="col s1 m1 l1 no-alexa">
-                        <a id="responseOIDDialog" class="btn"><i class="material-icons">add_circle_outline</i><span></span></a>
-                    </div>
                     <div class="input-field col s12 m5 offset-m1 l6">
                         <input class="value" id="restartOnDisconnect" type="checkbox" />
                         <span for="restartOnDisconnect" class="translate">Restart on disconnect:</span>
@@ -1692,15 +622,6 @@
                     </div>
                     <div class="col s12">
                         <span id="allowAdmin_tip" class="tip"></span>
-                    </div>
-                </div>
-                <div class="row no-alexa">
-                    <div class="input-field col s6">
-                        <input class="value" data-link="true" id="noCommon" type="checkbox" />
-                        <span for="noCommon" class="translate">Personal settings (only pro):</span>
-                    </div>
-                    <div class="col s6">
-                        <p class="translate">help_tip</p>
                     </div>
                 </div>
                 <br>

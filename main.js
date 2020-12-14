@@ -7,28 +7,19 @@ const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 //let IOSocket      = require(utils.appName + '.socketio/lib/socket.js');
 const IOSocket      = require('./lib/socket.js'); // temporary
 const request       = require('request');
-const AlexaSH2      = require('./lib/alexaSmartHomeV2');
-const AlexaSH3      = require('./lib/alexaSmartHomeV3');
-const AlexaCustom   = require('./lib/alexaCustom');
 const pack          = require('./io-package.json');
 const adapterName   = require('./package.json').name.split('.').pop();
 
 let socket          = null;
 let ioSocket        = null;
-let recalcTimeout   = null;
-let lang            = 'de';
-let translate       = false;
-let alexaSH2        = null;
-let alexaSH3        = null;
-let alexaCustom     = null;
 
 let detectDisconnect = null;
 let pingTimer       = null;
 let connected       = false;
 let connectTimer    = null;
 let uuid            = null;
-let alexaDisabled   = false;
 let waiting         = false;
+let apikey          = '';
 
 let TEXT_PING_TIMEOUT = 'Ping timeout';
 
@@ -37,19 +28,8 @@ function startAdapter(options) {
     options = options || {};
     Object.assign(options,{
         name:         adapterName,
-        objectChange: function (id, obj) {
-            ioSocket && ioSocket.send(socket, 'objectChange', id, obj);
-
-            if (id === 'system.config' && obj && !translate) {
-                lang = obj.common.language;
-                if (lang !== 'en' && lang !== 'de') {
-                    lang = 'en';
-                }
-                alexaSH2 && alexaSH2.setLanguage(lang, false);
-                alexaSH3 && alexaSH3.setLanguage(lang, false);
-            }
-        },
-        stateChange:  function (id, state) {
+        objectChange: (id, obj) => ioSocket && ioSocket.send(socket, 'objectChange', id, obj),
+        stateChange: (id, state) => {
             if (socket) {
                 if (id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
                     sendDataToIFTTT({
@@ -58,21 +38,11 @@ function startAdapter(options) {
                         ack: false
                     });
                 } else {
-                    if (state && !state.ack) {
-                        if (id === adapter.namespace + '.smart.alexaDisabled') {
-                            alexaDisabled = state.val === 'true' || state.val === true;
-                            if (!alexaDisabled && !adapter.config.apikey || !adapter.config.apikey.toString().startsWith('@pro_')) {
-                                adapter.setState('smart.alexaDisabled', true, true);
-                            } else {
-                                adapter.setState('smart.alexaDisabled', alexaDisabled, true);
-                            }
-                        }
-                    }
                     ioSocket && ioSocket.send(socket, 'stateChange', id, state);
                 }
             }
         },
-        unload:       function (callback) {
+        unload: callback => {
             if (pingTimer) {
                 clearInterval(pingTimer);
                 pingTimer = null;
@@ -91,52 +61,9 @@ function startAdapter(options) {
                 callback();
             }
         },
-        message:      function (obj) {
+        message: obj => {
             if (obj) {
                 switch (obj.command) {
-                    case 'update':
-                        recalcTimeout && clearTimeout(recalcTimeout);
-
-                        recalcTimeout = setTimeout(() => {
-                            recalcTimeout = null;
-                            alexaSH2 && alexaSH2.updateDevices(() =>
-                                adapter.setState('smart.updates', true, true));
-
-                            alexaSH3 && alexaSH3.updateDevices(() =>
-                                adapter.setState('smart.updates3', true, true));
-                        }, 1000);
-                        break;
-
-                    case 'browse':
-                        if (obj.callback) {
-                            adapter.log.info('Request devices');
-                            alexaSH2 && alexaSH2.updateDevices(() => {
-                                adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
-                                adapter.setState('smart.updates', false, true);
-                            });
-                        }
-                        break;
-
-                    case 'browse3':
-                        if (obj.callback) {
-                            adapter.log.info('Request V3 devices');
-                            alexaSH3 && alexaSH3.updateDevices(() => {
-                                adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
-                                adapter.setState('smart.updates3', false, true);
-                            });
-                        }
-                        break;
-
-                    case 'enums':
-                        if (obj.callback) {
-                            adapter.log.info('Request enums');
-                            alexaSH2 && alexaSH2.updateDevices(() => {
-                                adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
-                                adapter.setState('smart.updates', false, true);
-                            });
-                        }
-                        break;
-
                     case 'ifttt':
                         sendDataToIFTTT(obj.message);
                         break;
@@ -147,7 +74,7 @@ function startAdapter(options) {
                 }
             }
         },
-        ready:        () => createInstancesStates(main)
+        ready: () => createInstancesStates(main)
     });
 
     adapter = new utils.Adapter(options);
@@ -421,12 +348,12 @@ function onCloudRedirect(data) {
     } else {
         adapter.log.info('Adapter redirected continuously to "' + data.url + '". Reason: ' + (data && data.reason ? data.reason : 'command from server'));
         adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
-            if (err) adapter.log.error('redirectAdapter [getForeignObject]: ' + err);
+            err && adapter.log.error('redirectAdapter [getForeignObject]: ' + err);
             if (obj) {
                 obj.native.cloudUrl = data.url;
                 setTimeout(() => {
                     adapter.setForeignObject(obj._id, obj, err => {
-                        if (err) adapter.log.error('redirectAdapter [setForeignObject]: ' + err);
+                        err && adapter.log.error('redirectAdapter [setForeignObject]: ' + err);
 
                         adapter.config.cloudUrl = data.url;
                         if (socket) {
@@ -447,12 +374,12 @@ function onCloudError(error) {
 
 function onCloudStop(data) {
     adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
-        if (err) adapter.log.error('[getForeignObject]: ' + err);
+        err && adapter.log.error(`[getForeignObject]: ${err}`);
         if (obj) {
             obj.common.enabled = false;
             setTimeout(() =>
                 adapter.setForeignObject(obj._id, obj, err => {
-                    if (err) adapter.log.error('[setForeignObject]: ' + err);
+                    err && adapter.log.error('[setForeignObject]: ' + err);
                     adapter.terminate ? adapter.terminate(): process.exit();
                 }), 5000);
         } else {
@@ -538,18 +465,6 @@ function connect() {
                 cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
         } else {
             cb('Admin or Web are inactive.', 404, [], 'Admin or Web are inactive.');
-        }
-    });
-
-    socket.on('alexa', (request, callback) => {
-        adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
-
-        if (request && request.directive) {
-            alexaSH3 && alexaSH3.process(request, !alexaDisabled, callback);
-        } if (request && !request.header) {
-            alexaCustom && alexaCustom.process(request, !alexaDisabled, callback);
-        } else {
-            alexaSH2 && alexaSH2.process(request, !alexaDisabled, callback);
         }
     });
 
@@ -683,15 +598,20 @@ function connect() {
                     server = '';
                     return;
                 }
+                if (obj.common.secure) {
+                    adapter.log.error('Cannot activate web for cloud, because HTTPs is enabled. Please create extra instance for cloud');
+                    server = '';
+                    return;
+                }
 
-                server = 'http' + (obj.native.secure ? 's' : '')  + '://';
+                server = `http${obj.native.secure ? 's' : ''}://`;
                 // todo if run on other host
                 server += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
                 server += ':' + obj.native.port;
 
-                initConnect(socket, {apikey: adapter.config.apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version});
+                initConnect(socket, {apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version});
             } else {
-                adapter.log.error('Unknown instance ' + adapter.log.instance);
+                adapter.log.error(`Unknown instance ${adapter.log.instance}`);
                 server = null;
             }
         });
@@ -704,7 +624,7 @@ function connect() {
                         server = '';
                         return;
                     }
-                    adminServer = 'http' + (obj.native.secure ? 's' : '') + '://';
+                    adminServer = `http${obj.native.secure ? 's' : ''}://`;
                     // todo if run on other host
                     adminServer += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
                     adminServer += ':' + obj.native.port;
@@ -715,29 +635,105 @@ function connect() {
             });
         }
     } else {
-        initConnect(socket, {apikey: adapter.config.apikey, uuid: uuid, version: pack.common.version});
+        initConnect(socket, {apikey, uuid: uuid, version: pack.common.version});
     }
 }
 
 function createInstancesStates(callback, objs) {
     if (!objs) {
-        var pack = require(__dirname + '/io-package.json');
+        const pack = require(__dirname + '/io-package.json');
         objs = pack.instanceObjects;
     }
     if (!objs || !objs.length) {
         callback();
     } else {
-        var obj = objs.shift();
+        const obj = objs.shift();
         adapter.getObject(obj._id, (err, _obj) => {
             if (!_obj) {
                 adapter.setObject(obj._id, obj, err => {
-                    if (err) adapter.log.error('Cannot setObject: ' + err);
+                    err && adapter.log.error(`Cannot setObject: ${err}`);
                     setImmediate(createInstancesStates, callback, objs);
                 });
             } else {
                 setImmediate(createInstancesStates, callback, objs);
             }
         });
+    }
+}
+
+function _createAppKey(cb) {
+    adapter.log.info('Create new APP-KEY...')
+    request({
+        method: 'POST',
+        url: `https://${adapter.config.server}:3001/api/v1/appkeys`,
+        headers : {
+            Authorization: 'Basic ' + Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')
+        }
+    }, (err, state, body) => {
+        if (body) {
+            try {
+                body = JSON.parse(body);
+            } catch (e) {
+                cb(`Cannot parse answer from server: ${e}`);
+            }
+            if (body && body.key && body.key[0]) {
+                adapter.log.info(`New APP-KEY is ${body.key[0]}`);
+                cb(null, body.key[0]);
+            } else {
+                cb(`Cannot create app-key on server: ${err || state.statusCode || JSON.stringify(body)}`);
+            }
+        } else {
+            // retry in 20 seconds if server unavailable
+            if (err.code === 'ECONNREFUSED') {
+                adapter.log.warn('Server is offline or no connection. Retry in 10 seconds');
+                setTimeout(() => _createAppKey(cb), 10000);
+            } else {
+                cb(`Cannot create app-key on server: ${err || state.statusCode}`);
+            }
+        }
+    });
+}
+
+function _readAppKeyFromCloud(cb) {
+    request({
+        url: `https://${adapter.config.server}:3001/api/v1/appkeys`,
+        headers : {
+            Authorization: 'Basic ' + Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')
+        }
+    }, (err, state, body) => {
+        if (body) {
+            try {
+                body = JSON.parse(body);
+            } catch (e) {
+                cb(`Cannot parse answer from server: ${e}`);
+            }
+            if (body[0]) {
+                cb(null, body[0].key);
+            } else if (body) {
+                _createAppKey(cb);
+            } else {
+                // todo: create key
+                cb(`Cannot find app-key on server: ${err || state.statusCode || 'key does not exist'}`);
+            }
+        } else {
+            // todo: retry in 20 seconds if server unavailable
+            if (err.code === 'ECONNREFUSED') {
+                adapter.log.warn('Server is offline or no connection. Retry in 10 seconds');
+                setTimeout(() => _readAppKeyFromCloud(cb), 10000);
+            } else {
+                cb(`Cannot find app-key on server: ${err || state.statusCode}`);
+            }
+        }
+    });
+}
+
+function readAppKeyFromCloud(_resolve, _reject) {
+    if (!_resolve) {
+        return new Promise((resolve, reject) =>
+            readAppKeyFromCloud(resolve, reject));
+    } else {
+        _readAppKeyFromCloud((err, key) =>
+            err ? _reject(err) : _resolve(key));
     }
 }
 
@@ -757,118 +753,91 @@ function main() {
     adapter.config.replaces       = adapter.config.replaces ? adapter.config.replaces.split(',') : null;
     adapter.config.cloudUrl       = (adapter.config.cloudUrl || '').toString();
 
-    if (adapter.config.apikey && adapter.config.apikey.match(/^@pro_/)) {
-        if (adapter.config.cloudUrl.indexOf('https://iobroker.pro:')  === -1 &&
-            adapter.config.cloudUrl.indexOf('https://iobroker.info:') === -1) {
-            adapter.config.cloudUrl = 'https://iobroker.pro:10555';
-        }
+    adapter.config.pass           = adapter.config.pass || '';
+    adapter.config.login          = adapter.config.login || '';
+    adapter.config.server         = adapter.config.server || 'iobroker.pro';
+
+    if (adapter.config.login !== (adapter.config.login || '').trim().toLowerCase()) {
+        adapter.log.error('Please write your login only in lowercase!');
+    }
+
+    let appKeyPromise
+
+    if (adapter.config.login && adapter.config.pass) {
+        appKeyPromise = readAppKeyFromCloud()
     } else {
-        adapter.config.allowAdmin = false;
+        appKeyPromise = Promise.resolve(adapter.config.apikey);
     }
 
-    if (adapter.config.replaces) {
-        let text = [];
-        for (let r = 0; r < adapter.config.replaces.length; r++) {
-            text.push('"' + adapter.config.replaces + '"');
-        }
-        adapter.log.debug('Following strings will be replaced in names: ' + text.join(', '));
-    }
+    appKeyPromise
+        .then(_apikey => {
+            apikey = _apikey;
+            if (apikey && apikey.match(/^@pro_/)) {
+                if (adapter.config.cloudUrl.indexOf('https://iobroker.pro:')  === -1 &&
+                    adapter.config.cloudUrl.indexOf('https://iobroker.info:') === -1) {
+                    adapter.config.cloudUrl = 'https://iobroker.pro:10555';
+                }
+            } else {
+                adapter.config.allowAdmin = false;
+            }
 
-    // cloud could be used only together with pro.
-    // All other users must use iot cloud
-    if (!adapter.config.apikey || !adapter.config.apikey.toString().startsWith('@pro_')) {
-        alexaSH2    = new AlexaSH2(adapter);
-        alexaSH3    = new AlexaSH3(adapter);
-        alexaCustom = new AlexaCustom(adapter);
-        adapter.log.warn('Please use ioBroker.iot to control your devices via Alexa');
-    }
+            if (adapter.config.replaces) {
+                let text = [];
+                for (let r = 0; r < adapter.config.replaces.length; r++) {
+                    text.push(`"${adapter.config.replaces}"`);
+                }
+                adapter.log.debug(`Following strings will be replaced in names: ${text.join(', ')}`);
+            }
 
-    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-    adapter.getForeignObject('system.config', (err, obj) => {
-        if (adapter.config.language) {
-            translate = true;
-            lang = adapter.config.language;
-        } else {
-            lang = obj.common.language;
-        }
-        if (lang !== 'en' && lang !== 'de' && lang !== 'ru') {
-            lang = 'en';
-        }
-        alexaSH2 && alexaSH2.setLanguage(lang, translate);
-        alexaSH2 && alexaSH2.updateDevices();
-        alexaSH3 && alexaSH3.setLanguage(lang, translate);
-        alexaSH3 && alexaSH3.updateDevices();
-        alexaCustom && alexaCustom.setLanguage(lang);
-    });
+            // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-    //if (adapter.config.allowAI && false) {
-    //    createAiConnection();
-    //}
+            adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
+            for (let s = 0; s < adapter.config.allowedServices.length; s++) {
+                adapter.config.allowedServices[s] = adapter.config.allowedServices[s].trim();
+            }
 
-    adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
-    for (let s = 0; s < adapter.config.allowedServices.length; s++) {
-        adapter.config.allowedServices[s] = adapter.config.allowedServices[s].trim();
-    }
+            adapter.setState('info.connection', false, true);
+            adapter.config.cloudUrl = adapter.config.cloudUrl || 'https://iobroker.net:10555';
 
-    adapter.setState('info.connection', false, true);
-    adapter.config.cloudUrl = adapter.config.cloudUrl || 'https://iobroker.net:10555';
+            if (!apikey) {
+                return adapter.log.error('No api-key found. Please get one on https://iobroker.net');
+            }
 
-    if (!adapter.config.apikey) {
-        adapter.log.error('No api-key found. Please get one on https://iobroker.net');
-        return;
-    }
-
-    if (adapter.config.iftttKey) {
-        adapter.subscribeStates('services.ifttt');
-        // create ifttt object
-        adapter.getObject('services.ifttt', (err, obj) => {
-            if (!obj) {
-                adapter.setObject('services.ifttt', {
-                    _id: adapter.namespace + '.services.ifttt',
-                    type: 'state',
-                    common: {
-                        name: 'IFTTT value',
-                        write: true,
-                        role: 'state',
-                        read: true,
-                        type: 'mixed',
-                        desc: 'All written data will be sent to IFTTT. If no state specified all requests from IFTTT will be saved here'
-                    },
-                    native: {}
+            if (adapter.config.iftttKey) {
+                adapter.subscribeStates('services.ifttt');
+                // create ifttt object
+                adapter.getObject('services.ifttt', (err, obj) => {
+                    if (!obj) {
+                        adapter.setObject('services.ifttt', {
+                            _id: adapter.namespace + '.services.ifttt',
+                            type: 'state',
+                            common: {
+                                name: 'IFTTT value',
+                                write: true,
+                                role: 'state',
+                                read: true,
+                                type: 'mixed',
+                                desc: 'All written data will be sent to IFTTT. If no state specified all requests from IFTTT will be saved here'
+                            },
+                            native: {}
+                        });
+                    }
                 });
             }
-        });
-    }
 
-    adapter.subscribeStates('smart.*');
+            adapter.subscribeStates('smart.*');
 
-    adapter.getState('smart.alexaDisabled', (err, state) => {
-        if (!state || state.val === null || state.val === 'null') {
-            // init value with false
-            if (!alexaDisabled && !adapter.config.apikey || !adapter.config.apikey.toString().startsWith('@pro_')) {
-                adapter.setState('smart.alexaDisabled', true, true);
-            } else {
-                adapter.setState('smart.alexaDisabled', alexaDisabled, true);
+            adapter.log.info(`Connecting with ${adapter.config.cloudUrl} with "${apikey}"`);
+
+            return adapter.getForeignObjectAsync('system.meta.uuid');
+        })
+        .then(obj => {
+            if (obj && obj.native) {
+                uuid = obj.native.uuid;
             }
-        } else {
-            alexaDisabled = state.val === true || state.val === 'true';
-
-            if (!alexaDisabled && !adapter.config.apikey || !adapter.config.apikey.toString().startsWith('@pro_')) {
-                adapter.setState('smart.alexaDisabled', true, true);
-            } else {
-                adapter.setState('smart.alexaDisabled', alexaDisabled, true);
-            }
-        }
-    });
-
-    adapter.log.info('Connecting with ' + adapter.config.cloudUrl + ' with "' + adapter.config.apikey + '"');
-
-    adapter.getForeignObject('system.meta.uuid', (err, obj) => {
-        if (obj && obj.native) {
-            uuid = obj.native.uuid;
-        }
-        startConnect(true);
-    });
+            startConnect(true);
+        })
+        .catch(e => adapter.log.error(`Error: ${e}`));
 }
 
 // If started as allInOne/compact mode => return function to create instance
