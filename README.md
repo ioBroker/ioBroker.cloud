@@ -28,8 +28,6 @@ If you use standard iobroker.net cloud, you can deactivate it. This option is on
 ### Alexa settings
 ***Alexa is not supported in `cloud` adapter anymore. Use ioBroker.iot adapter for that.***
 
-For some time it still will work for `.pro` users and the documentation is available [here](doc/alexa.md).
-
 ## IFTTT
 [instructions](doc/ifttt.md)
 
