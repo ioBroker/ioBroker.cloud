@@ -20,6 +20,8 @@ let connectTimer    = null;
 let uuid            = null;
 let waiting         = false;
 let apikey          = '';
+let server          = 'http://localhost:8082';
+let adminServer     = 'http://localhost:8081';
 
 let TEXT_PING_TIMEOUT = 'Ping timeout';
 
@@ -28,7 +30,16 @@ function startAdapter(options) {
     options = options || {};
     Object.assign(options,{
         name:         adapterName,
-        objectChange: (id, obj) => ioSocket && ioSocket.send(socket, 'objectChange', id, obj),
+        objectChange: (id, obj) => {
+            if (id === adapter.config.instance) {
+                server = getConnectionString(obj);
+            }
+            if (id === adapter.config.allowAdmin) {
+                adminServer = getConnectionString(obj);
+            }
+
+            ioSocket && ioSocket.send(socket, 'objectChange', id, obj);
+        },
         stateChange: (id, state) => {
             if (socket) {
                 if (id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
@@ -80,6 +91,29 @@ function startAdapter(options) {
     adapter = new utils.Adapter(options);
 
     return adapter;
+}
+
+function getConnectionString(obj) {
+    let conn = null;
+    if (obj && obj.common && obj.native) {
+        if (obj.native.auth) {
+            adapter.log.error(`Cannot activate ${obj._id.replace('system.adapter.', '')} for cloud, because authentication is enabled. Please create extra instance for cloud`);
+            return conn;
+        } else
+        if (obj.native.secure) {
+            adapter.log.error(`Cannot activate ${obj._id.replace('system.adapter.', '')} for cloud, because HTTPs is enabled. Please create extra instance for cloud`);
+            return conn;
+        } else {
+            conn = `http${obj.native.secure ? 's' : ''}://`;
+            // todo if run on other host
+            conn += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
+            conn += ':' + obj.native.port;
+        }
+    } else {
+        conn = null;
+        adapter.log.error(`Unknown instance ${obj._id}`);
+    }
+    return conn;
 }
 
 function sendDataToIFTTT(obj) {
@@ -437,16 +471,13 @@ function connect() {
         reconnectionDelayMax: 120000
     });
 
-    socket.on('connect_error', error => adapter.log.error('Error while connecting to cloud: ' + error));
+    socket.on('connect_error', error => adapter.log.error(`Error while connecting to cloud: ${error}`));
 
     // cannot use "pong" because reserved by socket.io
     socket.on('pongg', (/*error*/) => {
         clearTimeout(detectDisconnect);
         detectDisconnect = null;
     });
-
-    let server      = 'http://localhost:8082';
-    let adminServer = 'http://localhost:8081';
 
     socket.on('html', (url, cb) => {
         if (url.match(/^\/admin\//)) {
@@ -492,7 +523,7 @@ function connect() {
                 isCustom = true;
             }
 
-            if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(data.name) !== -1) {
+            if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.includes(data.name)) {
                 if (!isCustom && data.name === 'text2command') {
                     if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
                         adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', decodeURIComponent(data.data), err =>
@@ -545,7 +576,6 @@ function connect() {
                                 });
                             }
                         });
-
                     } else {
                         callback && callback({error: 'not implemented'});
                     }
@@ -578,7 +608,7 @@ function connect() {
                     callback && callback({error: 'not allowed'});
                 }
             } else {
-                adapter.log.warn('Received service "' + data.name + '", but it is not found in whitelist');
+                adapter.log.warn(`Received service "${data.name}", but it is not found in whitelist`);
                 callback && callback({error: 'blocked'});
             }
         }
@@ -592,47 +622,15 @@ function connect() {
         }
 
         adapter.getForeignObject(adapter.config.instance, (err, obj) => {
-            if (obj && obj.common && obj.native) {
-                if (obj.common.auth) {
-                    adapter.log.error('Cannot activate web for cloud, because authentication is enabled. Please create extra instance for cloud');
-                    server = '';
-                    return;
-                }
-                if (obj.common.secure) {
-                    adapter.log.error('Cannot activate web for cloud, because HTTPs is enabled. Please create extra instance for cloud');
-                    server = '';
-                    return;
-                }
-
-                server = `http${obj.native.secure ? 's' : ''}://`;
-                // todo if run on other host
-                server += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
-                server += ':' + obj.native.port;
-
+            server = getConnectionString(obj);
+            if (server) {
                 initConnect(socket, {apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version});
-            } else {
-                adapter.log.error(`Unknown instance ${adapter.log.instance}`);
-                server = null;
             }
         });
 
         if (adapter.config.allowAdmin) {
-            adapter.getForeignObject(adapter.config.allowAdmin, (err, obj) => {
-                if (obj && obj.common && obj.native) {
-                    if (obj.common.auth) {
-                        adapter.log.error('Cannot activate admin for cloud, because authentication is enabled. Please create extra instance for cloud');
-                        server = '';
-                        return;
-                    }
-                    adminServer = `http${obj.native.secure ? 's' : ''}://`;
-                    // todo if run on other host
-                    adminServer += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
-                    adminServer += ':' + obj.native.port;
-                } else {
-                    adminServer = null;
-                    adapter.log.error('Unknown instance ' + adapter.config.allowAdmin);
-                }
-            });
+            adapter.getForeignObject(adapter.config.allowAdmin, (err, obj) =>
+                adminServer = getConnectionString(obj));
         }
     } else {
         initConnect(socket, {apikey, uuid: uuid, version: pack.common.version});
@@ -688,7 +686,7 @@ function _createAppKey(cb) {
                 adapter.log.warn('Server is offline or no connection. Retry in 10 seconds');
                 setTimeout(() => _createAppKey(cb), 10000);
             } else {
-                cb(`Cannot create app-key on server: ${err || state.statusCode}`);
+                cb(`Cannot create app-key on server: ${err || body || state.statusCode}`);
             }
         }
     });
