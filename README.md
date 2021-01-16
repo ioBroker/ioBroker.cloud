@@ -76,7 +76,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 4.0.1 (2021-01-16)
 * (Apollon77) Prevent crash case (Sentry IOBROKER-CLOUD-N)
 
 ### 4.0.0  (2020-12-14)

@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.0",
+        "version": "4.0.1",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "4.0.1": {
+                "en": "Prevent crash case (Sentry IOBROKER-CLOUD-N)",
+                "de": "Absturz verhindern (Sentry IOBROKER-CLOUD-N)",
+                "ru": "Случай предотвращения сбоя (Sentry IOBROKER-CLOUD-N)",
+                "pt": "Evitar caso de falha (Sentry IOBROKER-CLOUD-N)",
+                "nl": "Voorkom crash case (Sentry IOBROKER-CLOUD-N)",
+                "fr": "Prévenir les cas de crash (Sentry IOBROKER-CLOUD-N)",
+                "it": "Prevenire il crash case (Sentry IOBROKER-CLOUD-N)",
+                "es": "Prevenir caso de accidente (Sentry IOBROKER-CLOUD-N)",
+                "pl": "Zapobiegaj awariom (Sentry IOBROKER-CLOUD-N)",
+                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-CLOUD-N）"
+            },
             "4.0.0": {
                 "en": "Breaking change! Alexa was removed from cloud adapter.\nAllowed to use the login and password for authentication.",
                 "de": "Veränderung brechen! Alexa wurde vom Cloud-Adapter entfernt.\nErlaubt die Verwendung des Logins und des Passworts zur Authentifizierung.",
@@ -248,7 +260,9 @@
             }
         }
     },
-    "encryptedNative": ["pass"],
+    "encryptedNative": [
+        "pass"
+    ],
     "native": {
         "language": "",
         "login": "email.com",
