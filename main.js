@@ -111,7 +111,7 @@ function getConnectionString(obj) {
         }
     } else {
         conn = null;
-        adapter.log.error(`Unknown instance ${obj._id}`);
+        adapter.log.error(`Unknown instance ${obj ? obj._id : 'undefined'}`);
     }
     return conn;
 }
