@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.1",
+        "version": "4.0.2",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "4.0.2": {
+                "en": "Make sure states  which were not set or expired do not crash when requested via services (Sentry IOBROKER-CLOUD-P)",
+                "de": "Stellen Sie sicher, dass nicht festgelegte oder abgelaufene Zustände nicht abstürzen, wenn Sie über Dienste angefordert werden (Sentry IOBROKER-CLOUD-P).",
+                "ru": "Убедитесь, что состояния, которые не были установлены или с истекшим сроком действия, не аварийно завершаются при запросе через службы (Sentry IOBROKER-CLOUD-P)",
+                "pt": "Certifique-se de que os estados que não foram definidos ou expirados não travem quando solicitados por meio de serviços (Sentry IOBROKER-CLOUD-P)",
+                "nl": "Zorg ervoor dat staten die niet zijn ingesteld of verlopen, niet crashen wanneer ze worden aangevraagd via services (Sentry IOBROKER-CLOUD-P)",
+                "fr": "Assurez-vous que les états non définis ou expirés ne plantent pas lorsqu'ils sont demandés via les services (Sentry IOBROKER-CLOUD-P)",
+                "it": "Assicurati che gli stati non impostati o scaduti non si blocchino quando richiesto tramite i servizi (Sentry IOBROKER-CLOUD-P)",
+                "es": "Asegúrese de que los estados que no se establecieron o expiraron no se bloqueen cuando se soliciten a través de los servicios (Sentry IOBROKER-CLOUD-P)",
+                "pl": "Upewnij się, że stany, które nie zostały ustawione lub wygasły, nie ulegają awarii na żądanie za pośrednictwem usług (Sentry IOBROKER-CLOUD-P)",
+                "zh-cn": "确保通过服务请求时未设置或过期的状态不会崩溃（Sentry IOBROKER-CLOUD-P）"
+            },
             "4.0.1": {
                 "en": "Prevent crash case (Sentry IOBROKER-CLOUD-N)",
                 "de": "Absturz verhindern (Sentry IOBROKER-CLOUD-N)",
