@@ -548,8 +548,10 @@ function connect() {
                         adapter.getForeignState(parts[1], (error, state) => {
                             if (error) {
                                 callback && callback({error});
-                            } else {
+                            } else if (state) {
                                 callback && callback({result: 'Ok', val: state.val, plain: true});
+                            } else {
+                                callback && callback({result: 'Not found', val: null, plain: true});
                             }
                         });
                     } else if (parts[0] === 'set') {
