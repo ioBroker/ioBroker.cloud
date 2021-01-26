@@ -24,6 +24,7 @@ let server          = 'http://localhost:8082';
 let adminServer     = 'http://localhost:8081';
 
 let TEXT_PING_TIMEOUT = 'Ping timeout';
+let redirectRunning = false; // is redirect in progress
 
 let adapter;
 function startAdapter(options) {
@@ -296,7 +297,7 @@ function processIfttt(data, callback) {
 
 function onDisconnect(event) {
     if (typeof event === 'string') {
-        adapter.log.info('Connection changed: ' + event);
+        adapter.log.info(`Connection changed: ${event}`);
     } else {
         adapter.log.info('Connection changed: disconnect');
     }
@@ -309,10 +310,12 @@ function onDisconnect(event) {
         // clear ping timers
         checkPing();
 
-        if (adapter.config.restartOnDisconnect) {
+        if (adapter.config.restartOnDisconnect && !redirectRunning) {
+            adapter.log.info('Restart adapter by disconnect');
             // simulate scheduled restart
-            setTimeout(() => adapter.terminate ? adapter.terminate(-100): process.exit(-100), 10000);
+            setTimeout(() => adapter.terminate ? adapter.terminate(-100) : process.exit(-100), 10000);
         } else {
+            redirectRunning = false;
             startConnect();
         }
     }
@@ -372,7 +375,8 @@ function onCloudRedirect(data) {
         adapter.log.error('Received redirect, but no URL.');
     } else
     if (data.notSave) {
-        adapter.log.info('Adapter redirected temporally to "' + data.url + '" in one minute. Reason: ' + (data && data.reason ? data.reason : 'command from server'));
+        redirectRunning = true;
+        adapter.log.info(`Adapter redirected temporally to "${data.url}" in one minute. Reason: ${data && data.reason ? data.reason : 'command from server'}`);
         adapter.config.cloudUrl = data.url;
         if (socket) {
             socket.disconnect();
@@ -380,7 +384,7 @@ function onCloudRedirect(data) {
         }
         startConnect();
     } else {
-        adapter.log.info('Adapter redirected continuously to "' + data.url + '". Reason: ' + (data && data.reason ? data.reason : 'command from server'));
+        adapter.log.info(`Adapter redirected continuously to "${data.url}". Reason: ${data && data.reason ? data.reason : 'command from server'}`);
         adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
             err && adapter.log.error('redirectAdapter [getForeignObject]: ' + err);
             if (obj) {
@@ -453,7 +457,7 @@ function initConnect(socket, options) {
 function connect() {
     if (waiting) return;
 
-    adapter.log.debug('Connection attempt to ' + (adapter.config.cloudUrl || 'https://iobroker.net:10555') + ' ...');
+    adapter.log.debug(`Connection attempt to ${adapter.config.cloudUrl || 'https://iobroker.net:10555'} ...`);
 
     if (socket) {
         socket.off();
