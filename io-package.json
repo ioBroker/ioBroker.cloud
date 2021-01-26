@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.2",
+        "version": "4.0.3",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "4.0.3": {
+                "en": "Added the ignoring of restart on disconnect by the redirection",
+                "de": "Das Ignorieren des Neustarts beim Trennen durch die Umleitung wurde hinzugefügt",
+                "ru": "Добавлено игнорирование перезапуска при отключении перенаправлением",
+                "pt": "Adicionada a opção de ignorar a reinicialização na desconexão pelo redirecionamento",
+                "nl": "Het negeren van opnieuw opstarten bij verbreken door de omleiding toegevoegd",
+                "fr": "Ajout de l'ignorance du redémarrage lors de la déconnexion par la redirection",
+                "it": "Aggiunto l'ignoranza del riavvio alla disconnessione dal reindirizzamento",
+                "es": "Se agregó la omisión del reinicio al desconectar mediante la redirección.",
+                "pl": "Dodano ignorowanie restartu po rozłączeniu przez przekierowanie",
+                "zh-cn": "添加了通过重定向断开连接时重新启动的忽略"
+            },
             "4.0.2": {
                 "en": "Make sure states  which were not set or expired do not crash when requested via services (Sentry IOBROKER-CLOUD-P)",
                 "de": "Stellen Sie sicher, dass nicht festgelegte oder abgelaufene Zustände nicht abstürzen, wenn Sie über Dienste angefordert werden (Sentry IOBROKER-CLOUD-P).",
