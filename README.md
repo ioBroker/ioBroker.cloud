@@ -75,6 +75,9 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Stop all timers on the unloading
+
 ### 4.0.3 (2021-01-26)
 * (bluefox) Added the ignoring of restart on disconnect by the redirection 
 

@@ -13,7 +13,6 @@ const adapterName   = require('./package.json').name.split('.').pop();
 let socket          = null;
 let ioSocket        = null;
 
-let detectDisconnect = null;
 let pingTimer       = null;
 let connected       = false;
 let connectTimer    = null;
@@ -25,6 +24,16 @@ let adminServer     = 'http://localhost:8081';
 
 let TEXT_PING_TIMEOUT = 'Ping timeout';
 let redirectRunning = false; // is redirect in progress
+
+let timeouts = {
+    terminate: null,
+    onCloudWait: null,
+    detectDisconnect: null,
+    redirect: null,
+    onCloudStop: null,
+    createAppKey: null,
+    readAppKey: null,
+};
 
 let adapter;
 function startAdapter(options) {
@@ -63,14 +72,22 @@ function startAdapter(options) {
             }
         },
         unload: callback => {
+            if (connectTimer) {
+                clearInterval(connectTimer);
+                connectTimer = null;
+            }
             if (pingTimer) {
                 clearInterval(pingTimer);
                 pingTimer = null;
             }
-            if (detectDisconnect) {
-                clearTimeout(detectDisconnect);
-                detectDisconnect = null;
-            }
+
+            Object.keys(timeouts).forEach(tm => {
+                if (timeouts[tm]) {
+                    clearTimeout(timeouts[tm]);
+                    timeouts[tm] = null;
+                }
+            });
+
             try {
                 if (socket) {
                     socket.close();
@@ -164,13 +181,13 @@ function sendDataToIFTTT(obj) {
 }
 
 function pingConnection() {
-    if (!detectDisconnect) {
+    if (!timeouts.detectDisconnect) {
         if (connected && ioSocket) {
             // cannot use "ping" because reserved by socket.io
             ioSocket.send(socket, 'pingg');
 
-            detectDisconnect = setTimeout(() => {
-                detectDisconnect = null;
+            timeouts.detectDisconnect = setTimeout(() => {
+                timeouts.detectDisconnect = null;
                 adapter.log.error(TEXT_PING_TIMEOUT);
                 onDisconnect(TEXT_PING_TIMEOUT);
             }, adapter.config.pingTimeout);
@@ -186,9 +203,9 @@ function checkPing() {
             clearInterval(pingTimer);
             pingTimer = null;
         }
-        if (detectDisconnect) {
-            clearTimeout(detectDisconnect);
-            detectDisconnect = null;
+        if (timeouts.detectDisconnect) {
+            clearTimeout(timeouts.detectDisconnect);
+            timeouts.detectDisconnect = null;
         }
     }
 }
@@ -321,7 +338,10 @@ function onDisconnect(event) {
         if (adapter.config.restartOnDisconnect && !redirectRunning) {
             adapter.log.info('Restart adapter by disconnect');
             // simulate scheduled restart
-            setTimeout(() => adapter.terminate ? adapter.terminate(-100) : process.exit(-100), 10000);
+            timeouts.terminate = setTimeout(() => {
+                timeouts.terminate = null;
+                adapter.terminate ? adapter.terminate(-100) : process.exit(-100);
+            }, 10000);
         } else {
             redirectRunning = false;
             startConnect();
@@ -368,7 +388,8 @@ function onCloudWait(seconds) {
         connectTimer = null;
     }
 
-    setTimeout(() => {
+    timeouts.onCloudWait = setTimeout(() => {
+        timeouts.onCloudWait = null;
         waiting = false;
         startConnect(true);
     }, (seconds * 1000) || 60000);
@@ -397,7 +418,9 @@ function onCloudRedirect(data) {
             err && adapter.log.error('redirectAdapter [getForeignObject]: ' + err);
             if (obj) {
                 obj.native.cloudUrl = data.url;
-                setTimeout(() => {
+                timeouts.redirect = setTimeout(() => {
+                    timeouts.redirect = null;
+
                     adapter.setForeignObject(obj._id, obj, err => {
                         err && adapter.log.error('redirectAdapter [setForeignObject]: ' + err);
 
@@ -423,11 +446,13 @@ function onCloudStop(data) {
         err && adapter.log.error(`[getForeignObject]: ${err}`);
         if (obj) {
             obj.common.enabled = false;
-            setTimeout(() =>
+            timeouts.onCloudStop = setTimeout(() => {
+                timeouts.onCloudStop = null;
                 adapter.setForeignObject(obj._id, obj, err => {
-                    err && adapter.log.error('[setForeignObject]: ' + err);
+                    err && adapter.log.error(`[setForeignObject]: ${err}`);
                     adapter.terminate ? adapter.terminate(): process.exit();
-                }), 5000);
+                });
+            }, 5000);
         } else {
             adapter.terminate ? adapter.terminate(): process.exit();
         }
@@ -491,8 +516,8 @@ function connect() {
 
     // cannot use "pong" because reserved by socket.io
     socket.on('pongg', (/*error*/) => {
-        clearTimeout(detectDisconnect);
-        detectDisconnect = null;
+        clearTimeout(timeouts.detectDisconnect);
+        timeouts.detectDisconnect = null;
     });
 
     socket.on('html', (url, cb) => {
@@ -702,7 +727,10 @@ function _createAppKey(cb) {
             // retry in 20 seconds if server unavailable
             if (err.code === 'ECONNREFUSED') {
                 adapter.log.warn('Server is offline or no connection. Retry in 10 seconds');
-                setTimeout(() => _createAppKey(cb), 10000);
+                timeouts.createAppKey = setTimeout(() => {
+                    timeouts.createAppKey = null;
+                    _createAppKey(cb);
+                }, 10000);
             } else {
                 cb(`Cannot create app-key on server: ${err || body || state.statusCode}`);
             }
@@ -735,7 +763,10 @@ function _readAppKeyFromCloud(cb) {
             // todo: retry in 20 seconds if server unavailable
             if (err.code === 'ECONNREFUSED') {
                 adapter.log.warn('Server is offline or no connection. Retry in 10 seconds');
-                setTimeout(() => _readAppKeyFromCloud(cb), 10000);
+                timeouts.readAppKey = setTimeout(() => {
+                    timeouts.readAppKey = null;
+                    _readAppKeyFromCloud(cb);
+                }, 10000);
             } else {
                 cb(`Cannot find app-key on server: ${err || state.statusCode}`);
             }
