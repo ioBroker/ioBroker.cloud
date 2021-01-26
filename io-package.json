@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.3",
+        "version": "4.0.4",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "4.0.4": {
+                "en": "Stop all timers on the unloading",
+                "de": "Stoppen Sie alle Timer beim Entladen",
+                "ru": "Остановить все таймеры на разгрузке",
+                "pt": "Pare todos os cronômetros no descarregamento",
+                "nl": "Stop alle timers bij het uitladen",
+                "fr": "Arrêtez tous les minuteries lors du déchargement",
+                "it": "Ferma tutti i timer durante lo scarico",
+                "es": "Detén todos los temporizadores en la descarga",
+                "pl": "Zatrzymaj wszystkie liczniki czasu podczas rozładunku",
+                "zh-cn": "停止所有计时器"
+            },
             "4.0.3": {
                 "en": "Added the ignoring of restart on disconnect by the redirection",
                 "de": "Das Ignorieren des Neustarts beim Trennen durch die Umleitung wurde hinzugefügt",

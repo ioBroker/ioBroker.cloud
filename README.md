@@ -75,7 +75,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 4.0.4 (2021-01-26)
 * (bluefox) Stop all timers on the unloading
 
 ### 4.0.3 (2021-01-26)
