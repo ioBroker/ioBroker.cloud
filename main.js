@@ -33,10 +33,18 @@ function startAdapter(options) {
         name:         adapterName,
         objectChange: (id, obj) => {
             if (id === adapter.config.instance) {
-                server = getConnectionString(obj);
+                const _server = getConnectionString(obj);
+                if (_server !== server) {
+                    server = _server;
+                    startConnect(true);
+                }
             }
             if (id === adapter.config.allowAdmin) {
-                adminServer = getConnectionString(obj);
+                const _adminServer = getConnectionString(obj);
+                if (_adminServer !== adminServer) {
+                    adminServer = _adminServer;
+                    startConnect(true);
+                }
             }
 
             ioSocket && ioSocket.send(socket, 'objectChange', id, obj);
@@ -328,7 +336,7 @@ function onConnect() {
         adapter.setState('info.connection', connected, true);
         checkPing();
     } else {
-        adapter.log.info('Connection not changed: was connected');
+        adapter.log.debug('Connection not changed: was connected');
     }
 
     if (connectTimer) {
@@ -338,18 +346,18 @@ function onConnect() {
 }
 
 function onCloudConnect(clientId) {
-    adapter.log.info('User accessed from cloud: ' + (clientId || ''));
+    adapter.log.info(`User accessed from cloud: ${clientId || ''}`);
     adapter.setState('info.userOnCloud', true, true);
 }
 
 function onCloudDisconnect(clientId, name) {
-    adapter.log.info('User disconnected from cloud: ' + (clientId || '') + ' ' + (name || ''));
+    adapter.log.info(`User disconnected from cloud: ${clientId || ''} ${name || ''}`);
     adapter.setState('info.userOnCloud', false, true);
 }
 
 function onCloudWait(seconds) {
     waiting = true;
-    adapter.log.info('Server asked to wait for ' + (seconds || 60) + ' seconds');
+    adapter.log.info(`Server asked to wait for ${seconds || 60} seconds`);
     if (socket) {
         socket.disconnect();
         socket.off();
@@ -426,10 +434,12 @@ function onCloudStop(data) {
     });
 }
 
-// this is bug of scoket.io
+// this is bug of socket.io
 // sometimes auto-reconnect does not work.
 function startConnect(immediately) {
-    if (waiting) return;
+    if (waiting) {
+        return;
+    }
 
     if (connectTimer) {
         clearInterval(connectTimer);
@@ -455,7 +465,9 @@ function initConnect(socket, options) {
 }
 
 function connect() {
-    if (waiting) return;
+    if (waiting) {
+        return;
+    }
 
     adapter.log.debug(`Connection attempt to ${adapter.config.cloudUrl || 'https://iobroker.net:10555'} ...`);
 
@@ -830,6 +842,8 @@ function main() {
             }
 
             adapter.subscribeStates('smart.*');
+            adapter.config.instance && adapter.subscribeForeignObjects(adapter.config.instance, err => err && adapter.log.error(`Cannot subscribe: ${err}`));
+            adapter.config.allowAdmin && adapter.subscribeForeignObjects(adapter.config.allowAdmin, err => err && adapter.log.error(`Cannot subscribe: ${err}`));
 
             adapter.log.info(`Connecting with ${adapter.config.cloudUrl} with "${apikey}"`);
 
