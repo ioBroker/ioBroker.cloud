@@ -405,7 +405,7 @@ function onCloudRedirect(data) {
     } else
     if (data.notSave) {
         redirectRunning = true;
-        adapter.log.info(`Adapter redirected temporally to "${data.url}" in one minute. Reason: ${data && data.reason ? data.reason : 'command from server'}`);
+        adapter.log.info(`Adapter redirected temporally to "${data.url}" ${adapter.config.cloudUrl.includes('https://iobroker.pro:') ? 'in 30 seconds' : 'in one minute'}. Reason: ${data && data.reason ? data.reason : 'command from server'}`);
         adapter.config.cloudUrl = data.url;
         if (socket) {
             socket.disconnect();
@@ -470,7 +470,7 @@ function startConnect(immediately) {
         clearInterval(connectTimer);
         connectTimer = null;
     }
-    connectTimer = setInterval(connect, 60000);
+    connectTimer = setInterval(connect, adapter.config.cloudUrl.includes('https://iobroker.pro:') ? 30000 : 60000); // on pro there are not so many users as on net.
     if (immediately) {
         connect();
     }
@@ -494,14 +494,14 @@ function connect() {
         return;
     }
 
-    adapter.log.debug(`Connection attempt to ${adapter.config.cloudUrl || 'https://iobroker.net:10555'} ...`);
+    adapter.log.debug(`Connection attempt to ${adapter.config.cloudUrl} ...`);
 
     if (socket) {
         socket.off();
         socket.disconnect();
     }
 
-    socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
+    socket = require('socket.io-client')(adapter.config.cloudUrl, {
         transports:           ['websocket'],
         autoConnect:          true,
         reconnection:         !adapter.config.restartOnDisconnect,
@@ -666,15 +666,19 @@ function connect() {
 
         adapter.getForeignObject(adapter.config.instance, (err, obj) => {
             server = getConnectionString(obj);
-            if (server) {
+
+            if (adapter.config.allowAdmin) {
+                adapter.getForeignObject(adapter.config.allowAdmin, (err, obj) => {
+                    adminServer = getConnectionString(obj);
+                    if (server || adminServer) {
+                        initConnect(socket, {apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version});
+                    }
+                });
+            } else if (server) {
                 initConnect(socket, {apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version});
             }
         });
 
-        if (adapter.config.allowAdmin) {
-            adapter.getForeignObject(adapter.config.allowAdmin, (err, obj) =>
-                adminServer = getConnectionString(obj));
-        }
     } else {
         initConnect(socket, {apikey, uuid: uuid, version: pack.common.version});
     }

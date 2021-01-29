@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.5",
+        "version": "4.0.6",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,7 +28,7 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
-            "4.0.5": {
+            "4.0.6": {
                 "en": "Show the invalid authentication message",
                 "de": "Zeigen Sie die ungültige Authentifizierungsnachricht an",
                 "ru": "Показать неверное сообщение аутентификации",

@@ -75,7 +75,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
-### 4.0.5 (2021-01-29)
+### 4.0.6 (2021-01-29)
 * (bluefox) Show the invalid authentication message
 
 ### 4.0.4 (2021-01-26)
