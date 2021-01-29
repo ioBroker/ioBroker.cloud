@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.4",
+        "version": "4.0.5",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "4.0.5": {
+                "en": "Show the invalid authentication message",
+                "de": "Zeigen Sie die ungültige Authentifizierungsnachricht an",
+                "ru": "Показать неверное сообщение аутентификации",
+                "pt": "Mostra a mensagem de autenticação inválida",
+                "nl": "Toon het ongeldige authenticatiebericht",
+                "fr": "Afficher le message d'authentification non valide",
+                "it": "Mostra il messaggio di autenticazione non valido",
+                "es": "Mostrar el mensaje de autenticación no válido",
+                "pl": "Pokaż nieprawidłową wiadomość uwierzytelniającą",
+                "zh-cn": "显示无效的验证消息"
+            },
             "4.0.4": {
                 "en": "Stop all timers on the unloading",
                 "de": "Stoppen Sie alle Timer beim Entladen",
