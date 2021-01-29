@@ -704,13 +704,17 @@ function createInstancesStates(callback, objs) {
 
 function _createAppKey(cb) {
     adapter.log.info('Create new APP-KEY...')
+    const url = `https://${adapter.config.server}:3001/api/v1/appkeys`;
     request({
         method: 'POST',
-        url: `https://${adapter.config.server}:3001/api/v1/appkeys`,
+        url,
         headers: {
             Authorization: 'Basic ' + Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')
         }
     }, (err, state, body) => {
+        if (state && state.statusCode === 401) {
+            return cb(`Invalid user name or password or server (may be it is ${adapter.config.server === 'iobroker.pro' ? 'iobroker.net' : 'iobroker.pro'})`);
+        }
         if (body) {
             try {
                 body = JSON.parse(body);
@@ -721,7 +725,7 @@ function _createAppKey(cb) {
                 adapter.log.info(`New APP-KEY is ${body.key[0]}`);
                 cb(null, body.key[0]);
             } else {
-                cb(`Cannot create app-key on server: ${err || state.statusCode || JSON.stringify(body)}`);
+                cb(`Cannot create app-key on server "${url}": ${err || state.statusCode || JSON.stringify(body)}`);
             }
         } else {
             // retry in 20 seconds if server unavailable
@@ -739,12 +743,16 @@ function _createAppKey(cb) {
 }
 
 function _readAppKeyFromCloud(cb) {
+    const url = `https://${adapter.config.server}:3001/api/v1/appkeys`;
     request({
-        url: `https://${adapter.config.server}:3001/api/v1/appkeys`,
+        url,
         headers : {
             Authorization: 'Basic ' + Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')
         }
     }, (err, state, body) => {
+        if (state && state.statusCode === 401) {
+            return cb(`Invalid user name or password or server (may be it is ${adapter.config.server === 'iobroker.pro' ? 'iobroker.net' : 'iobroker.pro'})`);
+        }
         if (body) {
             try {
                 body = JSON.parse(body);
@@ -757,7 +765,7 @@ function _readAppKeyFromCloud(cb) {
                 _createAppKey(cb);
             } else {
                 // todo: create key
-                cb(`Cannot find app-key on server: ${err || state.statusCode || 'key does not exist'}`);
+                cb(`Cannot find app-key on server ${url}: ${err || state.statusCode || 'key does not exist'}`);
             }
         } else {
             // todo: retry in 20 seconds if server unavailable
@@ -800,8 +808,8 @@ function main() {
     adapter.config.replaces       = adapter.config.replaces ? adapter.config.replaces.split(',') : null;
     adapter.config.cloudUrl       = (adapter.config.cloudUrl || '').toString();
 
-    adapter.config.pass           = adapter.config.pass || '';
-    adapter.config.login          = adapter.config.login || '';
+    adapter.config.pass           = adapter.config.pass   || '';
+    adapter.config.login          = adapter.config.login  || '';
     adapter.config.server         = adapter.config.server || 'iobroker.pro';
 
     if (adapter.config.login !== (adapter.config.login || '').trim().toLowerCase()) {
@@ -811,7 +819,7 @@ function main() {
     let appKeyPromise
 
     if (adapter.config.login && adapter.config.pass) {
-        appKeyPromise = readAppKeyFromCloud()
+        appKeyPromise = readAppKeyFromCloud();
     } else {
         appKeyPromise = Promise.resolve(adapter.config.apikey);
     }
@@ -820,8 +828,8 @@ function main() {
         .then(_apikey => {
             apikey = _apikey;
             if (apikey && apikey.match(/^@pro_/)) {
-                if (adapter.config.cloudUrl.indexOf('https://iobroker.pro:')  === -1 &&
-                    adapter.config.cloudUrl.indexOf('https://iobroker.info:') === -1) {
+                if (!adapter.config.cloudUrl.includes('https://iobroker.pro:') &&
+                    !adapter.config.cloudUrl.includes('https://iobroker.net:')) {
                     adapter.config.cloudUrl = 'https://iobroker.pro:10555';
                 }
             } else {
