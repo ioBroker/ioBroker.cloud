@@ -322,13 +322,13 @@ function processIfttt(data, callback) {
 
 function onDisconnect(event) {
     if (typeof event === 'string') {
-        adapter.log.info(`Connection changed: ${event}`);
+        !redirectRunning && adapter.log.info(`Connection changed: ${event}`);
     } else {
         adapter.log.info('Connection changed: disconnect');
     }
 
     if (connected) {
-        adapter.log.info('Connection lost');
+        !redirectRunning && adapter.log.info('Connection lost');
         connected = false;
         adapter.setState('info.connection', false, true);
 
