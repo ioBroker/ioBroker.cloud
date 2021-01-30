@@ -823,6 +823,13 @@ function main() {
     let appKeyPromise
 
     if (adapter.config.login && adapter.config.pass) {
+        if (adapter.config.server === 'iobroker.pro') {
+            adapter.config.cloudUrl = adapter.config.cloudUrl.replace('iobroker.net', 'iobroker.pro');
+        } else
+        if (adapter.config.server === 'iobroker.net') {
+            adapter.config.cloudUrl = adapter.config.cloudUrl.replace('iobroker.pro', 'iobroker.net');
+        }
+
         appKeyPromise = readAppKeyFromCloud();
     } else {
         appKeyPromise = Promise.resolve(adapter.config.apikey);
@@ -831,9 +838,9 @@ function main() {
     appKeyPromise
         .then(_apikey => {
             apikey = _apikey;
-            if (apikey && apikey.match(/^@pro_/)) {
-                if (!adapter.config.cloudUrl.includes('https://iobroker.pro:') &&
-                    !adapter.config.cloudUrl.includes('https://iobroker.net:')) {
+            if (apikey && apikey.startsWith('@pro_')) {
+                if (!adapter.config.cloudUrl.startsWith('https://iobroker.pro:') &&
+                    !adapter.config.cloudUrl.startsWith('https://iobroker.info:')) { // yes .info and not .net (was debug server somewhere)
                     adapter.config.cloudUrl = 'https://iobroker.pro:10555';
                 }
             } else {

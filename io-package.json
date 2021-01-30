@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.6",
+        "version": "4.0.7",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,7 +28,7 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
-            "4.0.6": {
+            "4.0.7": {
                 "en": "Show the invalid authentication message",
                 "de": "Zeigen Sie die ungültige Authentifizierungsnachricht an",
                 "ru": "Показать неверное сообщение аутентификации",
@@ -111,162 +111,6 @@
                 "es": "Implementó los comandos sencillos de simpleApi (no todos)",
                 "pl": "Zaimplementowano proste polecenia simpleApi (nie wszystkie)",
                 "zh-cn": "实现了简单的simpleApi命令（并非全部）"
-            },
-            "3.0.5": {
-                "en": "Make sure that subscribe parrerns are strings (Sentry IOBROKER-CLOUD-D)",
-                "de": "Stellen Sie sicher, dass Abonnement-Parrerns Zeichenfolgen sind (Sentry IOBROKER-CLOUD-D).",
-                "ru": "Убедитесь, что параметры подписки являются строками (Sentry IOBROKER-CLOUD-D)",
-                "pt": "Certifique-se de que os parrerns de inscrição são strings (Sentry IOBROKER-CLOUD-D)",
-                "nl": "Zorg ervoor dat abonnementsparrerns strings zijn (Sentry IOBROKER-CLOUD-D)",
-                "fr": "Assurez-vous que les paramètres d'abonnement sont des chaînes (Sentry IOBROKER-CLOUD-D)",
-                "it": "Assicurati che i parrern di iscrizione siano stringhe (Sentry IOBROKER-CLOUD-D)",
-                "es": "Asegúrese de que los parrerns de suscripción sean cadenas (Sentry IOBROKER-CLOUD-D)",
-                "pl": "Upewnij się, że parrerns subskrypcji to ciągi (Sentry IOBROKER-CLOUD-D)",
-                "zh-cn": "确保订阅parrerns是字符串（Sentry IOBROKER-CLOUD-D）"
-            },
-            "3.0.4": {
-                "en": "crash prevented when socket is not connected (Sentry IOBROKER-CLOUD-8)",
-                "de": "Absturz verhindert, wenn keine Steckdose angeschlossen ist (Sentry IOBROKER-CLOUD-8)",
-                "ru": "предотвращено падение, если розетка не подключена (Sentry IOBROKER-CLOUD-8)",
-                "pt": "falha evitada quando o soquete não está conectado (Sentry IOBROKER-CLOUD-8)",
-                "nl": "crash voorkomen wanneer socket niet is aangesloten (Sentry IOBROKER-CLOUD-8)",
-                "fr": "crash empêché lorsque le socket n'est pas connecté (Sentry IOBROKER-CLOUD-8)",
-                "it": "arresto anomalo impedito quando il socket non è collegato (Sentry IOBROKER-CLOUD-8)",
-                "es": "bloqueo evitado cuando el zócalo no está conectado (Sentry IOBROKER-CLOUD-8)",
-                "pl": "zapobieganie awariom, gdy gniazdo nie jest podłączone (Sentry IOBROKER-CLOUD-8)",
-                "zh-cn": "未连接套接字时防止崩溃（Sentry IOBROKER-CLOUD-8）"
-            },
-            "3.0.3": {
-                "en": "Updated socket.io version",
-                "de": "Aktualisierte Version von socket.io",
-                "ru": "Обновленная версия socket.io",
-                "pt": "Versão socket.io atualizada",
-                "nl": "Bijgewerkte socket.io-versie",
-                "fr": "Version socket.io mise à jour",
-                "it": "Versione socket.io aggiornata",
-                "es": "Versión actualizada de socket.io",
-                "pl": "Zaktualizowana wersja socket.io",
-                "zh-cn": "更新了socket.io版本"
-            },
-            "3.0.2": {
-                "en": "fix for potential crash with web 3.x",
-                "de": "Behebung eines möglichen Absturzes mit Web 3.x.",
-                "ru": "исправление для возможного сбоя с веб 3.x",
-                "pt": "correção para possível falha com a web 3.x",
-                "nl": "oplossing voor mogelijke crash met web 3.x",
-                "fr": "correction d'un crash potentiel avec web 3.x",
-                "it": "correzione per un potenziale arresto anomalo con il Web 3.x",
-                "es": "solución para un posible bloqueo con web 3.x",
-                "pl": "naprawiono potencjalną awarię w przeglądarce 3.x",
-                "zh-cn": "修复了Web 3.x可能导致的崩溃"
-            },
-            "3.0.1": {
-                "en": "Breaking changes: no alexa support. Use ioBroker.iot for that.\nSupport of multiple clients for .pro",
-                "de": "Breaking Changes: Keine Unterstützung von Alexa. Verwenden Sie dazu ioBroker.iot.\nUnterstützung mehrerer Clients für .pro",
-                "ru": "Breaking Changes: нет поддержки alexa. Для этого используйте ioBroker.iot.\nПоддержка нескольких клиентов для .pro",
-                "pt": "Alterações recentes: sem suporte da alexa. Use ioBroker.iot para isso.\nSuporte de vários clientes para .pro",
-                "nl": "Veranderende veranderingen: geen ondersteuning voor Alexa. Gebruik daarvoor ioBroker.iot.\nOndersteuning van meerdere clients voor .pro",
-                "fr": "Changements de rupture: pas de support alexa. Utilisez ioBroker.iot pour cela.\nPrise en charge de plusieurs clients pour .pro",
-                "it": "Cambiamenti di rottura: nessun supporto alexa. Usa ioBroker.iot per questo.\nSupporto di più client per .pro",
-                "es": "Cambios de última hora: no hay soporte de alexa. Use ioBroker.iot para eso.\nSoporte de múltiples clientes para .pro",
-                "pl": "Przełomowe zmiany: brak obsługi Alexa. W tym celu użyj ioBroker.iot.\nObsługa wielu klientów dla .pro",
-                "zh-cn": "重大变化：无Alexa支持。为此使用ioBroker.iot。\n多个客户端支持.pro"
-            },
-            "2.8.0": {
-                "en": "The multiple client connection via cloud was corrected",
-                "de": "Die Verbindung mehrerer Clients über die Cloud wurde korrigiert",
-                "ru": "Исправлено подключение нескольких клиентов через облако",
-                "pt": "A conexão de múltiplos clientes via nuvem foi corrigida",
-                "nl": "De verbinding met meerdere clients via de cloud is gecorrigeerd",
-                "fr": "La connexion de plusieurs clients via le cloud a été corrigée",
-                "it": "La connessione a più client tramite cloud è stata corretta",
-                "es": "Se corrigió la conexión de múltiples clientes a través de la nube",
-                "pl": "Połączenie wielu klientów za pośrednictwem chmury zostało poprawione",
-                "zh-cn": "通过云的多客户端连接已得到纠正"
-            },
-            "2.7.1": {
-                "en": "Enhancements for Custom Skill",
-                "de": "Verbesserungen für Custom Skill",
-                "ru": "Улучшения для Custom Skill",
-                "pt": "Melhorias para o Custom Skill",
-                "nl": "Verbeteringen voor Custom Skill",
-                "fr": "Améliorations pour les Custom Skill",
-                "it": "Miglioramenti per Custom Skill",
-                "es": "Mejoras para Custom Skill",
-                "pl": "Rozszerzenia dla Custom Skill",
-                "zh-cn": "增强对定义的技术人员"
-            },
-            "2.7.0": {
-                "en": "Multilingual names were corrected",
-                "de": "Mehrsprachige Namen wurden korrigiert",
-                "ru": "Исправлены многоязычные имена",
-                "pt": "Nomes multilíngües foram corrigidos",
-                "nl": "Meertalige namen werden gecorrigeerd",
-                "fr": "Les noms multilingues ont été corrigés",
-                "it": "I nomi multilingue sono stati corretti",
-                "es": "Los nombres multilingües fueron corregidos",
-                "pl": "Poprawiono wielojęzyczne nazwy",
-                "zh-cn": "多语种的名称进行了修正"
-            },
-            "2.6.2": {
-                "en": "Several fixes",
-                "de": "Mehrere Korrekturen",
-                "ru": "Несколько исправлений",
-                "pt": "Várias correções",
-                "nl": "Verschillende oplossingen",
-                "fr": "Plusieurs corrections",
-                "it": "Diverse correzioni",
-                "es": "Varias correcciones",
-                "pl": "Kilka poprawek",
-                "zh-cn": "几个补丁"
-            },
-            "2.6.1": {
-                "en": "Support of custom alexa skill",
-                "de": "Unterstützung von custom alexa skill",
-                "ru": "Поддержка custom alexa skill",
-                "pt": "Suporte de custom alexa skill",
-                "nl": "Ondersteuning van custom alexa skill",
-                "fr": "Prise en charge de la compétence alexa personnalisée",
-                "it": "Supporto dell'abilità di alexa personalizzata",
-                "es": "Soporte de habilidad personalizada de alexa",
-                "pl": "Obsługa niestandardowych umiejętności alexa",
-                "zh-cn": "支持的定义alexa的技术人员"
-            },
-            "2.5.0": {
-                "en": "Added actions on commands from server: wait, stop, redirect",
-                "de": "Aktionen für Befehle vom Server hinzugefügt: wait, stop, redirect",
-                "ru": "Добавлены действия с командами с сервера: wait, stop, redirect",
-                "pt": "Ações adicionadas em comandos do servidor: aguarde, pare, redirecione",
-                "nl": "Acties toegevoegd aan opdrachten van server: wachten, stoppen, omleiden",
-                "fr": "Actions ajoutées sur les commandes du serveur: attente, arrêt, redirection",
-                "it": "Aggiunte azioni sui comandi dal server: attendere, arrestare, reindirizzare",
-                "es": "Acciones agregadas en los comandos del servidor: esperar, detener, redirigir",
-                "pl": "Dodano akcje na komendach z serwera: wait, stop, przekierowanie",
-                "zh-cn": "加入行动的命令从服务器等等，停下，重定向"
-            },
-            "2.4.7": {
-                "en": "Small changes in the configuration dialog\nInformation about the expiring of remote access was added",
-                "de": "Kleine Änderungen im Konfigurationsdialog\nInformationen zum Ablauf des Remote-Zugriffs wurden hinzugefügt",
-                "ru": "Небольшие изменения в диалоговом окне конфигурации\nДобавлена ​​информация об истечении удаленного доступа",
-                "pt": "Pequenas mudanças no diálogo de configuração\nForam adicionadas informações sobre o acesso remoto de acesso remoto",
-                "nl": "Kleine wijzigingen in het configuratievenster\nInformatie over het verlopen van externe toegang is toegevoegd",
-                "fr": "Petits changements dans la boîte de dialogue de configuration\nInformations sur l'expiration de l'accès à distance a été ajouté",
-                "it": "Piccole modifiche nella finestra di configurazione\nSono state aggiunte informazioni sulla scadenza dell'accesso remoto",
-                "es": "Pequeños cambios en el diálogo de configuración\nSe agregó información sobre el vencimiento del acceso remoto",
-                "pl": "Małe zmiany w oknie konfiguracji\nDodano informację o wygaśnięciu dostępu zdalnego",
-                "zh-cn": "小变化，在配置话\n信息有关的到期的远程访问加入"
-            },
-            "2.4.6": {
-                "en": "Adding of new devices is fixed",
-                "de": "Hinzufügen neuer Geräte ist behoben",
-                "ru": "Исправлено добавление новых устройств",
-                "pt": "A adição de novos dispositivos é fixa",
-                "nl": "Het toevoegen van nieuwe apparaten is opgelost",
-                "fr": "L'ajout de nouveaux appareils est fixé",
-                "it": "L'aggiunta di nuovi dispositivi è stata corretta",
-                "es": "Se fija la adición de nuevos dispositivos",
-                "pl": "Dodawanie nowych urządzeń zostało naprawione",
-                "zh-cn": "添加新的设备是固定的"
             }
         },
         "authors": [

@@ -63,7 +63,7 @@ systemDictionary = {
     "Types": {                                       "en": "Types",                                           "de": "Typen",                                           "ru": "Типы",                                            "pt": "Tipos",                                           "nl": "Soorten",                                         "fr": "Les types",                                       "it": "tipi",                                            "es": "Tipos",                                           "pl": "Rodzaje",                                         "zh-cn": "类型"},
     "Use following link for IFTTT:": {               "en": "Use following link for IFTTT",                    "de": "Benutze folgenden Link für IFTTT",                "ru": "Используйте этот URL для IFTTT",                  "pt": "Use o seguinte link para IFTTT",                  "nl": "Gebruik de volgende link voor IFTTT",             "fr": "Utilisez le lien suivant pour IFTTT",             "it": "Usa il seguente link per IFTTT",                  "es": "Utilice el siguiente enlace para IFTTT",          "pl": "Użyj następującego linku dla IFTTT",              "zh-cn": "使用以下链接过"},
     "Use following link for custom service:": {      "en": "Use following link for custom service",           "de": "Benutze folgende Link für einen eigenen Service", "ru": "Используйте этот URL для своего сервиса",         "pt": "Use o seguinte link para o serviço personalizado", "nl": "Gebruik de volgende link voor aangepaste service", "fr": "Utilisez le lien suivant pour un service personnalisé", "it": "Usa il seguente link per il servizio personalizzato", "es": "Use el siguiente enlace para servicio personalizado", "pl": "Użyj poniższego linku do niestandardowej usługi", "zh-cn": "使用下面的链路为定义的服务"},
-    "Use text2command instance:": {                  "en": "Use text2command instance",                       "de": "Benutze text2command Instanz",                    "ru": "Использовать text2command",                       "pt": "Use a instância text2command",                    "nl": "Gebruik de text2command-instantie",               "fr": "Utilisez l'instance text2command",                "it": "Utilizza l'istanza text2command",                 "es": "Use la instancia del comando text2",              "pl": "Użyj instancji text2command",                     "zh-cn": "使用text2command实例"},
+    "Use text2command instance:": {                  "en": "Use text2command instance",                       "de": "text2command Instanz",                            "ru": "Использовать text2command",                       "pt": "Use a instância text2command",                    "nl": "Gebruik de text2command-instantie",               "fr": "Utilisez l'instance text2command",                "it": "Utilizza l'istanza text2command",                 "es": "Use la instancia del comando text2",              "pl": "Użyj instancji text2command",                     "zh-cn": "使用text2command实例"},
     "White list for services:": {                    "en": "White list for services",                         "de": "White list für Services",                         "ru": "Белый список для сервисов",                       "pt": "Lista branca de serviços",                        "nl": "Witte lijst voor services",                       "fr": "Liste blanche pour les services",                 "it": "Lista bianca per i servizi",                      "es": "Lista blanca de servicios",                       "pl": "Biała lista dla usług",                           "zh-cn": "白色列表服务"},
     "Write response to:": {                          "en": "Write response to",                               "de": "Schreibe Antwort ins",                            "ru": "Писать ответ в",                                  "pt": "Escreva a resposta para",                         "nl": "Schrijf reactie op",                              "fr": "Écrire une réponse à",                            "it": "Scrivi risposta a",                               "es": "Escribir respuesta a",                            "pl": "Napisz odpowiedź na",                             "zh-cn": "写的响应"},
     "amazon link": {
@@ -122,5 +122,65 @@ systemDictionary = {
         "es": "Es posible que la instancia web no tenga HTTPS o autenticación habilitada. Puede deshabilitar la autenticación y HTTPS o crear un nuevo enlace de instancia web a localhost.",
         "pl": "Instancja internetowa może nie mieć włączonego protokołu HTTPS lub uwierzytelniania! Możesz wyłączyć uwierzytelnianie i HTTPS lub utworzyć nowe powiązanie instancji internetowej z hostem lokalnym.",
         "zh-cn": "Web实例可能未启用HTTPS或身份验证！您可以禁用身份验证和HTTPS或创建与本地主机的新Web实例绑定。"
+    },
+    "Password repeat": {
+        "en": "Password repeat",
+        "de": "Passwort wiederholen",
+        "ru": "Повтор пароля",
+        "pt": "Repetição de senha",
+        "nl": "Wachtwoord herhalen",
+        "fr": "Répéter le mot de passe",
+        "it": "Ripeti password",
+        "es": "Repite la contraseña",
+        "pl": "Powtórz hasło",
+        "zh-cn": "密码重复"
+    },
+    "Password": {
+        "en": "Password",
+        "de": "Passwort",
+        "ru": "пароль",
+        "pt": "Senha",
+        "nl": "Wachtwoord",
+        "fr": "Mot de passe",
+        "it": "Parola d'ordine",
+        "es": "Contraseña",
+        "pl": "Hasło",
+        "zh-cn": "密码"
+    },
+    "Login": {
+        "en": "Login",
+        "de": "Anmeldung",
+        "ru": "Авторизоваться",
+        "pt": "Conecte-se",
+        "nl": "Log in",
+        "fr": "S'identifier",
+        "it": "Accesso",
+        "es": "Iniciar sesión",
+        "pl": "Zaloguj sie",
+        "zh-cn": "登录"
+    },
+    "Server": {
+        "en": "Server",
+        "de": "Server",
+        "ru": "Сервер",
+        "pt": "Servidor",
+        "nl": "Server",
+        "fr": "Serveur",
+        "it": "server",
+        "es": "Servidor",
+        "pl": "serwer",
+        "zh-cn": "服务器"
+    },
+    "Use login and password": {
+        "en": "Use login and password",
+        "de": "Login und Passwort verwenden",
+        "ru": "Использовать логин и пароль",
+        "pt": "Use login e senha",
+        "nl": "Gebruik login en wachtwoord",
+        "fr": "Utiliser l'identifiant et le mot de passe",
+        "it": "Usa login e password",
+        "es": "Utilice nombre de usuario y contraseña",
+        "pl": "Użyj loginu i hasła",
+        "zh-cn": "使用登录名和密码"
     }
 };

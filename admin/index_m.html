@@ -41,6 +41,12 @@
     var selectId;
     var language;
     var noCommon;
+    var Base64={
+        _keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+        encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},
+        decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}
+    }
+
 
     function initSelectId(callback) {
         if (selectId) {
@@ -78,14 +84,44 @@
         });
     }
 
+    function readAppKeyFromCloud() {
+        const url = 'https://' + $('#server').val() + ':3001/api/v1/appkeys';
+        return fetch(url, {
+            headers : {
+                Authorization: 'Basic ' + Base64.encode($('#login').val() + ':' + $('#pass').val())
+            }
+        })
+            .then(res => res.json())
+            .then(data => data[0].key)
+            .catch(e => {
+                console.error('cannot get key: ' + e);
+                return 'CANNOT GET KEY';
+            });
+    }
+
     function updateIfttt() {
         var key = $('#apikey').val().trim();
-        $('#ifttt_link').html('https://iobroker.' + (key.match(/^@pro_/) ? 'pro' : 'net') + '/ifttt/' + key);
-        $('#service_link').html('https://iobroker.' + (key.match(/^@pro_/) ? 'pro' : 'net') + '/service/custom_&lt;NAME&gt;/' + key + '/&lt;data&gt;');
+        var isPro = $('#apikey').val().match(/^@pro_/);
+        if ($('#useCredentials').prop('checked')) {
+            isPro = $('#server').val() === 'iobroker.pro';
+            readAppKeyFromCloud()
+                .then(key => {
+                    $('#ifttt_link').val('https://iobroker.' + (isPro ? 'pro' : 'net') + '/ifttt/' + key);
+                    $('#service_link').val('https://iobroker.' + (isPro ? 'pro' : 'net') + '/service/custom_<NAME>/' + key + '/<data>');
+                    M && M.updateTextFields();
+                });
+        } else {
+            $('#ifttt_link').val('https://iobroker.' + (isPro ? 'pro' : 'net') + '/ifttt/' + key);
+            $('#service_link').val('https://iobroker.' + (isPro ? 'pro' : 'net') + '/service/custom_<NAME>/' + key + '/<data>');
+            M && M.updateTextFields();
+        }
     }
 
     function updateUrl() {
         var isPro = $('#apikey').val().match(/^@pro_/);
+        if ($('#useCredentials').prop('checked')) {
+            isPro = $('#server').val() === 'iobroker.pro';
+        }
         var $noCommon = $('#noCommon');
 
         if (isPro) {
@@ -258,9 +294,15 @@
                 $value.val(settings[key]).change(function() {
                     onChange();
                     var id = $(this).attr('id');
-                    if (id === 'language') language = $(this).val();
-                    if (id === 'functionFirst' || id === 'concatWord') $('#' + id + 'Hint').show();
-                    if (id === 'apikey') updateIfttt();
+                    if (id === 'language') {
+                        language = $(this).val();
+                    }
+                    if (id === 'functionFirst' || id === 'concatWord') {
+                        $('#' + id + 'Hint').show();
+                    }
+                    if (id === 'apikey') {
+                        updateIfttt();
+                    }
                 }).keyup(function() {
                     $(this).trigger('change');
                 });
@@ -271,6 +313,9 @@
         $tabs.find('li').on('click', function (tab)  {
             if (typeof localStorage !== 'undefined') {
                 localStorage['cloud-adapter'] = $(this).find('a').attr('href').substring(1);
+            }
+            if (tab.target.innerText.toUpperCase() === translateWord('Services and IFTTT').toUpperCase()) {
+                updateIfttt();
             }
         });
 
@@ -645,20 +690,15 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s12 m6 l4">
+                    <div class="input-field col s12 m8 l6">
                         <input id="service_link" type="text" readonly value="https://iobroker.net/service/" />
                         <label for="service_link" class="translate">Use following link for custom service:</label>
                     </div>
-                    <div class="input-field col s12 m6 l4">
+                    <div class="input-field col s12 m4 l2">
                         <select class="value" id="text2command">
                             <option value="" class="translate">disabled</option>
                         </select>
                         <label for="text2command" class="translate">Use text2command instance:</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col s12 l8">
-                        <p class="translate">help_tip</p>
                     </div>
                 </div>
             </div>
