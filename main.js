@@ -21,6 +21,7 @@ let waiting         = false;
 let apikey          = '';
 let server          = 'http://localhost:8082';
 let adminServer     = 'http://localhost:8081';
+let lovelaceServer  = 'http://localhost:8091';
 
 let TEXT_PING_TIMEOUT = 'Ping timeout';
 let redirectRunning = false; // is redirect in progress
@@ -47,11 +48,18 @@ function startAdapter(options) {
                     server = _server;
                     startConnect(true);
                 }
-            }
+            } else
             if (id === adapter.config.allowAdmin) {
                 const _adminServer = getConnectionString(obj);
                 if (_adminServer !== adminServer) {
                     adminServer = _adminServer;
+                    startConnect(true);
+                }
+            } else
+            if (id === adapter.config.lovelace) {
+                const _lovelaceServer = getConnectionString(obj);
+                if (_lovelaceServer !== lovelaceServer) {
+                    lovelaceServer = _lovelaceServer;
                     startConnect(true);
                 }
             }
@@ -520,6 +528,28 @@ function connect() {
         timeouts.detectDisconnect = null;
     });
 
+    socket.on('method', (url, options, cb) => {
+        if (url.startsWith('/lovelace/auth/')) {
+            url = url.replace(/^\/lovelace\/auth\//, '/auth/');
+
+            request({
+                url: lovelaceServer + url,
+                encoding: null,
+                method: options.method,
+                json: options.body
+            }, (error, response, body) =>
+                cb(error, response ? response.statusCode : 501, response ? response.headers : [], JSON.stringify(body)));
+        } else {
+            request({
+                url: server + url,
+                encoding: null,
+                method: options.method,
+                body: options.body
+            }, (error, response, body) =>
+                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
+        }
+    });
+
     socket.on('html', (url, cb) => {
         if (url.match(/^\/admin\//)) {
             if (adminServer && adapter.config.allowAdmin) {
@@ -529,10 +559,29 @@ function connect() {
             } else {
                 cb('Enable admin in cloud settings. And only pro.', 404, [], 'Enable admin in cloud settings. And only pro.');
             }
-        } else if (adminServer && adapter.config.allowAdmin && url.match(/^\/adapter\/|^\/lib\/js\/ace-|^\/lib\/js\/cron\/|^\/lib\/js\/jqGrid\//)) {
+        } else
+        // if admin
+        if (adminServer && adapter.config.allowAdmin &&
+            (url.startsWith('/adapter/') || url.startsWith('/lib/js/ace-') || url.startsWith('/lib/js/cron') || url.startsWith('/lib/js/jqGrid'))) {
             request({url: adminServer + url, encoding: null}, (error, response, body) =>
                 cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
-        } else if (server) {
+        } else
+        // if lovelace
+        if (lovelaceServer && adapter.config.lovelace &&
+            (url.startsWith('/lovelace/') || url.startsWith('/auth/') || url.startsWith('/frontend_latest/') || url.startsWith('/frontend_es5/') || url.startsWith('/static/fonts/roboto/'))) {
+            if (url === '/lovelace/manifest.json') {
+                url = '/manifest.json';
+            } if (url === '/lovelace/service_worker.js') {
+                url = '/service_worker.js';
+            } else if (url.startsWith('/lovelace/static/')) {
+                url = url.replace(/^\/lovelace\/static\//, '/static/');
+            }
+
+            request({url: lovelaceServer + url, encoding: null}, (error, response, body) =>
+                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
+        } else
+        // web
+        if (server) {
             request({url: server + url, encoding: null}, (error, response, body) =>
                 cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
         } else {
@@ -659,29 +708,46 @@ function connect() {
 
     socket.on('error', error => startConnect());
 
-    if (adapter.config.instance) {
-        if (adapter.config.instance.substring(0, 'system.adapter.'.length) !== 'system.adapter.') {
-            adapter.config.instance = 'system.adapter.' + adapter.config.instance;
+    return new Promise(resolve => {
+        if (adapter.config.instance) {
+            if (adapter.config.instance.substring(0, 'system.adapter.'.length) !== 'system.adapter.') {
+                adapter.config.instance = 'system.adapter.' + adapter.config.instance;
+            }
+            adapter.getForeignObjectAsync(adapter.config.instance)
+                .then(obj => {
+                    server = getConnectionString(obj);
+                    resolve();
+                })
+                .catch(() => null);
+        } else {
+            resolve();
         }
-
-        adapter.getForeignObject(adapter.config.instance, (err, obj) => {
-            server = getConnectionString(obj);
-
+    })
+        .then(() => {
             if (adapter.config.allowAdmin) {
-                adapter.getForeignObject(adapter.config.allowAdmin, (err, obj) => {
-                    adminServer = getConnectionString(obj);
-                    if (server || adminServer) {
-                        initConnect(socket, {apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version});
-                    }
-                });
-            } else if (server) {
-                initConnect(socket, {apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version});
+                return adapter.getForeignObjectAsync(adapter.config.allowAdmin)
+                    .then(obj => {
+                        adminServer = getConnectionString(obj);
+                    })
+                    .catch(() => null);
+            } else {
+                return Promise.resolve();
+            }
+        })
+        .then(() => {
+            if (adapter.config.lovelace) {
+                return adapter.getForeignObjectAsync(adapter.config.lovelace)
+                    .then(obj => lovelaceServer = getConnectionString(obj))
+                    .catch(() => null);
+            } else {
+                return Promise.resolve();
+            }
+        })
+        .then(() => {
+            if (server || lovelaceServer || adminServer) {
+                initConnect(socket, {apikey, uuid: uuid, version: pack.common.version});
             }
         });
-
-    } else {
-        initConnect(socket, {apikey, uuid: uuid, version: pack.common.version});
-    }
 }
 
 function createInstancesStates(callback, objs) {
@@ -822,7 +888,7 @@ function main() {
 
     let appKeyPromise
 
-    if (adapter.config.login && adapter.config.pass) {
+    if (adapter.config.login && adapter.config.pass && adapter.config.useCredentials) {
         if (adapter.config.server === 'iobroker.pro') {
             adapter.config.cloudUrl = adapter.config.cloudUrl.replace('iobroker.net', 'iobroker.pro');
         } else
@@ -845,6 +911,7 @@ function main() {
                 }
             } else {
                 adapter.config.allowAdmin = false;
+                adapter.config.lovelace = false;
             }
 
             if (adapter.config.replaces) {
@@ -894,6 +961,7 @@ function main() {
             adapter.subscribeStates('smart.*');
             adapter.config.instance && adapter.subscribeForeignObjects(adapter.config.instance, err => err && adapter.log.error(`Cannot subscribe: ${err}`));
             adapter.config.allowAdmin && adapter.subscribeForeignObjects(adapter.config.allowAdmin, err => err && adapter.log.error(`Cannot subscribe: ${err}`));
+            adapter.config.lovelace && adapter.subscribeForeignObjects(adapter.config.lovelace, err => err && adapter.log.error(`Cannot subscribe: ${err}`));
 
             adapter.log.info(`Connecting with ${adapter.config.cloudUrl} with "${apikey}"`);
 
