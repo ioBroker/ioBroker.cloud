@@ -206,6 +206,7 @@
         if (!settings) return;
 
         settings.allowAdmin = settings.allowAdmin || '';
+        settings.lovelace = settings.lovelace || '';
         settings.responseOID = settings.responseOID || '';
         settings.restartOnDisconnect = settings.restartOnDisconnect || false;
         settings.text2command = settings.text2command || '';
@@ -214,6 +215,7 @@
         settings.server = settings.server || 'iobroker.pro';
         settings.pass = settings.pass || '';
         settings.login = settings.login || '';
+        settings.useCredentials = settings.useCredentials || false;
 
         noCommon = settings.noCommon;
 
@@ -279,6 +281,22 @@
                     constrainWidth: false
                 }
             });
+        });
+
+        getAdapterInstances('lovelace', function (res) {
+            if (!res) return;
+            var text = '<option value="">' + _('disabled') + '</option>';
+            for (var t = 0; t < res.length; t++) {
+                text += '<option value="' + res[t]._id + '">' + res[t].common.name + ' [' + res[t]._id.replace('system.adapter.', '') + ']</option>';
+            }
+            $('#lovelace').html(text).val(settings.lovelace).change(function () {
+                checkAuthForInstance('lovelace', $(this).val());
+            }).select({
+                dropdownOptions: {
+                    constrainWidth: false
+                }
+            });
+            checkAuthForInstance('lovelace', settings.lovelace);
         });
 
         $('.value').each(function () {
@@ -399,6 +417,7 @@
         obj.allowedServices = chips2list('.allowedServices');
         $('#functionFirstHint').hide();
         $('#concatWordHint').hide();
+
         callback(obj);
     }
 </script>
@@ -661,12 +680,21 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s12">
+                    <div class="input-field col s12 m6 l4">
                         <select class="value" id="allowAdmin" data-link="true" style="display: inline-block"></select>
                         <label for="allowAdmin" class="translate">Allow admin access (only pro):</label>
                     </div>
-                    <div class="col s12">
+                    <div class="input-field col s12 m6 l4">
+                        <select class="value" id="lovelace" data-link="true" style="display: inline-block"></select>
+                        <label for="lovelace" class="translate">Allow lovelace access (only pro):</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m6 l4">
                         <span id="allowAdmin_tip" class="tip"></span>
+                    </div>
+                    <div class="col s12 m6 l4">
+                        <span id="lovelace_tip" class="tip"></span>
                     </div>
                 </div>
                 <br>

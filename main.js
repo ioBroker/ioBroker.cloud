@@ -485,7 +485,7 @@ function startConnect(immediately) {
 }
 
 function initConnect(socket, options) {
-    ioSocket = new IOSocket(socket, options, adapter);
+    ioSocket = new IOSocket(socket, options, adapter, lovelaceServer);
 
     ioSocket.on('connect',         onConnect);
     ioSocket.on('disconnect',      onDisconnect);
@@ -529,8 +529,8 @@ function connect() {
     });
 
     socket.on('method', (url, options, cb) => {
-        if (url.startsWith('/lovelace/auth/')) {
-            url = url.replace(/^\/lovelace\/auth\//, '/auth/');
+        if (url.startsWith('/lovelace/')) {
+            url = url.replace(/^\/lovelace\//, '/');
 
             request({
                 url: lovelaceServer + url,
@@ -540,60 +540,59 @@ function connect() {
             }, (error, response, body) =>
                 cb(error, response ? response.statusCode : 501, response ? response.headers : [], JSON.stringify(body)));
         } else {
+            adapter.log.error('Unexpected request ' + url);
             request({
                 url: server + url,
                 encoding: null,
                 method: options.method,
-                body: options.body
+                json: options.body
             }, (error, response, body) =>
                 cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
         }
     });
 
     socket.on('html', (url, cb) => {
-        if (url.match(/^\/admin\//)) {
-            if (adminServer && adapter.config.allowAdmin) {
-                url = url.substring(6);
+        try {
+            if (url.match(/^\/admin\//)) {
+                if (adminServer && adapter.config.allowAdmin) {
+                    url = url.substring(6);
+                    request({url: adminServer + url, encoding: null}, (error, response, body) =>
+                        cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
+                } else {
+                    cb('Enable admin in cloud settings. And only pro.', 404, [], 'Enable admin in cloud settings. And only pro.');
+                }
+            } else
+                // if admin
+            if (adminServer && adapter.config.allowAdmin &&
+                (url.startsWith('/adapter/') || url.startsWith('/lib/js/ace-') || url.startsWith('/lib/js/cron') || url.startsWith('/lib/js/jqGrid'))) {
                 request({url: adminServer + url, encoding: null}, (error, response, body) =>
                     cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
-            } else {
-                cb('Enable admin in cloud settings. And only pro.', 404, [], 'Enable admin in cloud settings. And only pro.');
-            }
-        } else
-        // if admin
-        if (adminServer && adapter.config.allowAdmin &&
-            (url.startsWith('/adapter/') || url.startsWith('/lib/js/ace-') || url.startsWith('/lib/js/cron') || url.startsWith('/lib/js/jqGrid'))) {
-            request({url: adminServer + url, encoding: null}, (error, response, body) =>
-                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
-        } else
-        // if lovelace
-        if (lovelaceServer && adapter.config.lovelace &&
-            (url.startsWith('/lovelace/') || url.startsWith('/auth/') || url.startsWith('/frontend_latest/') || url.startsWith('/frontend_es5/') || url.startsWith('/static/fonts/roboto/'))) {
-            if (url === '/lovelace/manifest.json') {
-                url = '/manifest.json';
-            } if (url === '/lovelace/service_worker.js') {
-                url = '/service_worker.js';
-            } else if (url.startsWith('/lovelace/static/')) {
-                url = url.replace(/^\/lovelace\/static\//, '/static/');
-            }
+            } else
+                // if lovelace
+            if (lovelaceServer && adapter.config.lovelace && url.startsWith('/lovelace/')) {
+                url = url.replace(/^\/lovelace\//, '/');
 
-            request({url: lovelaceServer + url, encoding: null}, (error, response, body) =>
-                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
-        } else
-        // web
-        if (server) {
-            request({url: server + url, encoding: null}, (error, response, body) =>
-                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
-        } else {
+                request({url: lovelaceServer + url, encoding: null}, (error, response, body) =>
+                    cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
+            } else
+                // web
+            if (server) {
+                request({url: server + url, encoding: null}, (error, response, body) =>
+                    cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
+            } else {
+                cb('Admin or Web are inactive.', 404, [], 'Admin or Web are inactive.');
+            }
+        } catch (e) {
+            adapter.log.error('Cannot request: ' + e);
             cb('Admin or Web are inactive.', 404, [], 'Admin or Web are inactive.');
         }
     });
 
     socket.on('ifttt', processIfttt);
 
-    socket.on('iftttError', error => adapter.log.error('Error from IFTTT: ' + JSON.stringify(error)));
+    socket.on('iftttError', error => adapter.log.error(`Error from IFTTT: ${JSON.stringify(error)}`));
 
-    socket.on('cloudError', error => adapter.log.error('Cloud says: ' + error));
+    socket.on('cloudError', error => adapter.log.error(`Cloud says: ${error}`));
 
     socket.on('service', (data, callback) => {
         adapter.log.debug('service: ' + JSON.stringify(data));
@@ -747,7 +746,7 @@ function connect() {
             }
         })
         .then(() => {
-            if (server || lovelaceServer || adminServer) {
+            if (socket && (server || lovelaceServer || adminServer)) {
                 initConnect(socket, {apikey, uuid: uuid, version: pack.common.version});
             }
         });

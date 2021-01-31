@@ -187,6 +187,7 @@
         "allowedServices": "",
         "text2command": "0",
         "allowAdmin": "",
+        "lovelace": "",
         "noCommon": false
     },
     "objects": [],
