@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.7",
+        "version": "4.0.8",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "4.0.8": {
+                "en": "Prevent crash case (Sentry IOBROKER-CLOUD-S)\nfix usage of credentials",
+                "de": "Absturz verhindern (Sentry IOBROKER-CLOUD-S)\nKorrektur der Verwendung von Anmeldeinformationen",
+                "ru": "Предотвращение сбоя (Sentry IOBROKER-CLOUD-S)\nисправить использование учетных данных",
+                "pt": "Evitar caso de travamento (Sentry IOBROKER-CLOUD-S)\ncorrigir o uso de credenciais",
+                "nl": "Voorkom crash case (Sentry IOBROKER-CLOUD-S)\ngebruik van inloggegevens repareren",
+                "fr": "Prévenir les cas de crash (Sentry IOBROKER-CLOUD-S)\ncorriger l'utilisation des informations d'identification",
+                "it": "Prevenire il crash case (Sentry IOBROKER-CLOUD-S)\ncorreggere l'utilizzo delle credenziali",
+                "es": "Caso de prevención de accidentes (Sentry IOBROKER-CLOUD-S)\ncorregir el uso de credenciales",
+                "pl": "Zapobiegaj awariom (Sentry IOBROKER-CLOUD-S)\nnaprawić użycie poświadczeń",
+                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-CLOUD-S）\n修复凭证的使用"
+            },
             "4.0.7": {
                 "en": "Show the invalid authentication message",
                 "de": "Zeigen Sie die ungültige Authentifizierungsnachricht an",
