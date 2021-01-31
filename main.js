@@ -571,7 +571,7 @@ function connect() {
                             callback && callback({result: err || 'Ok'}));
                     } else {
                         adapter.log.warn('Received service text2command, but instance is not defined');
-                        callback && callback({error: 'but instance is not defined'});
+                        callback && callback({error: 'instance is not defined'});
                     }
                 } else if (!isCustom && (data.name === 'simpleApi' || data.name === 'simpleapi')) {
                     // GET https://iobroker.net/service/simpleApi/<user-app-key>/get/system.adapter.admin.0.cputime
@@ -598,12 +598,15 @@ function connect() {
                     } else if (parts[0] === 'set') {
                         // https://iobroker.pro/service/simpleapi/<user-app-key>/set/stateID?value=1
                         let [id, val] = parts[1].split('?');
+                        if (id === undefined || val === undefined) {
+                            return callback && callback({error: 'invalid call'});
+                        }
                         val = val.replace(/^value=/, '');
                         adapter.getForeignObject(id, (error, obj) => {
                             if (error || !obj) {
                                 callback && callback({error: error || 'not found'});
                             } else if (obj.type !== 'state') {
-                                callback && callback({error: 'only states could be controlled'});
+                                callback && callback({error: 'only states can be controlled'});
                             } else {
                                 if (obj.common && obj.common.type === 'boolean') {
                                     val = val === 'true' || val === '1' || val === 'ON' || val === 'on';
