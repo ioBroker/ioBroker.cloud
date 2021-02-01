@@ -485,7 +485,7 @@ function startConnect(immediately) {
 }
 
 function initConnect(socket, options) {
-    ioSocket = new IOSocket(socket, options, adapter, lovelaceServer);
+    ioSocket = new IOSocket(socket, {...options, lovelaceServer}, adapter);
 
     ioSocket.on('connect',         onConnect);
     ioSocket.on('disconnect',      onDisconnect);
@@ -747,7 +747,13 @@ function connect() {
         })
         .then(() => {
             if (socket && (server || lovelaceServer || adminServer)) {
-                initConnect(socket, {apikey, uuid: uuid, version: pack.common.version});
+                initConnect(socket, {
+                    apikey,
+                    uuid,
+                    version: pack.common.version,
+                    allowAdmin: adapter.config.allowAdmin,
+                    lovelace: adapter.config.lovelace
+                });
             }
         });
 }
