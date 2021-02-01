@@ -75,7 +75,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
-## __WORK IN PROGRESS__
+### __WORK IN PROGRESS__
 * (bluefox) Support of lovelace via ioBroker.pro
 * (bluefox) Fixed error with the admin
 
