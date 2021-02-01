@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.8",
+        "version": "4.0.9",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "4.0.9": {
+                "en": "Support of lovelace via ioBroker.pro\nFixed error with the admin",
+                "de": "Unterstützung von Lovelace über ioBroker.pro\nFehler beim Admin behoben",
+                "ru": "Поддержка ловеласа через ioBroker.pro\nИсправлена ошибка с админкой",
+                "pt": "Suporte de lovelace via ioBroker.pro\nErro corrigido com o administrador",
+                "nl": "Ondersteuning van lovelace via ioBroker.pro\nFout opgelost met de admin",
+                "fr": "Prise en charge de lovelace via ioBroker.pro\nCorrection d'une erreur avec l'administrateur",
+                "it": "Supporto di lovelace tramite ioBroker.pro\nRisolto errore con l'amministratore",
+                "es": "Soporte de lovelace a través de ioBroker.pro\nError solucionado con el administrador.",
+                "pl": "Wsparcie lovelace przez ioBroker.pro\nNaprawiono błąd z administratorem",
+                "zh-cn": "通过ioBroker.pro支持lovelace\n修复了管理员的错误"
+            },
             "4.0.8": {
                 "en": "Prevent crash case (Sentry IOBROKER-CLOUD-S)\nfix usage of credentials",
                 "de": "Absturz verhindern (Sentry IOBROKER-CLOUD-S)\nKorrektur der Verwendung von Anmeldeinformationen",
