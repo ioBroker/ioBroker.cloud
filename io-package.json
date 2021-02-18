@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.9",
+        "version": "4.0.10",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "4.0.10": {
+                "en": "Fix crash case (Sentry IOBROKER-CLOUD-X)",
+                "de": "Absturz behoben (Sentry IOBROKER-CLOUD-X)",
+                "ru": "Исправить сбой (Sentry IOBROKER-CLOUD-X)",
+                "pt": "Corrigir caso de falha (Sentry IOBROKER-CLOUD-X)",
+                "nl": "Crashcase repareren (Sentry IOBROKER-CLOUD-X)",
+                "fr": "Correction d'un cas de crash (Sentry IOBROKER-CLOUD-X)",
+                "it": "Risolto il problema di crash (Sentry IOBROKER-CLOUD-X)",
+                "es": "Reparar caso de bloqueo (Sentry IOBROKER-CLOUD-X)",
+                "pl": "Napraw przypadek awarii (Sentry IOBROKER-CLOUD-X)",
+                "zh-cn": "修复崩溃情况（Sentry IOBROKER-CLOUD-X）"
+            },
             "4.0.9": {
                 "en": "Support of lovelace via ioBroker.pro\nFixed error with the admin",
                 "de": "Unterstützung von Lovelace über ioBroker.pro\nFehler beim Admin behoben",
