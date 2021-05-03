@@ -190,6 +190,7 @@
     },
     "protectedNative": [
         "login",
+        "pass",
         "apikey"
     ],
     "encryptedNative": [
