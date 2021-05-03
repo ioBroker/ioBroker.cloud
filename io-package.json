@@ -188,6 +188,10 @@
             }
         }
     },
+    "protectedNative": [
+        "login",
+        "apikey"
+    ],
     "encryptedNative": [
         "pass"
     ],
