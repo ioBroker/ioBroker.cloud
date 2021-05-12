@@ -199,6 +199,11 @@
             }
         }
     },
+    "protectedNative": [
+        "login",
+        "pass",
+        "apikey"
+    ],
     "encryptedNative": [
         "pass"
     ],
