@@ -178,9 +178,8 @@
         "preserveSettings": "smartName",
         "blockly": true,
         "logTransporter": true,
-        "config": {
-            "width": 1224,
-            "height": 700
+        "adminUI": {
+            "config": "json"
         },
         "plugins": {
             "sentry": {
@@ -212,7 +211,8 @@
         "text2command": "0",
         "allowAdmin": "",
         "lovelace": "",
-        "noCommon": false
+        "noCommon": false,
+        "useCredentials": true
     },
     "objects": [],
     "instanceObjects": [

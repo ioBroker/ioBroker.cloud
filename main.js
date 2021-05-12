@@ -113,6 +113,37 @@ function startAdapter(options) {
                         sendDataToIFTTT(obj.message);
                         break;
 
+                    case 'getIFTTTLink':
+                        if (typeof obj.message === 'string') {
+                            return obj.callback && adapter.sendTo(obj.from, obj.command, 'invalid config', obj.callback);
+                        }
+                        if (obj.message.useCredentials) {
+                            _readAppKeyFromCloud(obj.message.server, obj.message.login, obj.message.pass, (err, key) => {
+                                const text = `https://${obj.message.server}/ifttt/${key}`;
+                                obj.callback && adapter.sendTo(obj.from, obj.command, text, obj.callback);
+                            })
+                        } else {
+                            const text = `https://${obj.message.apikey.startsWith('@pro_') ? 'iobroker.pro' : 'iobroker.net'}/ifttt/${obj.message.apikey}`;
+                            obj.callback && adapter.sendTo(obj.from, obj.command, text, obj.callback);
+                        }
+                        break;
+
+                    case 'getServiceLink':
+                        if (typeof obj.message === 'string') {
+                            return obj.callback && adapter.sendTo(obj.from, obj.command, 'invalid config', obj.callback);
+                        }
+
+                        if (obj.message.useCredentials) {
+                            _readAppKeyFromCloud(obj.message.server, obj.message.login, obj.message.pass, (err, key) => {
+                                const text = `https://${obj.message.server}/service/custom_<NAME>/${key}/<data>`;
+                                obj.callback && adapter.sendTo(obj.from, obj.command, text, obj.callback);
+                            })
+                        } else {
+                            const text = `https://${obj.message.apikey.startsWith('@pro_') ? 'iobroker.pro' : 'iobroker.net'}/service/custom_<NAME>/${obj.message.apikey}/<data>`;
+                            obj.callback && adapter.sendTo(obj.from, obj.command, text, obj.callback);
+                        }
+                        break;
+
                     default:
                         adapter.log.warn('Unknown command: ' + obj.command);
                         break;
@@ -820,16 +851,24 @@ function _createAppKey(cb) {
     });
 }
 
-function _readAppKeyFromCloud(cb) {
-    const url = `https://${adapter.config.server}:3001/api/v1/appkeys`;
+function _readAppKeyFromCloud(server, login, password, cb) {
+    if (typeof server === 'function') {
+        cb = server;
+        server = null;
+    }
+    server = server || adapter.config.server;
+    login = login || adapter.config.login;
+    password = password || adapter.config.pass;
+
+    const url = `https://${server}:3001/api/v1/appkeys`;
     request({
         url,
         headers : {
-            Authorization: 'Basic ' + Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')
+            Authorization: 'Basic ' + Buffer.from(`${login}:${password}`).toString('base64')
         }
     }, (err, state, body) => {
         if (state && state.statusCode === 401) {
-            return cb(`Invalid user name or password or server (may be it is ${adapter.config.server === 'iobroker.pro' ? 'iobroker.net' : 'iobroker.pro'})`);
+            return cb(`Invalid user name or password or server (may be it is ${server === 'iobroker.pro' ? 'iobroker.net' : 'iobroker.pro'})`);
         }
         if (body) {
             try {
@@ -851,7 +890,7 @@ function _readAppKeyFromCloud(cb) {
                 adapter.log.warn('Server is offline or no connection. Retry in 10 seconds');
                 timeouts.readAppKey = setTimeout(() => {
                     timeouts.readAppKey = null;
-                    _readAppKeyFromCloud(cb);
+                    _readAppKeyFromCloud(server, login, password, cb);
                 }, 10000);
             } else {
                 cb(`Cannot find app-key on server: ${err || state.statusCode}`);

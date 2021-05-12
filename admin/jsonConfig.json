@@ -1,0 +1,206 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "_options": {
+            "type": "panel",
+            "label": "Options",
+            "items": {
+                "useCredentials": {
+                    "type": "checkbox",
+                    "label": "Use login and password"
+                },
+                "server": {
+                    "newLine": true,
+                    "type": "select",
+                    "label": "Server",
+                    "hidden": "!data.useCredentials",
+                    "noTranslation":  true,
+                    "options": [
+                        {"label": "iobroker.pro", "value": "iobroker.pro"},
+                        {"label": "iobroker.net", "value": "iobroker.net"}
+                    ]
+                },
+                "apikey": {
+                    "newLine": true,
+                    "hidden": "!!data.useCredentials",
+                    "type": "text",
+                    "sm": 12,
+                    "label": "APP-KEY",
+                    "help": "help_tip"
+                },
+                "login": {
+                    "newLine": true,
+                    "hidden": "!data.useCredentials",
+                    "type": "text",
+                    "sm": 12,
+                    "md": 4,
+                    "label": "Login"
+                },
+                "pass": {
+                    "hidden": "!data.useCredentials",
+                    "type": "password",
+                    "repeat": true,
+                    "sm": 12,
+                    "md": 4,
+                    "label": "Password"
+                },
+                "instance": {
+                    "newLine": true,
+                    "adapter": "web",
+                    "type": "instance",
+                    "sm": 12,
+                    "md": 4,
+                    "label": "Web instance"
+                },
+                "_instanceAlive": {
+                    "newLine": true,
+                    "type": "alive",
+                    "textAlive": "",
+                    "instance": "${data.instance}",
+                    "sm": 12,
+                    "md": 4
+                }
+            }
+        },
+        "_advanced": {
+            "type": "panel",
+            "label": "Extended options",
+            "items": {
+                "cloudUrl": {
+                    "disabled": "(data.useCredentials && data.server === 'iobroker.pro') || (!data.useCredentials && data.apikey.startsWith('@pro_'))",
+                    "type": "text",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3,
+                    "label": "Cloud URL"
+                },
+                "connectionTimeout": {
+                    "type": "number",
+                    "min": 0,
+                    "max": 100000,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3,
+                    "label": "Connection timeout"
+                },
+                "pingTimeout": {
+                    "type": "number",
+                    "min": 0,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3,
+                    "label": "Ping timeout"
+                },
+                "allowSelfSignedCertificate": {
+                    "newLine": true,
+                    "type": "checkbox",
+                    "label": "Allow self-signed certificates",
+                    "help": "Read more about certificates",
+                    "helpLink": "https://github.com/ioBroker/ioBroker.cloud/blob/master/README.md#allow-self-signed-certificates",
+                    "sm": 12
+                },
+                "restartOnDisconnect": {
+                    "newLine": true,
+                    "type": "checkbox",
+                    "label": "Restart on disconnect",
+                    "sm": 12
+                },
+                "allowAdmin": {
+                    "newLine": true,
+                    "type": "instance",
+                    "adapter": "admin",
+                    "long": true,
+                    "allowDeactivate": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "label": "Allow admin access",
+                    "help": "only on pro",
+                    "disabled": "(data.useCredentials && data.server !== 'iobroker.pro') || (!data.useCredentials && !data.apikey.startsWith('@pro_'))"
+                },
+                "lovelace": {
+                    "type": "instance",
+                    "long": true,
+                    "adapter": "lovelace",
+                    "allowDeactivate": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "label": "Allow lovelace access",
+                    "help": "only on pro",
+                    "disabled": "(data.useCredentials && data.server !== 'iobroker.pro') || (!data.useCredentials && !data.apikey.startsWith('@pro_'))"
+                },
+                "_adminAlive": {
+                    "newLine": true,
+                    "type": "alive",
+                    "textAlive": "",
+                    "instance": "${data.allowAdmin}",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_lovelaceAlive": {
+                    "type": "alive",
+                    "textAlive": "",
+                    "instance": "${data.lovelace}",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                }
+            }
+        },
+        "_services": {
+            "type": "panel",
+            "label": "Services and IFTTT",
+            "items": {
+                "iftttKey": {
+                    "type": "text",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "label": "IFTTT key"
+                },
+                "_ifttt_link": {
+                    "type": "textSendTo",
+                    "container": "text",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 8,
+                    "alsoDependsOn": ["useCredentials", "apikey", "login", "pass", "server"],
+                    "label": "Use following link for IFTTT",
+                    "command": "getIFTTTLink",
+                    "jsonData": "{\"apikey\": \"${data.apikey}\", \"useCredentials\": ${!!data.useCredentials}, \"login\": \"${data.login}\", \"pass\": \"${data.pass}\", \"server\": \"${data.server}\"}",
+                    "copyToClipboard": true
+                },
+                "allowedServices": {
+                    "newLine": true,
+                    "type": "chips",
+                    "sm": 12,
+                    "label": "White list for services"
+                },
+                "_service_link": {
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 8,
+                    "type": "textSendTo",
+                    "alsoDependsOn": ["useCredentials", "apikey", "login", "pass", "server"],
+                    "container": "text",
+                    "label": "Use following link for custom service",
+                    "command": "getServiceLink",
+                    "jsonData": "{\"apikey\": \"${data.apikey}\", \"useCredentials\": ${!!data.useCredentials}, \"login\": \"${data.login}\", \"pass\": \"${data.pass}\", \"server\": \"${data.server}\"}",
+                    "copyToClipboard": true
+                },
+                "text2command": {
+                    "sm": 12,
+                    "md": 4,
+                    "short": true,
+                    "type": "instance",
+                    "adapter": "text2command",
+                    "allowDeactivate": true,
+                    "label": "Use text2command instance"
+                }
+            }
+        }
+    }
+}

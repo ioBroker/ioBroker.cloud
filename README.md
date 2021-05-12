@@ -75,6 +75,9 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Fixed the connection issue with the cloud
+* (bluefox) Added support for Admin5
 
 ### 4.0.10 (2021-02-18)
 * (Apollon77) Fix crash case (Sentry IOBROKER-CLOUD-X)
