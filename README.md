@@ -75,7 +75,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 4.0.11 (2021-05-12)
 * (bluefox) Fixed the connection issue with the cloud
 * (bluefox) Added support for Admin5
 
