@@ -205,6 +205,8 @@
         "adminUI": {
             "config": "json"
         },
+        "connectionType": "cloud",
+        "dataSource": "push",
         "plugins": {
             "sentry": {
                 "dsn": "https://4e98835e3b074c49a3e31d51a46801a2@sentry.iobroker.net/33"
