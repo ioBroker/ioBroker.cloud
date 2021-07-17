@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "4.0.11",
+        "version": "4.1.0",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker云"
         },
         "news": {
+            "4.1.0": {
+                "en": "Added support for new javascript",
+                "de": "Unterstützung für neues Javascript hinzugefügt",
+                "ru": "Добавлена поддержка нового javascript.",
+                "pt": "Adicionado suporte para novo javascript",
+                "nl": "Ondersteuning toegevoegd voor nieuw javascript",
+                "fr": "Ajout du support pour le nouveau javascript",
+                "it": "Aggiunto supporto per il nuovo javascript",
+                "es": "Soporte agregado para nuevo javascript",
+                "pl": "Dodano wsparcie dla nowego javascript",
+                "zh-cn": "添加了对新 javascript 的支持"
+            },
             "4.0.11": {
                 "en": "Fixed the connection issue with the cloud\nAdded support for Admin5",
                 "de": "Das Verbindungsproblem mit der Cloud wurde behoben\nUnterstützung für Admin5 hinzugefügt",
