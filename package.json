@@ -30,14 +30,18 @@
     "gulp": "^4.0.2",
     "axios": "^0.21.1",
     "mocha": "^9.1.1",
-    "chai": "^4.3.4"
+    "chai": "^4.3.4",
+    "@iobroker/testing": "^2.5.1"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.cloud/issues"
   },
   "main": "main.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --exit",
+    "test:unit": "mocha test/unitAdapter --exit",
+    "test:package": "mocha test/packageFiles --exit",
+    "test:integration": "mocha test/integrationAdapter --exit",
+    "test": "mocha --exit",
     "release": "release-script",
     "release-minor": "release-script minor",
     "release-major": "release-script major"
