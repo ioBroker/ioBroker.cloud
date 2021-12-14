@@ -25,7 +25,7 @@
     "ws": "^8.2.3"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^2.2.1",
+    "@alcalzone/release-script": "^3.4.1",
     "@types/node": "^16.11.11",
     "gulp": "^4.0.2",
     "axios": "^0.24.0",
