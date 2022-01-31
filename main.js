@@ -3,10 +3,9 @@
 /* jslint node: true */
 'use strict';
 
-const utils = require('@iobroker/adapter-core'); // Get common adapter utils
-//let IOSocket      = require(utils.appName + '.socketio/lib/socket.js');
+const utils         = require('@iobroker/adapter-core'); // Get common adapter utils
 const IOSocket      = require('./lib/socket.js'); // temporary
-const request       = require('request');
+const axios         = require('axios');
 const pack          = require('./io-package.json');
 const adapterName   = require('./package.json').name.split('.').pop();
 
@@ -46,6 +45,7 @@ function startAdapter(options) {
                 const _server = getConnectionString(obj);
                 if (_server !== server) {
                     server = _server;
+                    adapter.log.info(`Reconnect because web instance ${obj && obj.common && obj.common.enabled ? 'started' : 'stopped'}`);
                     startConnect(true);
                 }
             } else
@@ -53,6 +53,7 @@ function startAdapter(options) {
                 const _adminServer = getConnectionString(obj);
                 if (_adminServer !== adminServer) {
                     adminServer = _adminServer;
+                    adapter.log.info(`Reconnect because admin instance ${obj && obj.common && obj.common.enabled ? 'started' : 'stopped'}`);
                     startConnect(true);
                 }
             } else
@@ -60,6 +61,7 @@ function startAdapter(options) {
                 const _lovelaceServer = getConnectionString(obj);
                 if (_lovelaceServer !== lovelaceServer) {
                     lovelaceServer = _lovelaceServer;
+                    adapter.log.info(`Reconnect because lovelace instance ${obj && obj.common && obj.common.enabled ? 'started' : 'stopped'}`);
                     startConnect(true);
                 }
             }
@@ -167,6 +169,10 @@ function getConnectionString(obj) {
         } else
         if (obj.native.secure) {
             adapter.log.error(`Cannot activate ${obj._id.replace('system.adapter.', '')} for cloud, because HTTPs is enabled. Please create extra instance for cloud`);
+            return conn;
+        } else
+        if (!obj.common.enabled) {
+            adapter.log.error(`Instance ${obj._id.replace('system.adapter.', '')} not enabled. Please enabled this instance for cloud`);
             return conn;
         } else {
             conn = `http${obj.native.secure ? 's' : ''}://`;
@@ -453,6 +459,7 @@ function onCloudRedirect(data) {
         startConnect();
     } else {
         adapter.log.info(`Adapter redirected continuously to "${data.url}". Reason: ${data && data.reason ? data.reason : 'command from server'}`);
+
         adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
             err && adapter.log.error('redirectAdapter [getForeignObject]: ' + err);
             if (obj) {
@@ -482,7 +489,7 @@ function onCloudError(error) {
 
 function onCloudStop(data) {
     adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
-        err && adapter.log.error(`[getForeignObject]: ${err}`);
+        err && adapter.log.error(`[onCloudStop]: ${err}`);
         if (obj) {
             obj.common.enabled = false;
             timeouts.onCloudStop = setTimeout(() => {
@@ -528,6 +535,26 @@ function initConnect(socket, options) {
     ioSocket.on('cloudStop',       onCloudStop);
 }
 
+function answerWithReason(instance, name, cb) {
+    if (!instance) {
+        adapter.log.error(`${name} instance not defined. Please specify the lovelace instance in settings`);
+    } else {
+        adapter.getForeignObjectAsync(instance)
+            .catch(() => null)
+            .then(obj => {
+                const conn = getConnectionString(obj);
+                if (conn) {
+                    if (!obj.common.enabled) {
+                        adapter.log.error(`${name} instance "${instance}" not activated.`);
+                    } else {
+                        adapter.log.error(`${name} instance "${instance}" not available.`);
+                    }
+                }
+            });
+    }
+    cb && cb(`${name} is inactive`, 404, [], `${name} is inactive`);
+}
+
 function connect() {
     if (waiting) {
         return;
@@ -562,23 +589,51 @@ function connect() {
     socket.on('method', (url, options, cb) => {
         if (url.startsWith('/lovelace/')) {
             url = url.replace(/^\/lovelace\//, '/');
-
-            request({
-                url: lovelaceServer + url,
-                encoding: null,
-                method: options.method,
-                json: options.body
-            }, (error, response, body) =>
-                cb(error, response ? response.statusCode : 501, response ? response.headers : [], JSON.stringify(body)));
+            if (!lovelaceServer) {
+                answerWithReason(adapter.config.lovelace, 'Lovelace', cb);
+            } else {
+                axios({
+                    url: lovelaceServer + url,
+                    method: options.method,
+                    data: options.body,
+                    responseType: 'arraybuffer',
+                    validateStatus: status => status < 400
+                })
+                    .then(response => cb(null, response.status, response.headers, JSON.stringify(response.data)))
+                    .catch(error => {
+                        if (error.response) {
+                            adapter.log.error(`Cannot request lovelace pages "${url}": ${error.response.data || error.response.status}`);
+                            cb(error.response.data || error.response.status, error.response.status || 501, error.response.headers, JSON.stringify(error.response.data));
+                        } else {
+                            adapter.log.error(`Cannot request lovelace pages "${url}": ${error.code}`);
+                            cb(error.code, 501, {}, JSON.stringify({error: 'unexpected error'}));
+                        }
+                    });
+            }
         } else {
-            adapter.log.error('Unexpected request ' + url);
-            request({
-                url: server + url,
-                encoding: null,
-                method: options.method,
-                json: options.body
-            }, (error, response, body) =>
-                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
+            adapter.log.error('Unexpected request: ' + url);
+
+            if (!server) {
+                answerWithReason(adapter.config.instance, 'Web', cb);
+            } else {
+                axios({
+                    url: server + url,
+                    method: options.method,
+                    data: options.body,
+                    responseType: 'arraybuffer',
+                    validateStatus: status => status < 400
+                })
+                    .then(response => cb(null, response.status, response.headers, JSON.stringify(response.data)))
+                    .catch(error => {
+                        if (error.response) {
+                            adapter.log.error(`Cannot request web pages "${url}": ${error.response.data || error.response.status}`);
+                            cb(error.response.data || error.response.status, error.response.status || 501, error.response.headers, JSON.stringify(error.response.data));
+                        } else {
+                            adapter.log.error(`Cannot request web pages "${url}": ${error.code}`);
+                            cb(error.code, 501, {}, JSON.stringify({error: 'unexpected error'}));
+                        }
+                    });
+            }
         }
     });
 
@@ -587,35 +642,82 @@ function connect() {
             if (url.match(/^\/admin\//)) {
                 if (adminServer && adapter.config.allowAdmin) {
                     url = url.substring(6);
-                    request({url: adminServer + url, encoding: null}, (error, response, body) =>
-                        cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
+                    axios.get(adminServer + url, {responseType: 'arraybuffer', validateStatus: status => status < 400})
+                        .then(response => cb(null, response.status, response.headers, response.data))
+                        .catch(error => {
+                            if (error.response) {
+                                adapter.log.error('Cannot request admin pages: ' + (error.response.data || error.response.status));
+                                cb(error.code, error.response.status || 501, error.response.headers, error.response.data);
+                            } else {
+                                adapter.log.error('Cannot request admin pages: no response');
+                                cb('no response', 501, {}, 'no response from admin');
+                            }
+                        });
                 } else {
+                    answerWithReason(adapter.config.allowAdmin, 'Admin');
+
                     cb('Enable admin in cloud settings. And only pro.', 404, [], 'Enable admin in cloud settings. And only pro.');
                 }
             } else
                 // if admin
-            if (adminServer && adapter.config.allowAdmin &&
-                (url.startsWith('/adapter/') || url.startsWith('/lib/js/ace-') || url.startsWith('/lib/js/cron') || url.startsWith('/lib/js/jqGrid'))) {
-                request({url: adminServer + url, encoding: null}, (error, response, body) =>
-                    cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
+            if (url.startsWith('/adapter/') || url.startsWith('/lib/js/ace-') || url.startsWith('/lib/js/cron') || url.startsWith('/lib/js/jqGrid')) {
+                if (adminServer && adapter.config.allowAdmin) {
+                    axios.get(adminServer + url, {responseType: 'arraybuffer', validateStatus: status => status < 400})
+                        .then(response => cb(null, response.status, response.headers, response.data))
+                        .catch(error => {
+                            if (error.response) {
+                                adapter.log.error('Cannot request admin pages: ' + (error.response.data || error.response.status));
+                                cb(error.code, error.response.status || 501, error.response.headers, error.response.data);
+                            } else {
+                                adapter.log.error('Cannot request admin pages: no response');
+                                cb('no response', 501, {}, 'no response from admin');
+                            }
+                        });
+                } else {
+                    answerWithReason(adapter.config.allowAdmin, 'Admin');
+
+                    cb('Enable admin in cloud settings. And only pro.', 404, [], 'Enable admin in cloud settings. And only pro.');
+                }
             } else
                 // if lovelace
-            if (lovelaceServer && adapter.config.lovelace && url.startsWith('/lovelace/')) {
-                url = url.replace(/^\/lovelace\//, '/');
-
-                request({url: lovelaceServer + url, encoding: null}, (error, response, body) =>
-                    cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
+            if (url.startsWith('/lovelace/')) {
+                if (lovelaceServer && adapter.config.lovelace) {
+                    url = url.replace(/^\/lovelace\//, '/');
+                    axios.get(lovelaceServer + url, {responseType: 'arraybuffer', validateStatus: status => status < 400})
+                        .then(response => cb(null, response.status, response.headers, response.data))
+                        .catch(error => {
+                            if (error.response) {
+                                adapter.log.error('Cannot request lovelace pages: ' + (error.response.data || error.response.status));
+                                cb(error.code, error.response.status || 501, error.response.headers, error.response.data);
+                            } else {
+                                adapter.log.error('Cannot request lovelace pages: no response');
+                                cb('no response', 501, {}, 'no response from lovelace');
+                            }
+                        });
+                } else {
+                    answerWithReason(adapter.config.lovelace, 'Lovelace', cb);
+                }
             } else
-                // web
+            // web
             if (server) {
-                request({url: server + url, encoding: null}, (error, response, body) =>
-                    cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
+                axios.get(server + url, {responseType: 'arraybuffer', validateStatus: status => status < 400})
+                    .then(response => cb(null, response.status, response.headers, response.data))
+                    .catch(error => {
+                        if (error.response) {
+                            adapter.log.error('Cannot request web pages: ' + (error.response.data || error.response.status));
+                            cb(error.code, error.response.status || 501, error.response.headers, error.response.data);
+                        } else {
+                            adapter.log.error('Cannot request web pages: no response');
+                            cb('no response', 501, {}, 'no response from web');
+                        }
+                    });
             } else {
-                cb('Admin or Web are inactive.', 404, [], 'Admin or Web are inactive.');
+                // analyse answer
+                return answerWithReason(adapter.config.instance, 'Web', cb);
             }
         } catch (e) {
             adapter.log.error('Cannot request: ' + e);
-            cb('Admin or Web are inactive.', 404, [], 'Admin or Web are inactive.');
+            cb('Admin or Web are inactive.', 404, {}, 'Admin or Web are inactive.');
         }
     });
 
@@ -743,9 +845,6 @@ function connect() {
 
     return new Promise(resolve => {
         if (adapter.config.instance) {
-            if (adapter.config.instance.substring(0, 'system.adapter.'.length) !== 'system.adapter.') {
-                adapter.config.instance = 'system.adapter.' + adapter.config.instance;
-            }
             adapter.getForeignObjectAsync(adapter.config.instance)
                 .then(obj => {
                     server = getConnectionString(obj);
@@ -814,41 +913,46 @@ function createInstancesStates(callback, objs) {
 function _createAppKey(cb) {
     adapter.log.info('Create new APP-KEY...')
     const url = `https://${adapter.config.server}:3001/api/v1/appkeys`;
-    request({
-        method: 'POST',
-        url,
-        headers: {
-            Authorization: 'Basic ' + Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')
-        }
-    }, (err, state, body) => {
-        if (state && state.statusCode === 401) {
-            return cb(`Invalid user name or password or server (may be it is ${adapter.config.server === 'iobroker.pro' ? 'iobroker.net' : 'iobroker.pro'})`);
-        }
-        if (body) {
-            try {
-                body = JSON.parse(body);
-            } catch (e) {
-                cb(`Cannot parse answer from server: ${e}`);
-            }
+
+    axios.post(url, null, {
+        headers: {Authorization: 'Basic ' + Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')},
+        validateStatus: status => status < 400
+    })
+        .then(response => {
+            let body = response.data;
+
             if (body && body.key && body.key[0]) {
                 adapter.log.info(`New APP-KEY is ${body.key[0]}`);
                 cb(null, body.key[0]);
             } else {
-                cb(`Cannot create app-key on server "${url}": ${err || state.statusCode || JSON.stringify(body)}`);
+                cb(`Cannot create app-key on server "${url}": ${JSON.stringify(body)}`);
             }
-        } else {
-            // retry in 20 seconds if server unavailable
-            if (err.code === 'ECONNREFUSED') {
+        })
+        .catch(error => {
+            if (error.code === 'ECONNREFUSED') {
                 adapter.log.warn('Server is offline or no connection. Retry in 10 seconds');
                 timeouts.createAppKey = setTimeout(() => {
                     timeouts.createAppKey = null;
                     _createAppKey(cb);
                 }, 10000);
+            } else
+            if (error.response && error.response.status === 401) {
+                return cb(`Invalid user name or password or server (may be it is ${adapter.config.server === 'iobroker.pro' ? 'iobroker.net' : 'iobroker.pro'})`);
+            } else if (error.response && error.response.data) {
+                let body = error.response.data;
+
+                if (body && body.key && body.key[0]) {
+                    adapter.log.info(`New APP-KEY is ${body.key[0]}`);
+                    cb(null, body.key[0]);
+                } else {
+                    cb(`Cannot create app-key on server "${url}": ${
+                        (error.response && error.response.status) || 
+                        (error.response && error.response.data && JSON.stringify(error.response.data)) || 'unknown error'}`);
+                }
             } else {
-                cb(`Cannot create app-key on server: ${err || body || state.statusCode}`);
+                cb(`Cannot create app-key on server "${url}": ${error.code || 'unknown error'}`);
             }
-        }
-    });
+        });
 }
 
 function _readAppKeyFromCloud(server, login, password, cb) {
@@ -856,47 +960,54 @@ function _readAppKeyFromCloud(server, login, password, cb) {
         cb = server;
         server = null;
     }
-    server = server || adapter.config.server;
-    login = login || adapter.config.login;
+    server   = server   || adapter.config.server;
+    login    = login    || adapter.config.login;
     password = password || adapter.config.pass;
 
     const url = `https://${server}:3001/api/v1/appkeys`;
-    request({
-        url,
-        headers : {
-            Authorization: 'Basic ' + Buffer.from(`${login}:${password}`).toString('base64')
-        }
-    }, (err, state, body) => {
-        if (state && state.statusCode === 401) {
-            return cb(`Invalid user name or password or server (may be it is ${server === 'iobroker.pro' ? 'iobroker.net' : 'iobroker.pro'})`);
-        }
-        if (body) {
-            try {
-                body = JSON.parse(body);
-            } catch (e) {
-                cb(`Cannot parse answer from server: ${e}`);
-            }
-            if (body[0]) {
+
+    axios.get(url, {
+        headers: {Authorization: 'Basic ' + Buffer.from(`${login}:${password}`).toString('base64')},
+        validateStatus: status => status < 400
+    })
+        .then(response => {
+            let body = response.data;
+
+            if (body && body[0] && body[0].key) {
                 cb(null, body[0].key);
             } else if (body) {
                 _createAppKey(cb);
             } else {
                 // todo: create key
-                cb(`Cannot find app-key on server ${url}: ${err || state.statusCode || 'key does not exist'}`);
+                cb(`Cannot create app-key on server "${url}": ${body ? JSON.stringify(body) : 'key does not exist'}`);
             }
-        } else {
-            // todo: retry in 20 seconds if server unavailable
-            if (err.code === 'ECONNREFUSED') {
+        })
+        .catch(error => {
+            if (error.code === 'ECONNREFUSED') {
                 adapter.log.warn('Server is offline or no connection. Retry in 10 seconds');
+
                 timeouts.readAppKey = setTimeout(() => {
                     timeouts.readAppKey = null;
                     _readAppKeyFromCloud(server, login, password, cb);
                 }, 10000);
+            } else
+            if (error.response && error.response.status === 401) {
+                return cb(`Invalid user name or password or server (may be it is ${adapter.config.server === 'iobroker.pro' ? 'iobroker.net' : 'iobroker.pro'})`);
+            } else if (error.response && error.response.data) {
+                let body = error.response.data;
+
+                if (body && body[0] && body[0].key) {
+                    adapter.log.info(`New APP-KEY is ${body[0].key}`);
+                    cb(null, body[0].key);
+                } else {
+                    cb(`Cannot create app-key on server "${url}": ${
+                        (error.response && error.response.status) ||
+                        (error.response && error.response.data && JSON.stringify(error.response.data)) || 'unknown error'}`);
+                }
             } else {
-                cb(`Cannot find app-key on server: ${err || state.statusCode}`);
+                cb(`Cannot create app-key on server "${url}": ${error.code || 'unknown error'}`);
             }
-        }
-    });
+        });
 }
 
 function readAppKeyFromCloud(_resolve, _reject) {
@@ -1005,10 +1116,20 @@ function main() {
                 });
             }
 
+            if (adapter.config.instance && !adapter.config.instance.startsWith('system.adapter.')) {
+                adapter.config.instance = 'system.adapter.' + adapter.config.instance;
+            }
+            if (adapter.config.allowAdmin && !adapter.config.allowAdmin.startsWith('system.adapter.')) {
+                adapter.config.allowAdmin = 'system.adapter.' + adapter.config.allowAdmin;
+            }
+            if (adapter.config.lovelace && !adapter.config.lovelace.startsWith('system.adapter.')) {
+                adapter.config.lovelace = 'system.adapter.' + adapter.config.lovelace;
+            }
+
             adapter.subscribeStates('smart.*');
-            adapter.config.instance && adapter.subscribeForeignObjects(adapter.config.instance, err => err && adapter.log.error(`Cannot subscribe: ${err}`));
+            adapter.config.instance   && adapter.subscribeForeignObjects(adapter.config.instance, err => err && adapter.log.error(`Cannot subscribe: ${err}`));
             adapter.config.allowAdmin && adapter.subscribeForeignObjects(adapter.config.allowAdmin, err => err && adapter.log.error(`Cannot subscribe: ${err}`));
-            adapter.config.lovelace && adapter.subscribeForeignObjects(adapter.config.lovelace, err => err && adapter.log.error(`Cannot subscribe: ${err}`));
+            adapter.config.lovelace   && adapter.subscribeForeignObjects(adapter.config.lovelace, err => err && adapter.log.error(`Cannot subscribe: ${err}`));
 
             adapter.log.info(`Connecting with ${adapter.config.cloudUrl} with "${apikey}"`);
 
