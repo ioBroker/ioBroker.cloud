@@ -1,305 +1,245 @@
 {
-    "common": {
-        "name": "cloud",
-        "version": "4.1.0",
-        "title": "Cloud connection",
-        "titleLang": {
-            "en": "Cloud connection",
-            "de": "Cloud-Verbindung",
-            "ru": "Облачное соединение",
-            "pt": "Conexão em nuvem",
-            "nl": "Cloud verbinding",
-            "fr": "Connexion au cloud",
-            "it": "Connessione cloud",
-            "es": "Conexión a la nube",
-            "pl": "Połączenie w chmurze",
-            "zh-cn": "云连接"
-        },
-        "desc": {
-            "en": "Connects your ioBroker server to the ioBroker cloud",
-            "de": "Verbindet Ihren ioBroker-Server mit der ioBroker-Cloud",
-            "ru": "Подключает сервер ioBroker к облаку ioBroker",
-            "pt": "Conecta seu servidor ioBroker à nuvem ioBroker",
-            "nl": "Verbindt uw ioBroker-server met de ioBroker-cloud",
-            "fr": "Connecte votre serveur ioBroker au cloud ioBroker",
-            "it": "Collega il tuo server ioBroker al cloud ioBroker",
-            "es": "Conecta tu ioBroker servidor a la ioBroker en la nube",
-            "pl": "Łączy serwer ioBroker na ioBroker chmura",
-            "zh-cn": "连接你的ioBroker服务器的ioBroker云"
-        },
-        "news": {
-            "4.1.0": {
-                "en": "Added support for new javascript",
-                "de": "Unterstützung für neues Javascript hinzugefügt",
-                "ru": "Добавлена поддержка нового javascript.",
-                "pt": "Adicionado suporte para novo javascript",
-                "nl": "Ondersteuning toegevoegd voor nieuw javascript",
-                "fr": "Ajout du support pour le nouveau javascript",
-                "it": "Aggiunto supporto per il nuovo javascript",
-                "es": "Soporte agregado para nuevo javascript",
-                "pl": "Dodano wsparcie dla nowego javascript",
-                "zh-cn": "添加了对新 javascript 的支持"
-            },
-            "4.0.11": {
-                "en": "Fixed the connection issue with the cloud\nAdded support for Admin5",
-                "de": "Das Verbindungsproblem mit der Cloud wurde behoben\nUnterstützung für Admin5 hinzugefügt",
-                "ru": "Исправлена проблема с подключением к облаку\nДобавлена поддержка Admin5",
-                "pt": "Corrigido o problema de conexão com a nuvem\nAdicionado suporte para Admin5",
-                "nl": "Het verbindingsprobleem met de cloud opgelost\nOndersteuning toegevoegd voor Admin5",
-                "fr": "Correction du problème de connexion avec le cloud\nAjout du support pour Admin5",
-                "it": "Risolto il problema di connessione con il cloud\nAggiunto supporto per Admin5",
-                "es": "Se solucionó el problema de conexión con la nube.\nSoporte agregado para Admin5",
-                "pl": "Naprawiono problem z połączeniem z chmurą\nDodano wsparcie dla Admin5",
-                "zh-cn": "修复了与云的连接问题\n添加了对Admin5的支持"
-            },
-            "4.0.10": {
-                "en": "Fix crash case (Sentry IOBROKER-CLOUD-X)",
-                "de": "Absturz behoben (Sentry IOBROKER-CLOUD-X)",
-                "ru": "Исправить сбой (Sentry IOBROKER-CLOUD-X)",
-                "pt": "Corrigir caso de falha (Sentry IOBROKER-CLOUD-X)",
-                "nl": "Crashcase repareren (Sentry IOBROKER-CLOUD-X)",
-                "fr": "Correction d'un cas de crash (Sentry IOBROKER-CLOUD-X)",
-                "it": "Risolto il problema di crash (Sentry IOBROKER-CLOUD-X)",
-                "es": "Reparar caso de bloqueo (Sentry IOBROKER-CLOUD-X)",
-                "pl": "Napraw przypadek awarii (Sentry IOBROKER-CLOUD-X)",
-                "zh-cn": "修复崩溃情况（Sentry IOBROKER-CLOUD-X）"
-            },
-            "4.0.9": {
-                "en": "Support of lovelace via ioBroker.pro\nFixed error with the admin",
-                "de": "Unterstützung von Lovelace über ioBroker.pro\nFehler beim Admin behoben",
-                "ru": "Поддержка ловеласа через ioBroker.pro\nИсправлена ошибка с админкой",
-                "pt": "Suporte de lovelace via ioBroker.pro\nErro corrigido com o administrador",
-                "nl": "Ondersteuning van lovelace via ioBroker.pro\nFout opgelost met de admin",
-                "fr": "Prise en charge de lovelace via ioBroker.pro\nCorrection d'une erreur avec l'administrateur",
-                "it": "Supporto di lovelace tramite ioBroker.pro\nRisolto errore con l'amministratore",
-                "es": "Soporte de lovelace a través de ioBroker.pro\nError solucionado con el administrador.",
-                "pl": "Wsparcie lovelace przez ioBroker.pro\nNaprawiono błąd z administratorem",
-                "zh-cn": "通过ioBroker.pro支持lovelace\n修复了管理员的错误"
-            },
-            "4.0.8": {
-                "en": "Prevent crash case (Sentry IOBROKER-CLOUD-S)\nfix usage of credentials",
-                "de": "Absturz verhindern (Sentry IOBROKER-CLOUD-S)\nKorrektur der Verwendung von Anmeldeinformationen",
-                "ru": "Предотвращение сбоя (Sentry IOBROKER-CLOUD-S)\nисправить использование учетных данных",
-                "pt": "Evitar caso de travamento (Sentry IOBROKER-CLOUD-S)\ncorrigir o uso de credenciais",
-                "nl": "Voorkom crash case (Sentry IOBROKER-CLOUD-S)\ngebruik van inloggegevens repareren",
-                "fr": "Prévenir les cas de crash (Sentry IOBROKER-CLOUD-S)\ncorriger l'utilisation des informations d'identification",
-                "it": "Prevenire il crash case (Sentry IOBROKER-CLOUD-S)\ncorreggere l'utilizzo delle credenziali",
-                "es": "Caso de prevención de accidentes (Sentry IOBROKER-CLOUD-S)\ncorregir el uso de credenciales",
-                "pl": "Zapobiegaj awariom (Sentry IOBROKER-CLOUD-S)\nnaprawić użycie poświadczeń",
-                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-CLOUD-S）\n修复凭证的使用"
-            },
-            "4.0.7": {
-                "en": "Show the invalid authentication message",
-                "de": "Zeigen Sie die ungültige Authentifizierungsnachricht an",
-                "ru": "Показать неверное сообщение аутентификации",
-                "pt": "Mostra a mensagem de autenticação inválida",
-                "nl": "Toon het ongeldige authenticatiebericht",
-                "fr": "Afficher le message d'authentification non valide",
-                "it": "Mostra il messaggio di autenticazione non valido",
-                "es": "Mostrar el mensaje de autenticación no válido",
-                "pl": "Pokaż nieprawidłową wiadomość uwierzytelniającą",
-                "zh-cn": "显示无效的验证消息"
-            },
-            "4.0.4": {
-                "en": "Stop all timers on the unloading",
-                "de": "Stoppen Sie alle Timer beim Entladen",
-                "ru": "Остановить все таймеры на разгрузке",
-                "pt": "Pare todos os cronômetros no descarregamento",
-                "nl": "Stop alle timers bij het uitladen",
-                "fr": "Arrêtez tous les minuteries lors du déchargement",
-                "it": "Ferma tutti i timer durante lo scarico",
-                "es": "Detén todos los temporizadores en la descarga",
-                "pl": "Zatrzymaj wszystkie liczniki czasu podczas rozładunku",
-                "zh-cn": "停止所有计时器"
-            },
-            "4.0.3": {
-                "en": "Added the ignoring of restart on disconnect by the redirection",
-                "de": "Das Ignorieren des Neustarts beim Trennen durch die Umleitung wurde hinzugefügt",
-                "ru": "Добавлено игнорирование перезапуска при отключении перенаправлением",
-                "pt": "Adicionada a opção de ignorar a reinicialização na desconexão pelo redirecionamento",
-                "nl": "Het negeren van opnieuw opstarten bij verbreken door de omleiding toegevoegd",
-                "fr": "Ajout de l'ignorance du redémarrage lors de la déconnexion par la redirection",
-                "it": "Aggiunto l'ignoranza del riavvio alla disconnessione dal reindirizzamento",
-                "es": "Se agregó la omisión del reinicio al desconectar mediante la redirección.",
-                "pl": "Dodano ignorowanie restartu po rozłączeniu przez przekierowanie",
-                "zh-cn": "添加了通过重定向断开连接时重新启动的忽略"
-            },
-            "4.0.2": {
-                "en": "Make sure states  which were not set or expired do not crash when requested via services (Sentry IOBROKER-CLOUD-P)",
-                "de": "Stellen Sie sicher, dass nicht festgelegte oder abgelaufene Zustände nicht abstürzen, wenn Sie über Dienste angefordert werden (Sentry IOBROKER-CLOUD-P).",
-                "ru": "Убедитесь, что состояния, которые не были установлены или с истекшим сроком действия, не аварийно завершаются при запросе через службы (Sentry IOBROKER-CLOUD-P)",
-                "pt": "Certifique-se de que os estados que não foram definidos ou expirados não travem quando solicitados por meio de serviços (Sentry IOBROKER-CLOUD-P)",
-                "nl": "Zorg ervoor dat staten die niet zijn ingesteld of verlopen, niet crashen wanneer ze worden aangevraagd via services (Sentry IOBROKER-CLOUD-P)",
-                "fr": "Assurez-vous que les états non définis ou expirés ne plantent pas lorsqu'ils sont demandés via les services (Sentry IOBROKER-CLOUD-P)",
-                "it": "Assicurati che gli stati non impostati o scaduti non si blocchino quando richiesto tramite i servizi (Sentry IOBROKER-CLOUD-P)",
-                "es": "Asegúrese de que los estados que no se establecieron o expiraron no se bloqueen cuando se soliciten a través de los servicios (Sentry IOBROKER-CLOUD-P)",
-                "pl": "Upewnij się, że stany, które nie zostały ustawione lub wygasły, nie ulegają awarii na żądanie za pośrednictwem usług (Sentry IOBROKER-CLOUD-P)",
-                "zh-cn": "确保通过服务请求时未设置或过期的状态不会崩溃（Sentry IOBROKER-CLOUD-P）"
-            },
-            "4.0.1": {
-                "en": "Prevent crash case (Sentry IOBROKER-CLOUD-N)",
-                "de": "Absturz verhindern (Sentry IOBROKER-CLOUD-N)",
-                "ru": "Случай предотвращения сбоя (Sentry IOBROKER-CLOUD-N)",
-                "pt": "Evitar caso de falha (Sentry IOBROKER-CLOUD-N)",
-                "nl": "Voorkom crash case (Sentry IOBROKER-CLOUD-N)",
-                "fr": "Prévenir les cas de crash (Sentry IOBROKER-CLOUD-N)",
-                "it": "Prevenire il crash case (Sentry IOBROKER-CLOUD-N)",
-                "es": "Prevenir caso de accidente (Sentry IOBROKER-CLOUD-N)",
-                "pl": "Zapobiegaj awariom (Sentry IOBROKER-CLOUD-N)",
-                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-CLOUD-N）"
-            },
-            "4.0.0": {
-                "en": "Breaking change! Alexa was removed from cloud adapter.\nAllowed to use the login and password for authentication.",
-                "de": "Veränderung brechen! Alexa wurde vom Cloud-Adapter entfernt.\nErlaubt die Verwendung des Logins und des Passworts zur Authentifizierung.",
-                "ru": "Критическое изменение! Алекса была удалена из облачного адаптера.\nРазрешено использовать логин и пароль для аутентификации.",
-                "pt": "Quebrando a mudança! Alexa foi removida do adaptador de nuvem.\nTem permissão para usar o login e a senha para autenticação.",
-                "nl": "Verandering doorbreken! Alexa is verwijderd uit de cloudadapter.\nToegestaan om de login en het wachtwoord te gebruiken voor authenticatie.",
-                "fr": "Changement de rupture! Alexa a été supprimée de l'adaptateur cloud.\nAutorisé à utiliser le login et le mot de passe pour l'authentification.",
-                "it": "Rottura del cambiamento! Alexa è stato rimosso dall'adattatore cloud.\nAutorizzato a utilizzare il login e la password per l'autenticazione.",
-                "es": "¡Rompiendo el cambio! Alexa fue eliminada del adaptador de nube.\nSe le permite utilizar el nombre de usuario y la contraseña para la autenticación.",
-                "pl": "Przełomowa zmiana! Alexa została usunięta z adaptera chmury.\nDozwolone jest używanie loginu i hasła do uwierzytelniania.",
-                "zh-cn": "零钱！ Alexa已从云适配器中删除。\n允许使用登录名和密码进行身份验证。"
-            },
-            "3.1.0": {
-                "en": "Implemented the easy simpleApi commands (not all)",
-                "de": "Implementierte die einfachen simpleApi-Befehle (nicht alle)",
-                "ru": "Реализованы простые команды simpleApi (не все)",
-                "pt": "Implementado os comandos simpleApi fáceis (não todos)",
-                "nl": "Implementeerde de eenvoudige simpleApi-opdrachten (niet alle)",
-                "fr": "Implémentation des commandes simples simplesApi (pas toutes)",
-                "it": "Implementati i semplici comandi simpleApi (non tutti)",
-                "es": "Implementó los comandos sencillos de simpleApi (no todos)",
-                "pl": "Zaimplementowano proste polecenia simpleApi (nie wszystkie)",
-                "zh-cn": "实现了简单的simpleApi命令（并非全部）"
-            }
-        },
-        "authors": [
-            "bluefox <dogafox@gmail.com>"
-        ],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "mode": "daemon",
-        "loglevel": "info",
-        "readme": "https://github.com/ioBroker/ioBroker.cloud/blob/master/README.md",
-        "icon": "cloud.png",
-        "keywords": [
-            "web",
-            "Cloud",
-            "communication"
-        ],
-        "compact": true,
-        "enabled": false,
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.cloud/master/admin/cloud.png",
-        "type": "communication",
-        "messagebox": true,
-        "stopBeforeUpdate": true,
-        "materialize": true,
-        "dependencies": [
-            {
-                "js-controller": ">=3.1.3"
-            }
-        ],
-        "preserveSettings": "smartName",
-        "blockly": true,
-        "logTransporter": true,
-        "adminUI": {
-            "config": "json"
-        },
-        "connectionType": "cloud",
-        "dataSource": "push",
-        "plugins": {
-            "sentry": {
-                "dsn": "https://4e98835e3b074c49a3e31d51a46801a2@sentry.iobroker.net/33"
-            }
-        }
+  "common": {
+    "name": "cloud",
+    "version": "4.1.1",
+    "title": "Cloud connection",
+    "titleLang": {
+      "en": "Cloud connection",
+      "de": "Cloud-Verbindung",
+      "ru": "Облачное соединение",
+      "pt": "Conexão em nuvem",
+      "nl": "Cloud verbinding",
+      "fr": "Connexion au cloud",
+      "it": "Connessione cloud",
+      "es": "Conexión a la nube",
+      "pl": "Połączenie w chmurze",
+      "zh-cn": "云连接"
     },
-    "protectedNative": [
-        "login",
-        "pass",
-        "apikey"
-    ],
-    "encryptedNative": [
-        "pass"
-    ],
-    "native": {
-        "language": "",
-        "login": "email.com",
-        "pass": "",
-        "server": "iobroker.pro",
-        "apikey": "",
-        "instance": "web.0",
-        "cloudUrl": "https://iobroker.net:10555",
-        "connectionTimeout": 10000,
-        "allowSelfSignedCertificate": true,
-        "functionFirst": false,
-        "concatWord": "",
-        "responseOID": "",
-        "restartOnDisconnect": false,
-        "pingTimeout": 5000,
-        "iftttKey": "",
-        "replaces": "",
-        "allowedServices": "",
-        "text2command": "0",
-        "allowAdmin": "",
-        "lovelace": "",
-        "noCommon": false,
-        "useCredentials": true
+    "desc": {
+      "en": "Connects your ioBroker server to the ioBroker cloud",
+      "de": "Verbindet Ihren ioBroker-Server mit der ioBroker-Cloud",
+      "ru": "Подключает сервер ioBroker к облаку ioBroker",
+      "pt": "Conecta seu servidor ioBroker à nuvem ioBroker",
+      "nl": "Verbindt uw ioBroker-server met de ioBroker-cloud",
+      "fr": "Connecte votre serveur ioBroker au cloud ioBroker",
+      "it": "Collega il tuo server ioBroker al cloud ioBroker",
+      "es": "Conecta tu ioBroker servidor a la ioBroker en la nube",
+      "pl": "Łączy serwer ioBroker na ioBroker chmura",
+      "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "If connected to cloud",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.userOnCloud",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "If user is connected over cloud",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.remoteTill",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Time till pro access is available",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "services",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        }
-    ]
+    "news": {
+      "4.1.1": {
+        "en": "Important: Requires js-controller 3.1 at least!\nAdd some checks to prevent issues with missing data\nFIx some crash cases reported by Sentry\npass HEAD requests without body (Sentry IOBROKER-CLOUD-14)",
+        "de": "Wichtig: Benötigt mindestens js-controller 3.1!\nFügen Sie einige Überprüfungen hinzu, um Probleme mit fehlenden Daten zu vermeiden\nBehebung einiger von Sentry gemeldeter Absturzfälle\nHEAD-Anfragen ohne Text weitergeben (Sentry IOBROKER-CLOUD-14)",
+        "ru": "Важно: Требуется js-контроллер версии не ниже 3.1!\nДобавьте некоторые проверки, чтобы предотвратить проблемы с отсутствующими данными\nИсправьте некоторые случаи сбоев, о которых сообщил Sentry.\nпередавать запросы HEAD без тела (Sentry IOBROKER-CLOUD-14)",
+        "pt": "Importante: Requer js-controller 3.1 pelo menos!\nAdicione algumas verificações para evitar problemas com dados ausentes\nCorrigir alguns casos de travamento relatados pelo Sentinela\npassar solicitações HEAD sem corpo (Sentry IOBROKER-CLOUD-14)",
+        "nl": "Belangrijk: vereist minimaal js-controller 3.1!\nVoeg enkele controles toe om problemen met ontbrekende gegevens te voorkomen\nRepareer enkele crashgevallen gemeld door Sentry\npass HEAD-verzoeken zonder hoofdtekst (Sentry IOBROKER-CLOUD-14)",
+        "fr": "Important : Nécessite au moins js-controller 3.1 !\nAjoutez quelques vérifications pour éviter les problèmes de données manquantes\nCorrection de certains cas de plantage signalés par Sentry\npasser les requêtes HEAD sans corps (Sentry IOBROKER-CLOUD-14)",
+        "it": "Importante: richiede almeno js-controller 3.1!\nAggiungi alcuni controlli per evitare problemi con i dati mancanti\nRisolvi alcuni casi di crash segnalati da Sentry\nsupera le richieste HEAD senza corpo (Sentry IOBROKER-CLOUD-14)",
+        "es": "Importante: ¡Requiere js-controller 3.1 al menos!\nAgregue algunas comprobaciones para evitar problemas con datos faltantes\nSolucionar algunos casos de fallas informados por Sentry\npasar solicitudes HEAD sin cuerpo (Sentry IOBROKER-CLOUD-14)",
+        "pl": "Ważne: Wymaga przynajmniej js-controller 3.1!\nDodaj kilka testów, aby zapobiec problemom z brakującymi danymi\nNapraw niektóre przypadki awarii zgłoszone przez Sentry\nprzekazać żądania HEAD bez treści (Sentry IOBROKER-CLOUD-14)",
+        "zh-cn": "重要提示：至少需要 js-controller 3.1！\n添加一些检查以防止丢失数据的问题\n修复了 Sentry 报告的一些崩溃案例\n传递没有正文的 HEAD 请求 (Sentry IOBROKER-CLOUD-14)"
+      },
+      "4.1.0": {
+        "en": "Added support for new javascript",
+        "de": "Unterstützung für neues Javascript hinzugefügt",
+        "ru": "Добавлена поддержка нового javascript.",
+        "pt": "Adicionado suporte para novo javascript",
+        "nl": "Ondersteuning toegevoegd voor nieuw javascript",
+        "fr": "Ajout du support pour le nouveau javascript",
+        "it": "Aggiunto supporto per il nuovo javascript",
+        "es": "Soporte agregado para nuevo javascript",
+        "pl": "Dodano wsparcie dla nowego javascript",
+        "zh-cn": "添加了对新 javascript 的支持"
+      },
+      "4.0.11": {
+        "en": "Fixed the connection issue with the cloud\nAdded support for Admin5",
+        "de": "Das Verbindungsproblem mit der Cloud wurde behoben\nUnterstützung für Admin5 hinzugefügt",
+        "ru": "Исправлена проблема с подключением к облаку\nДобавлена поддержка Admin5",
+        "pt": "Corrigido o problema de conexão com a nuvem\nAdicionado suporte para Admin5",
+        "nl": "Het verbindingsprobleem met de cloud opgelost\nOndersteuning toegevoegd voor Admin5",
+        "fr": "Correction du problème de connexion avec le cloud\nAjout du support pour Admin5",
+        "it": "Risolto il problema di connessione con il cloud\nAggiunto supporto per Admin5",
+        "es": "Se solucionó el problema de conexión con la nube.\nSoporte agregado para Admin5",
+        "pl": "Naprawiono problem z połączeniem z chmurą\nDodano wsparcie dla Admin5",
+        "zh-cn": "修复了与云的连接问题\n添加了对Admin5的支持"
+      },
+      "4.0.10": {
+        "en": "Fix crash case (Sentry IOBROKER-CLOUD-X)",
+        "de": "Absturz behoben (Sentry IOBROKER-CLOUD-X)",
+        "ru": "Исправить сбой (Sentry IOBROKER-CLOUD-X)",
+        "pt": "Corrigir caso de falha (Sentry IOBROKER-CLOUD-X)",
+        "nl": "Crashcase repareren (Sentry IOBROKER-CLOUD-X)",
+        "fr": "Correction d'un cas de crash (Sentry IOBROKER-CLOUD-X)",
+        "it": "Risolto il problema di crash (Sentry IOBROKER-CLOUD-X)",
+        "es": "Reparar caso de bloqueo (Sentry IOBROKER-CLOUD-X)",
+        "pl": "Napraw przypadek awarii (Sentry IOBROKER-CLOUD-X)",
+        "zh-cn": "修复崩溃情况（Sentry IOBROKER-CLOUD-X）"
+      },
+      "4.0.9": {
+        "en": "Support of lovelace via ioBroker.pro\nFixed error with the admin",
+        "de": "Unterstützung von Lovelace über ioBroker.pro\nFehler beim Admin behoben",
+        "ru": "Поддержка ловеласа через ioBroker.pro\nИсправлена ошибка с админкой",
+        "pt": "Suporte de lovelace via ioBroker.pro\nErro corrigido com o administrador",
+        "nl": "Ondersteuning van lovelace via ioBroker.pro\nFout opgelost met de admin",
+        "fr": "Prise en charge de lovelace via ioBroker.pro\nCorrection d'une erreur avec l'administrateur",
+        "it": "Supporto di lovelace tramite ioBroker.pro\nRisolto errore con l'amministratore",
+        "es": "Soporte de lovelace a través de ioBroker.pro\nError solucionado con el administrador.",
+        "pl": "Wsparcie lovelace przez ioBroker.pro\nNaprawiono błąd z administratorem",
+        "zh-cn": "通过ioBroker.pro支持lovelace\n修复了管理员的错误"
+      },
+      "4.0.8": {
+        "en": "Prevent crash case (Sentry IOBROKER-CLOUD-S)\nfix usage of credentials",
+        "de": "Absturz verhindern (Sentry IOBROKER-CLOUD-S)\nKorrektur der Verwendung von Anmeldeinformationen",
+        "ru": "Предотвращение сбоя (Sentry IOBROKER-CLOUD-S)\nисправить использование учетных данных",
+        "pt": "Evitar caso de travamento (Sentry IOBROKER-CLOUD-S)\ncorrigir o uso de credenciais",
+        "nl": "Voorkom crash case (Sentry IOBROKER-CLOUD-S)\ngebruik van inloggegevens repareren",
+        "fr": "Prévenir les cas de crash (Sentry IOBROKER-CLOUD-S)\ncorriger l'utilisation des informations d'identification",
+        "it": "Prevenire il crash case (Sentry IOBROKER-CLOUD-S)\ncorreggere l'utilizzo delle credenziali",
+        "es": "Caso de prevención de accidentes (Sentry IOBROKER-CLOUD-S)\ncorregir el uso de credenciales",
+        "pl": "Zapobiegaj awariom (Sentry IOBROKER-CLOUD-S)\nnaprawić użycie poświadczeń",
+        "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-CLOUD-S）\n修复凭证的使用"
+      },
+      "4.0.7": {
+        "en": "Show the invalid authentication message",
+        "de": "Zeigen Sie die ungültige Authentifizierungsnachricht an",
+        "ru": "Показать неверное сообщение аутентификации",
+        "pt": "Mostra a mensagem de autenticação inválida",
+        "nl": "Toon het ongeldige authenticatiebericht",
+        "fr": "Afficher le message d'authentification non valide",
+        "it": "Mostra il messaggio di autenticazione non valido",
+        "es": "Mostrar el mensaje de autenticación no válido",
+        "pl": "Pokaż nieprawidłową wiadomość uwierzytelniającą",
+        "zh-cn": "显示无效的验证消息"
+      }
+    },
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "loglevel": "info",
+    "readme": "https://github.com/ioBroker/ioBroker.cloud/blob/master/README.md",
+    "icon": "cloud.png",
+    "keywords": [
+      "web",
+      "Cloud",
+      "communication"
+    ],
+    "compact": true,
+    "enabled": false,
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.cloud/master/admin/cloud.png",
+    "type": "communication",
+    "messagebox": true,
+    "stopBeforeUpdate": true,
+    "materialize": true,
+    "dependencies": [
+      {
+        "js-controller": ">=3.1.3"
+      }
+    ],
+    "preserveSettings": "smartName",
+    "blockly": true,
+    "logTransporter": true,
+    "adminUI": {
+      "config": "json"
+    },
+    "connectionType": "cloud",
+    "dataSource": "push",
+    "plugins": {
+      "sentry": {
+        "dsn": "https://4e98835e3b074c49a3e31d51a46801a2@sentry.iobroker.net/33"
+      }
+    }
+  },
+  "protectedNative": [
+    "login",
+    "pass",
+    "apikey"
+  ],
+  "encryptedNative": [
+    "pass"
+  ],
+  "native": {
+    "language": "",
+    "login": "email.com",
+    "pass": "",
+    "server": "iobroker.pro",
+    "apikey": "",
+    "instance": "web.0",
+    "cloudUrl": "https://iobroker.net:10555",
+    "connectionTimeout": 10000,
+    "allowSelfSignedCertificate": true,
+    "functionFirst": false,
+    "concatWord": "",
+    "responseOID": "",
+    "restartOnDisconnect": false,
+    "pingTimeout": 5000,
+    "iftttKey": "",
+    "replaces": "",
+    "allowedServices": "",
+    "text2command": "0",
+    "allowAdmin": "",
+    "lovelace": "",
+    "noCommon": false,
+    "useCredentials": true
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If connected to cloud",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.userOnCloud",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If user is connected over cloud",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.remoteTill",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Time till pro access is available",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "services",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    }
+  ]
 }
