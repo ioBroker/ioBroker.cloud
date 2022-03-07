@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "socket.io": "~1.7.4",
-    "socket.io-client": "~1.7.4",
+    "socket.io-client": "~4.4.1",
     "cookie-parser": "^1.4.6",
     "request": "^2.88.2",
     "@iobroker/adapter-core": "^2.6.0",
