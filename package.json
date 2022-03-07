@@ -21,7 +21,7 @@
     "socket.io-client": "~1.7.4",
     "cookie-parser": "^1.4.6",
     "request": "^2.88.2",
-    "@iobroker/adapter-core": "^2.5.1",
+    "@iobroker/adapter-core": "^2.6.0",
     "ws": "^8.5.0"
   },
   "devDependencies": {
