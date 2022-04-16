@@ -172,7 +172,7 @@ function getConnectionString(obj) {
             return conn;
         } else
         if (!obj.common.enabled) {
-            adapter.log.error(`Instance ${obj._id.replace('system.adapter.', '')} not enabled. Please enabled this instance for cloud`);
+            adapter.log.error(`Instance ${obj._id.replace('system.adapter.', '')} not enabled. Please enable this instance for cloud`);
             return conn;
         } else {
             conn = `http${obj.native.secure ? 's' : ''}://`;
