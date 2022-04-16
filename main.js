@@ -761,9 +761,11 @@ function connect() {
                         adapter.getForeignState(parts[1], (error, state) => {
                             if (error) {
                                 callback && callback({error});
-                            } else {
+                            } else if (state) {
                                 state.result = 'Ok';
                                 callback && callback(state);
+                            } else {
+                                callback && callback({result: 'Not found'});
                             }
                         });
                     } else if (parts[0] === 'getPlainValue') {
@@ -963,6 +965,16 @@ function _readAppKeyFromCloud(server, login, password, cb) {
     server   = server   || adapter.config.server;
     login    = login    || adapter.config.login;
     password = password || adapter.config.pass;
+
+    if (!server.length) {
+        return cb('Servername not provided. Please check your configuration!');
+    }
+    if (!login.length) {
+        return cb('Login not provided. Please check your configuration!');
+    }
+    if (!password.length) {
+        return cb('Password not provided. Please check your configuration!');
+    }
 
     const url = `https://${server}:3001/api/v1/appkeys`;
 
