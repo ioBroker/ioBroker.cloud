@@ -4,7 +4,7 @@
 'use strict';
 
 const utils         = require('@iobroker/adapter-core'); // Get common adapter utils
-const IOSocket      = require('./lib/socket.js'); // temporary
+const SocketCloud   = require('./lib/socketCloud.js');
 const axios         = require('axios');
 const pack          = require('./io-package.json');
 const adapterName   = require('./package.json').name.split('.').pop();
@@ -523,7 +523,7 @@ function startConnect(immediately) {
 }
 
 function initConnect(socket, options) {
-    ioSocket = new IOSocket(socket, {...options, lovelaceServer}, adapter);
+    ioSocket = new SocketCloud(socket, options, adapter, lovelaceServer);
 
     ioSocket.on('connect',         onConnect);
     ioSocket.on('disconnect',      onDisconnect);
@@ -843,7 +843,10 @@ function connect() {
         }
     });
 
-    socket.on('error', error => startConnect());
+    socket.on('error', error => {
+        console.error('Some error: ' + error);
+        startConnect()
+    });
 
     return new Promise(resolve => {
         if (adapter.config.instance) {
@@ -860,9 +863,7 @@ function connect() {
         .then(() => {
             if (adapter.config.allowAdmin) {
                 return adapter.getForeignObjectAsync(adapter.config.allowAdmin)
-                    .then(obj => {
-                        adminServer = getConnectionString(obj);
-                    })
+                    .then(obj => adminServer = getConnectionString(obj))
                     .catch(() => null);
             } else {
                 return Promise.resolve();
