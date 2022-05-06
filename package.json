@@ -19,7 +19,7 @@
   "dependencies": {
     "@iobroker/adapter-core": "^2.6.0",
     "@iobroker/socket-classes": "^0.1.7",
-    "socket.io-client": "~1.7.4",
+    "socket.io-client": "~4.5.0",
     "cookie-parser": "^1.4.6",
     "axios": "^0.27.2",
     "ws": "^8.6.0"
