@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "4.1.1",
+    "version": "4.1.2",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,18 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "4.1.2": {
+        "en": "Added preparations for Admin 6\nAdded better error reporting\nRemoved outdated `request` library\nUsed common sockets (could be buggy)",
+        "de": "Weitere Vorbereitungen für Admin 6\nBessere Fehlermeldung\nEntfernte veraltete Anfrage-Bibliothek\nVerwendete häufige Steckdosen (sollte Buggy sein)",
+        "ru": "Добавлены препараты для Admin 6\nДобавлена лучшая отчетность об ошибке\nУдаленная библиотека запросов\nИспользуемые общие розетки (может быть багги)",
+        "pt": "Preparações adicionadas para Admin 6\nAdicionado melhor relatório de erro\nBiblioteca de solicitação desatualizada\nTomadas comuns usadas (pode ser buggy)",
+        "nl": "Aangepaste voorbereidingen voor Admin 6\nVoeg betere fouten toe\nVerwijder de bibliotheek\nGebruikte gemeenschappelijke sokken",
+        "fr": "Préparations supplémentaires pour Admin 6\nAjout d'une meilleure déclaration d'erreur\nBibliothèque de demandes désuètes\nDouilles courantes usagées (peut être buggy)",
+        "it": "Aggiunto preparazioni per Admin 6\nAggiunto migliore segnalazione di errore\nLibreria di richiesta obsoleta\nUsato prese comuni (potrebbe essere buggy)",
+        "es": "Preparativos adicionales para el Admin 6\nMás información sobre errores\nBiblioteca de solicitud desactualizada\nEnchufes comunes usados (puede ser buggy)",
+        "pl": "Administrowane przygotowania do Admin 6\nPoniższy raport dotyczący błędów\nPrzewidywać się\nStosowane gniazda (could be buggy)",
+        "zh-cn": "增 编 6\n增加较好的错误报告\n删除过时要求图书馆\nA. 使用共同配量(可偷运)"
+      },
       "4.1.1": {
         "en": "Important: Requires js-controller 3.1 at least!\nAdd some checks to prevent issues with missing data\nFIx some crash cases reported by Sentry\npass HEAD requests without body (Sentry IOBROKER-CLOUD-14)",
         "de": "Wichtig: Benötigt mindestens js-controller 3.1!\nFügen Sie einige Überprüfungen hinzu, um Probleme mit fehlenden Daten zu vermeiden\nBehebung einiger von Sentry gemeldeter Absturzfälle\nHEAD-Anfragen ohne Text weitergeben (Sentry IOBROKER-CLOUD-14)",
@@ -99,18 +111,6 @@
         "es": "Caso de prevención de accidentes (Sentry IOBROKER-CLOUD-S)\ncorregir el uso de credenciales",
         "pl": "Zapobiegaj awariom (Sentry IOBROKER-CLOUD-S)\nnaprawić użycie poświadczeń",
         "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-CLOUD-S）\n修复凭证的使用"
-      },
-      "4.0.7": {
-        "en": "Show the invalid authentication message",
-        "de": "Zeigen Sie die ungültige Authentifizierungsnachricht an",
-        "ru": "Показать неверное сообщение аутентификации",
-        "pt": "Mostra a mensagem de autenticação inválida",
-        "nl": "Toon het ongeldige authenticatiebericht",
-        "fr": "Afficher le message d'authentification non valide",
-        "it": "Mostra il messaggio di autenticazione non valido",
-        "es": "Mostrar el mensaje de autenticación no válido",
-        "pl": "Pokaż nieprawidłową wiadomość uwierzytelniającą",
-        "zh-cn": "显示无效的验证消息"
       }
     },
     "authors": [
