@@ -642,6 +642,13 @@ function connect() {
             if (url.match(/^\/admin\//)) {
                 if (adminServer && adapter.config.allowAdmin) {
                     url = url.substring(6);
+                    if (url.includes('loginBackgroundImage')) {
+                        console.log('AAA')
+                    }
+                    if (url === '/@@loginBackgroundImage@@') {
+                        url = '/files/admin.0/login-bg.png';
+                    }
+
                     axios.get(adminServer + url, {responseType: 'arraybuffer', validateStatus: status => status < 400})
                         .then(response => cb(null, response.status, response.headers, response.data))
                         .catch(error => {
