@@ -146,16 +146,30 @@ function startAdapter(options) {
                         }
                         break;
 
+                    case 'cmdStdout':
+                    case 'cmdStderr':
+                    case 'cmdExit':
+                    case 'getHostInfo':
+                        // send to cloud
+                        ioSocket && ioSocket.send(socket, obj.command, obj.message.id, obj.message.data);
+                        break;
+
                     default:
-                        adapter.log.warn('Unknown command: ' + obj.command);
+                        adapter.log.warn('Unknown command_: ' + obj.command);
                         break;
                 }
             }
         },
-        ready: () => createInstancesStates(main)
+        ready: () => createInstancesStates(main),
     });
 
     adapter = new utils.Adapter(options);
+
+    adapter.on('log', obj => {
+        if (apikey && apikey.startsWith('@pro_')) {
+            ioSocket && ioSocket.send(socket, 'log', obj);
+        }
+    });
 
     return adapter;
 }
@@ -264,8 +278,7 @@ function controlState(id, data, callback) {
                 data.ack = true;
             }
             if (data.val === undefined) {
-                callback && callback('No value set');
-                return;
+                return callback && callback('No value set');
             }
             adapter.getForeignObject(data.id, (err, obj) => {
                 if (!obj || !obj.common) {
