@@ -20,7 +20,7 @@ This is application key that the user can get on [https://iobroker.net](https://
 ![Intro](img/intro.png)
 
 ### Instance
-All requests from cloud adapter will be routed to some WEB Instance. User must specify here the WEB instance, that will be showed to user, when he logs in https://iobroker.net site.
+All requests from cloud adapter will be routed to specific WEB Instance. User must specify here the WEB instance, that will be showed to user, when he logs in https://iobroker.net site.
 
 ### Allow self-signed certificates
 If you use standard iobroker.net cloud, you can deactivate it. This option is only important if own cloud used.
@@ -75,6 +75,9 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Added preparations for Admin 6
+
 ### 4.1.2 (2022-06-22)
 * (bluefox) Added preparations for Admin 6
 * (bluefox) Added better error reporting
