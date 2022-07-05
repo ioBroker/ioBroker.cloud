@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "4.1.2",
+    "version": "4.2.0",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,18 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "4.2.0": {
+        "en": "Added preparations for Admin 6",
+        "de": "Weitere Vorbereitungen für Admin 6",
+        "ru": "Добавлены препараты для Admin 6",
+        "pt": "Preparações adicionadas para Admin 6",
+        "nl": "Aangepaste voorbereidingen voor Admin 6",
+        "fr": "Préparations supplémentaires pour Admin 6",
+        "it": "Aggiunto preparazioni per Admin 6",
+        "es": "Preparativos adicionales para el Admin 6",
+        "pl": "Administrowane przygotowania do Admin 6",
+        "zh-cn": "增 编 6"
+      },
       "4.1.2": {
         "en": "Added preparations for Admin 6\nAdded better error reporting\nRemoved outdated `request` library\nUsed common sockets (could be buggy)",
         "de": "Weitere Vorbereitungen für Admin 6\nBessere Fehlermeldung\nEntfernte veraltete Anfrage-Bibliothek\nVerwendete häufige Steckdosen (sollte Buggy sein)",
@@ -99,18 +111,6 @@
         "es": "Soporte de lovelace a través de ioBroker.pro\nError solucionado con el administrador.",
         "pl": "Wsparcie lovelace przez ioBroker.pro\nNaprawiono błąd z administratorem",
         "zh-cn": "通过ioBroker.pro支持lovelace\n修复了管理员的错误"
-      },
-      "4.0.8": {
-        "en": "Prevent crash case (Sentry IOBROKER-CLOUD-S)\nfix usage of credentials",
-        "de": "Absturz verhindern (Sentry IOBROKER-CLOUD-S)\nKorrektur der Verwendung von Anmeldeinformationen",
-        "ru": "Предотвращение сбоя (Sentry IOBROKER-CLOUD-S)\nисправить использование учетных данных",
-        "pt": "Evitar caso de travamento (Sentry IOBROKER-CLOUD-S)\ncorrigir o uso de credenciais",
-        "nl": "Voorkom crash case (Sentry IOBROKER-CLOUD-S)\ngebruik van inloggegevens repareren",
-        "fr": "Prévenir les cas de crash (Sentry IOBROKER-CLOUD-S)\ncorriger l'utilisation des informations d'identification",
-        "it": "Prevenire il crash case (Sentry IOBROKER-CLOUD-S)\ncorreggere l'utilizzo delle credenziali",
-        "es": "Caso de prevención de accidentes (Sentry IOBROKER-CLOUD-S)\ncorregir el uso de credenciales",
-        "pl": "Zapobiegaj awariom (Sentry IOBROKER-CLOUD-S)\nnaprawić użycie poświadczeń",
-        "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-CLOUD-S）\n修复凭证的使用"
       }
     },
     "authors": [

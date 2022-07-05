@@ -75,7 +75,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.2.0 (2022-07-05)
 * (bluefox) Added preparations for Admin 6
 
 ### 4.1.2 (2022-06-22)
