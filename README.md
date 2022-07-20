@@ -75,7 +75,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.2.1 (2022-07-20)
 * (bluefox) Used new version of socket library.
 
 ### 4.2.0 (2022-07-05)
