@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "4.2.1",
+    "version": "4.2.2",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,18 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "4.2.2": {
+        "en": "Corrected error with services list and admin6",
+        "de": "Fehler behoben mit der Dienstliste und admin6",
+        "ru": "Исправлена ошибка со списком услуг и admin6",
+        "pt": "Erro correto com lista de serviços e admin6",
+        "nl": "Verkeerde fout met dienstenlijst en administratie",
+        "fr": "Erreur corrigée avec la liste de services et admin6",
+        "it": "Errore corretto con l'elenco dei servizi e admin6",
+        "es": "Error corregido con lista de servicios y admin6",
+        "pl": "Poprawny błąd z listą serwisową i admin6",
+        "zh-cn": "服务清单和注6的更正错误"
+      },
       "4.2.1": {
         "en": "Used new version of socket library.",
         "de": "Gebrauchte neue Version der Steckdosenbibliothek.",
@@ -99,18 +111,6 @@
         "es": "Se solucionó el problema de conexión con la nube.\nSoporte agregado para Admin5",
         "pl": "Naprawiono problem z połączeniem z chmurą\nDodano wsparcie dla Admin5",
         "zh-cn": "修复了与云的连接问题\n添加了对Admin5的支持"
-      },
-      "4.0.10": {
-        "en": "Fix crash case (Sentry IOBROKER-CLOUD-X)",
-        "de": "Absturz behoben (Sentry IOBROKER-CLOUD-X)",
-        "ru": "Исправить сбой (Sentry IOBROKER-CLOUD-X)",
-        "pt": "Corrigir caso de falha (Sentry IOBROKER-CLOUD-X)",
-        "nl": "Crashcase repareren (Sentry IOBROKER-CLOUD-X)",
-        "fr": "Correction d'un cas de crash (Sentry IOBROKER-CLOUD-X)",
-        "it": "Risolto il problema di crash (Sentry IOBROKER-CLOUD-X)",
-        "es": "Reparar caso de bloqueo (Sentry IOBROKER-CLOUD-X)",
-        "pl": "Napraw przypadek awarii (Sentry IOBROKER-CLOUD-X)",
-        "zh-cn": "修复崩溃情况（Sentry IOBROKER-CLOUD-X）"
       }
     },
     "authors": [
