@@ -1115,10 +1115,12 @@ function main() {
 
             // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-            adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
-            for (let s = 0; s < adapter.config.allowedServices.length; s++) {
-                adapter.config.allowedServices[s] = adapter.config.allowedServices[s].trim();
+            if (typeof adapter.config.allowedServices === 'string') {
+                adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
+            } else if (!Array.isArray(adapter.config.allowedServices)) {
+                adapter.config.allowedServices = [];
             }
+            adapter.config.allowedServices = adapter.config.allowedServices.map(s => s.trim());
 
             adapter.setState('info.connection', false, true);
             adapter.config.cloudUrl = adapter.config.cloudUrl || 'https://iobroker.net:10555';
