@@ -28,7 +28,7 @@
     "@alcalzone/release-script": "^3.5.9",
     "@alcalzone/release-script-plugin-iobroker": "^3.5.9",
     "@alcalzone/release-script-plugin-license": "^3.5.9",
-    "@iobroker/testing": "^3.0.2",
+    "@iobroker/testing": "^4.1.0",
     "@types/node": "^18.7.13",
     "gulp": "^4.0.2",
     "mocha": "^10.0.0",
