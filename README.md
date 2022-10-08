@@ -75,6 +75,10 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Prepare for future js-controller versions
+
 ### 4.2.2 (2022-08-24)
 * (bluefox) Corrected error with services list and admin6
 

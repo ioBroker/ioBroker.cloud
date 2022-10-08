@@ -17,20 +17,20 @@
     "url": "https://github.com/ioBroker/ioBroker.cloud"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.6.0",
-    "@iobroker/socket-classes": "^0.5.3",
+    "@iobroker/adapter-core": "^2.6.7",
+    "@iobroker/socket-classes": "^0.5.4",
     "socket.io-client": "~1.7.4",
     "cookie-parser": "^1.4.6",
     "axios": "^0.27.2",
-    "ws": "^8.8.1"
+    "ws": "^8.9.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.5.9",
     "@alcalzone/release-script-plugin-iobroker": "^3.5.9",
     "@alcalzone/release-script-plugin-license": "^3.5.9",
+    "@iobroker/adapter-dev": "^1.1.0",
     "@iobroker/testing": "^4.1.0",
-    "@types/node": "^18.7.14",
-    "gulp": "^4.0.2",
+    "@types/node": "^18.8.0",
     "mocha": "^10.0.0",
     "chai": "^4.3.6"
   },
@@ -55,7 +55,8 @@
     "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
-    "release-major": "release-script major --yes"
+    "release-major": "release-script major --yes",
+    "translate": "translate-adapter"
   },
   "license": "MIT",
   "readmeFilename": "README.md"
