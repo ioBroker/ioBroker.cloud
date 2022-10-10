@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "4.2.2",
+    "version": "4.2.3",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,18 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "4.2.3": {
+        "en": "Prepare for future js-controller versions\nCorrected error with iobroker.pro and delete object",
+        "de": "Bereiten Sie sich auf zukünftige js-Controller-Versionen\nFehler behoben mit iobroker.pro und Objekt löschen",
+        "ru": "Подготовьтесь к будущим версиям js-controller\nИсправлена ошибка с iobroker.pro и удалить объект",
+        "pt": "Prepare-se para futuras versões js-controller\nErro corrigido com iobroker.pro e excluir objeto",
+        "nl": "Bereid je voor op toekomstige Js-controller versie\nGecorrigeerde fout met iobroker. Pro en wit object",
+        "fr": "Préparez-vous pour les versions futures de js-controller\nErreur corrigée avec iobroker.pro et supprimer objet",
+        "it": "Prepararsi per le future versioni js-controller\nErrore corretto con iobroker.pro ed eliminare oggetto",
+        "es": "Prepararse para futuras versiones js-controller\nError corregido con iobroker.pro y eliminar objeto",
+        "pl": "Prepare for future js-controller version\nPoprawiony błąd z iobrokerem i usunął obiekt",
+        "zh-cn": "今后防污版本的编制\n装有碘化器的错误。"
+      },
       "4.2.2": {
         "en": "Corrected error with services list and admin6",
         "de": "Fehler behoben mit der Dienstliste und admin6",
@@ -99,18 +111,6 @@
         "es": "Soporte agregado para nuevo javascript",
         "pl": "Dodano wsparcie dla nowego javascript",
         "zh-cn": "添加了对新 javascript 的支持"
-      },
-      "4.0.11": {
-        "en": "Fixed the connection issue with the cloud\nAdded support for Admin5",
-        "de": "Das Verbindungsproblem mit der Cloud wurde behoben\nUnterstützung für Admin5 hinzugefügt",
-        "ru": "Исправлена проблема с подключением к облаку\nДобавлена поддержка Admin5",
-        "pt": "Corrigido o problema de conexão com a nuvem\nAdicionado suporte para Admin5",
-        "nl": "Het verbindingsprobleem met de cloud opgelost\nOndersteuning toegevoegd voor Admin5",
-        "fr": "Correction du problème de connexion avec le cloud\nAjout du support pour Admin5",
-        "it": "Risolto il problema di connessione con il cloud\nAggiunto supporto per Admin5",
-        "es": "Se solucionó el problema de conexión con la nube.\nSoporte agregado para Admin5",
-        "pl": "Naprawiono problem z połączeniem z chmurą\nDodano wsparcie dla Admin5",
-        "zh-cn": "修复了与云的连接问题\n添加了对Admin5的支持"
       }
     },
     "authors": [
