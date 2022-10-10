@@ -78,6 +78,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 
 ### __WORK IN PROGRESS__
 * (Apollon77) Prepare for future js-controller versions
+* (bluefox) Corrected error with iobroker.pro and delete object
 
 ### 4.2.2 (2022-08-24)
 * (bluefox) Corrected error with services list and admin6
