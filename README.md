@@ -75,6 +75,9 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected work with lovelace
+
 ### 4.2.3 (2022-10-10)
 * (Apollon77) Prepare for future js-controller versions
 * (bluefox) Corrected error with iobroker.pro and delete object
@@ -95,7 +98,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 * (bluefox) Used common sockets (could be buggy)
 
 ### 4.1.1 (2022-02-19)
-* Important: Requires js-controller 3.1 at least!
+* Important: Requires `js-controller` 3.1 at least!
 * (Apollon77) Add some checks to prevent issues with missing data
 * (Apollon77) FIx some crash cases reported by Sentry
 * (Apollon77) pass HEAD requests without body (Sentry IOBROKER-CLOUD-14)

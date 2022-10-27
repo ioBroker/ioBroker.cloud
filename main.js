@@ -609,7 +609,7 @@ function connect() {
                     url: lovelaceServer + url,
                     method: options.method,
                     data: options.body,
-                    responseType: 'arraybuffer',
+                    // responseType: 'arraybuffer',
                     validateStatus: status => status < 400
                 })
                     .then(response => cb(null, response.status, response.headers, JSON.stringify(response.data)))
@@ -633,16 +633,16 @@ function connect() {
                     url: server + url,
                     method: options.method,
                     data: options.body,
-                    responseType: 'arraybuffer',
+                    // responseType: 'arraybuffer',
                     validateStatus: status => status < 400
                 })
                     .then(response => cb(null, response.status, response.headers, JSON.stringify(response.data)))
                     .catch(error => {
                         if (error.response) {
-                            adapter.log.error(`Cannot request web pages "${url}": ${error.response.data || error.response.status}`);
+                            adapter.log.error(`Cannot request web pages "${server}${url}": ${error.response.data || error.response.status}`);
                             cb(error.response.data || error.response.status, error.response.status || 501, error.response.headers, JSON.stringify(error.response.data));
                         } else {
-                            adapter.log.error(`Cannot request web pages "${url}": ${error.code}`);
+                            adapter.log.error(`Cannot request web pages "${server}${url}": ${error.code}`);
                             cb(error.code, 501, {}, JSON.stringify({error: 'unexpected error'}));
                         }
                     });
@@ -707,10 +707,10 @@ function connect() {
                         .then(response => cb(null, response.status, response.headers, response.data))
                         .catch(error => {
                             if (error.response) {
-                                adapter.log.error('Cannot request lovelace pages: ' + (error.response.data || error.response.status));
+                                adapter.log.error(`Cannot request lovelace pages "${lovelaceServer + url}": ${error.response.data || error.response.status}`);
                                 cb(error.code, error.response.status || 501, error.response.headers, error.response.data);
                             } else {
-                                adapter.log.error('Cannot request lovelace pages: no response');
+                                adapter.log.error(`Cannot request lovelace pages "${lovelaceServer + url}": no response`);
                                 cb('no response', 501, {}, 'no response from lovelace');
                             }
                         });
@@ -724,10 +724,10 @@ function connect() {
                     .then(response => cb(null, response.status, response.headers, response.data))
                     .catch(error => {
                         if (error.response) {
-                            adapter.log.error('Cannot request web pages: ' + (error.response.data || error.response.status));
+                            adapter.log.error(`Cannot request web pages "${server + url}": ${error.response.data || error.response.status}`);
                             cb(error.code, error.response.status || 501, error.response.headers, error.response.data);
                         } else {
-                            adapter.log.error('Cannot request web pages: no response');
+                            adapter.log.error(`Cannot request web pages"${server + url}": no response`);
                             cb('no response', 501, {}, 'no response from web');
                         }
                     });
@@ -736,7 +736,7 @@ function connect() {
                 return answerWithReason(adapter.config.instance, 'Web', cb);
             }
         } catch (e) {
-            adapter.log.error('Cannot request: ' + e);
+            adapter.log.error(`Cannot request: ${e}`);
             cb('Admin or Web are inactive.', 404, {}, 'Admin or Web are inactive.');
         }
     });
