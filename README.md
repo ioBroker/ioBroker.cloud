@@ -75,7 +75,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.3.0 (2022-10-27)
 * (bluefox) Corrected work with lovelace
 
 ### 4.2.3 (2022-10-10)

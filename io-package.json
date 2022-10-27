@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "4.2.3",
+    "version": "4.3.0",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "4.3.0": {
+        "en": "Corrected work with lovelace",
+        "de": "Korrigierte Arbeit mit Lovelace",
+        "ru": "Правильная работа с lovelace",
+        "pt": "Trabalho corrigido com lovelace",
+        "nl": "Gecorrigeerd werk met lovelace",
+        "fr": "Travail corrigé avec lovelace",
+        "it": "Lavoro corretto con lovelace",
+        "es": "Trabajo corregido con lovelace",
+        "pl": "Poprawka z miłością",
+        "uk": "Правильна робота з любов'ю",
+        "zh-cn": "与亲爱之道的辅助工作"
+      },
       "4.2.3": {
         "en": "Prepare for future js-controller versions\nCorrected error with iobroker.pro and delete object",
         "de": "Bereiten Sie sich auf zukünftige js-Controller-Versionen\nFehler behoben mit iobroker.pro und Objekt löschen",
@@ -99,18 +112,6 @@
         "es": "Importante: ¡Requiere js-controller 3.1 al menos!\nAgregue algunas comprobaciones para evitar problemas con datos faltantes\nSolucionar algunos casos de fallas informados por Sentry\npasar solicitudes HEAD sin cuerpo (Sentry IOBROKER-CLOUD-14)",
         "pl": "Ważne: Wymaga przynajmniej js-controller 3.1!\nDodaj kilka testów, aby zapobiec problemom z brakującymi danymi\nNapraw niektóre przypadki awarii zgłoszone przez Sentry\nprzekazać żądania HEAD bez treści (Sentry IOBROKER-CLOUD-14)",
         "zh-cn": "重要提示：至少需要 js-controller 3.1！\n添加一些检查以防止丢失数据的问题\n修复了 Sentry 报告的一些崩溃案例\n传递没有正文的 HEAD 请求 (Sentry IOBROKER-CLOUD-14)"
-      },
-      "4.1.0": {
-        "en": "Added support for new javascript",
-        "de": "Unterstützung für neues Javascript hinzugefügt",
-        "ru": "Добавлена поддержка нового javascript.",
-        "pt": "Adicionado suporte para novo javascript",
-        "nl": "Ondersteuning toegevoegd voor nieuw javascript",
-        "fr": "Ajout du support pour le nouveau javascript",
-        "it": "Aggiunto supporto per il nuovo javascript",
-        "es": "Soporte agregado para nuevo javascript",
-        "pl": "Dodano wsparcie dla nowego javascript",
-        "zh-cn": "添加了对新 javascript 的支持"
       }
     },
     "authors": [
