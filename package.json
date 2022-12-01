@@ -31,7 +31,7 @@
     "@iobroker/adapter-dev": "^1.1.0",
     "@iobroker/testing": "^4.1.0",
     "@types/node": "^18.8.3",
-    "mocha": "^10.0.0",
+    "mocha": "^10.1.0",
     "chai": "^4.3.6"
   },
   "bugs": {
