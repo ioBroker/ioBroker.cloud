@@ -22,7 +22,7 @@
     "socket.io-client": "~1.7.4",
     "cookie-parser": "^1.4.6",
     "axios": "^1.2.0",
-    "ws": "^8.10.0"
+    "ws": "^8.11.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.5.9",
