@@ -75,6 +75,9 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Downgrade of axios package to 0.27.2
+
 ### 4.3.0 (2022-10-27)
 * (bluefox) Corrected work with lovelace
 
