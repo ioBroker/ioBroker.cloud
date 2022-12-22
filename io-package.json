@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "4.3.0",
+    "version": "4.3.1",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "4.3.1": {
+        "en": "Downgrade of axios package to 0.27.2",
+        "de": "Abwärts von Axios Paket auf 0,27.2",
+        "ru": "Улучшение пакета axios до 0.27.2",
+        "pt": "Downgrade de pacote de axios para 0,27.2",
+        "nl": "Downgrade Axios pakket naar 0.27",
+        "fr": "Mise à niveau du paquet axios à 0,27.2",
+        "it": "Downgrade del pacchetto assios a 0.27.2",
+        "es": "Reducción del paquete de axios a 0.27.2",
+        "pl": "Downgrade Axios (ang.)",
+        "uk": "Downgrade axios пакет до 0.27.2",
+        "zh-cn": "A. 总表的职等至0.27.2"
+      },
       "4.3.0": {
         "en": "Corrected work with lovelace",
         "de": "Korrigierte Arbeit mit Lovelace",
@@ -100,18 +113,6 @@
         "es": "Preparativos adicionales para el Admin 6\nMás información sobre errores\nBiblioteca de solicitud desactualizada\nEnchufes comunes usados (puede ser buggy)",
         "pl": "Administrowane przygotowania do Admin 6\nPoniższy raport dotyczący błędów\nPrzewidywać się\nStosowane gniazda (could be buggy)",
         "zh-cn": "增 编 6\n增加较好的错误报告\n删除过时要求图书馆\nA. 使用共同配量(可偷运)"
-      },
-      "4.1.1": {
-        "en": "Important: Requires js-controller 3.1 at least!\nAdd some checks to prevent issues with missing data\nFIx some crash cases reported by Sentry\npass HEAD requests without body (Sentry IOBROKER-CLOUD-14)",
-        "de": "Wichtig: Benötigt mindestens js-controller 3.1!\nFügen Sie einige Überprüfungen hinzu, um Probleme mit fehlenden Daten zu vermeiden\nBehebung einiger von Sentry gemeldeter Absturzfälle\nHEAD-Anfragen ohne Text weitergeben (Sentry IOBROKER-CLOUD-14)",
-        "ru": "Важно: Требуется js-контроллер версии не ниже 3.1!\nДобавьте некоторые проверки, чтобы предотвратить проблемы с отсутствующими данными\nИсправьте некоторые случаи сбоев, о которых сообщил Sentry.\nпередавать запросы HEAD без тела (Sentry IOBROKER-CLOUD-14)",
-        "pt": "Importante: Requer js-controller 3.1 pelo menos!\nAdicione algumas verificações para evitar problemas com dados ausentes\nCorrigir alguns casos de travamento relatados pelo Sentinela\npassar solicitações HEAD sem corpo (Sentry IOBROKER-CLOUD-14)",
-        "nl": "Belangrijk: vereist minimaal js-controller 3.1!\nVoeg enkele controles toe om problemen met ontbrekende gegevens te voorkomen\nRepareer enkele crashgevallen gemeld door Sentry\npass HEAD-verzoeken zonder hoofdtekst (Sentry IOBROKER-CLOUD-14)",
-        "fr": "Important : Nécessite au moins js-controller 3.1 !\nAjoutez quelques vérifications pour éviter les problèmes de données manquantes\nCorrection de certains cas de plantage signalés par Sentry\npasser les requêtes HEAD sans corps (Sentry IOBROKER-CLOUD-14)",
-        "it": "Importante: richiede almeno js-controller 3.1!\nAggiungi alcuni controlli per evitare problemi con i dati mancanti\nRisolvi alcuni casi di crash segnalati da Sentry\nsupera le richieste HEAD senza corpo (Sentry IOBROKER-CLOUD-14)",
-        "es": "Importante: ¡Requiere js-controller 3.1 al menos!\nAgregue algunas comprobaciones para evitar problemas con datos faltantes\nSolucionar algunos casos de fallas informados por Sentry\npasar solicitudes HEAD sin cuerpo (Sentry IOBROKER-CLOUD-14)",
-        "pl": "Ważne: Wymaga przynajmniej js-controller 3.1!\nDodaj kilka testów, aby zapobiec problemom z brakującymi danymi\nNapraw niektóre przypadki awarii zgłoszone przez Sentry\nprzekazać żądania HEAD bez treści (Sentry IOBROKER-CLOUD-14)",
-        "zh-cn": "重要提示：至少需要 js-controller 3.1！\n添加一些检查以防止丢失数据的问题\n修复了 Sentry 报告的一些崩溃案例\n传递没有正文的 HEAD 请求 (Sentry IOBROKER-CLOUD-14)"
       }
     },
     "authors": [
