@@ -155,7 +155,7 @@ function startAdapter(options) {
                         break;
 
                     default:
-                        adapter.log.warn('Unknown command_: ' + obj.command);
+                        adapter.log.warn(`Unknown command_: ${obj.command}`);
                         break;
                 }
             }
@@ -192,7 +192,7 @@ function getConnectionString(obj) {
             conn = `http${obj.native.secure ? 's' : ''}://`;
             // todo if run on other host
             conn += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
-            conn += ':' + obj.native.port;
+            conn += `:${obj.native.port}`;
         }
     } else {
         conn = null;
@@ -212,7 +212,7 @@ function sendDataToIFTTT(obj) {
     }
     if (typeof obj !== 'object') {
         ioSocket && ioSocket.send(socket, 'ifttt', {
-            id:     adapter.namespace + '.services.ifttt',
+            id:     `${adapter.namespace}.services.ifttt`,
             key:    adapter.config.iftttKey,
             val:    obj
         });
@@ -229,7 +229,7 @@ function sendDataToIFTTT(obj) {
             adapter.log.warn('No value is defined');
             return;
         }
-        obj.id = obj.id || (adapter.namespace + '.services.ifttt');
+        obj.id = obj.id || (`${adapter.namespace}.services.ifttt`);
         ioSocket && ioSocket.send(socket, 'ifttt', {
             id:  obj.id,
             key: obj.key || adapter.config.iftttKey,
@@ -274,7 +274,7 @@ function controlState(id, data, callback) {
 
     if (typeof data === 'object') {
         if (data.id) {
-            if (data.id === adapter.namespace + '.services.ifttt') {
+            if (data.id === `${adapter.namespace}.services.ifttt`) {
                 data.ack = true;
             }
             if (data.val === undefined) {
@@ -282,7 +282,7 @@ function controlState(id, data, callback) {
             }
             adapter.getForeignObject(data.id, (err, obj) => {
                 if (!obj || !obj.common) {
-                    callback && callback('Unknown ID: ' + data.id);
+                    callback && callback(`Unknown ID: ${data.id}`);
                 } else {
                     if (typeof data.val === 'string') {
                         data.val = data.val.replace(/^@ifttt\s?/, '');
@@ -316,7 +316,7 @@ function controlState(id, data, callback) {
 }
 
 function processIfttt(data, callback) {
-    adapter.log.debug('Received IFTTT object: ' + data);
+    adapter.log.debug(`Received IFTTT object: ${data}`);
     let id;
     if (typeof data === 'object' && data.id && data.data !== undefined) {
         id = data.id;
@@ -324,7 +324,7 @@ function processIfttt(data, callback) {
             try {
                 data = JSON.parse(data.data);
             } catch (e) {
-                adapter.log.debug('Cannot parse: ' + data.data);
+                adapter.log.debug(`Cannot parse: ${data.data}`);
             }
         } else {
             data = data.data;
@@ -341,7 +341,7 @@ function processIfttt(data, callback) {
                     }
                 }
             } catch (e) {
-                adapter.log.debug('Cannot parse: ' + data);
+                adapter.log.debug(`Cannot parse: ${data}`);
             }
         }
     }
@@ -351,10 +351,10 @@ function processIfttt(data, callback) {
             if (obj) {
                 controlState(id, data, callback);
             } else {
-                adapter.getForeignObject(adapter.namespace + '.services.'  + id, (err, obj) => {
+                adapter.getForeignObject(`${adapter.namespace}.services.${id}`, (err, obj) => {
                     if (!obj) {
                         // create state
-                        adapter.setObject('services.' + id, {
+                        adapter.setObject(`services.${id}`, {
                                 type: 'state',
                                 common: {
                                     name: 'IFTTT value',
@@ -366,7 +366,7 @@ function processIfttt(data, callback) {
                                 },
                                 native: {}
                             },
-                            () => controlState(adapter.namespace + '.services.'  + id, data, callback));
+                            () => controlState(`${adapter.namespace}.services.${id}`, data, callback));
                     } else {
                         controlState(obj._id, data, callback);
                     }
@@ -473,15 +473,15 @@ function onCloudRedirect(data) {
     } else {
         adapter.log.info(`Adapter redirected continuously to "${data.url}". Reason: ${data && data.reason ? data.reason : 'command from server'}`);
 
-        adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
-            err && adapter.log.error('redirectAdapter [getForeignObject]: ' + err);
+        adapter.getForeignObject(`system.adapter.${adapter.namespace}`, (err, obj) => {
+            err && adapter.log.error(`redirectAdapter [getForeignObject]: ${err}`);
             if (obj) {
                 obj.native.cloudUrl = data.url;
                 timeouts.redirect = setTimeout(() => {
                     timeouts.redirect = null;
 
                     adapter.setForeignObject(obj._id, obj, err => {
-                        err && adapter.log.error('redirectAdapter [setForeignObject]: ' + err);
+                        err && adapter.log.error(`redirectAdapter [setForeignObject]: ${err}`);
 
                         adapter.config.cloudUrl = data.url;
                         if (socket) {
@@ -497,11 +497,11 @@ function onCloudRedirect(data) {
 }
 
 function onCloudError(error) {
-    adapter.log.error('Cloud says: ' + error);
+    adapter.log.error(`Cloud says: ${error}`);
 }
 
 function onCloudStop(data) {
-    adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
+    adapter.getForeignObject(`system.adapter.${adapter.namespace}`, (err, obj) => {
         err && adapter.log.error(`[onCloudStop]: ${err}`);
         if (obj) {
             obj.common.enabled = false;
@@ -624,7 +624,7 @@ function connect() {
                     });
             }
         } else {
-            adapter.log.error('Unexpected request: ' + url);
+            adapter.log.error(`Unexpected request: ${url}`);
 
             if (!server) {
                 answerWithReason(adapter.config.instance, 'Web', cb);
@@ -768,7 +768,7 @@ function connect() {
             if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.includes(data.name)) {
                 if (!isCustom && data.name === 'text2command') {
                     if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
-                        adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', decodeURIComponent(data.data), err =>
+                        adapter.setForeignState(`text2command.${adapter.config.text2command}.text`, decodeURIComponent(data.data), err =>
                             callback && callback({result: err || 'Ok'}));
                     } else {
                         adapter.log.warn('Received service text2command, but instance is not defined');
@@ -829,13 +829,13 @@ function connect() {
                         callback && callback({error: 'not implemented'});
                     }
                 } else if (isCustom) {
-                    adapter.getObject('services.custom_' + data.name, (err, obj) => {
+                    adapter.getObject(`services.custom_${data.name}`, (err, obj) => {
                         if (!obj) {
-                            adapter.setObject('services.custom_' + data.name, {
-                                _id: adapter.namespace + '.services.custom_' + data.name,
+                            adapter.setObject(`services.custom_${data.name}`, {
+                                _id: `${adapter.namespace}.services.custom_${data.name}`,
                                 type: 'state',
                                 common: {
-                                    name: 'Service for ' + data.name,
+                                    name: `Service for ${data.name}`,
                                     write: false,
                                     read: true,
                                     type: 'mixed',
@@ -844,13 +844,13 @@ function connect() {
                                 native: {}
                             }, err => {
                                 if (!err) {
-                                    adapter.setState('services.custom_' + data.name, data.data, false, err => callback && callback({result: err || 'Ok'}));
+                                    adapter.setState(`services.custom_${data.name}`, data.data, false, err => callback && callback({result: err || 'Ok'}));
                                 } else {
                                     callback && callback({result: err});
                                 }
                             });
                         } else {
-                            adapter.setState('services.custom_' + data.name, data.data, false, err => callback && callback({result: err || 'Ok'}));
+                            adapter.setState(`services.custom_${data.name}`, data.data, false, err => callback && callback({result: err || 'Ok'}));
                         }
                     });
                 } else {
@@ -864,7 +864,7 @@ function connect() {
     });
 
     socket.on('error', error => {
-        console.error('Some error: ' + error);
+        console.error(`Some error: ${error}`);
         startConnect()
     });
 
@@ -913,7 +913,7 @@ function connect() {
 
 function createInstancesStates(callback, objs) {
     if (!objs) {
-        const pack = require(__dirname + '/io-package.json');
+        const pack = require('./io-package.json');
         objs = pack.instanceObjects;
     }
     if (!objs || !objs.length) {
@@ -938,7 +938,7 @@ function _createAppKey(cb) {
     const url = `https://${adapter.config.server}:3001/api/v1/appkeys`;
 
     axios.post(url, null, {
-        headers: {Authorization: 'Basic ' + Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')},
+        headers: {Authorization: `Basic ${Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')}`},
         validateStatus: status => status < 400
     })
         .then(response => {
@@ -1000,7 +1000,7 @@ function _readAppKeyFromCloud(server, login, password, cb) {
     const url = `https://${server}:3001/api/v1/appkeys`;
 
     axios.get(url, {
-        headers: {Authorization: 'Basic ' + Buffer.from(`${login}:${password}`).toString('base64')},
+        headers: {Authorization: `Basic ${Buffer.from(`${login}:${password}`).toString('base64')}`},
         validateStatus: status => status < 400
     })
         .then(response => {
@@ -1135,7 +1135,7 @@ function main() {
                 adapter.getObject('services.ifttt', (err, obj) => {
                     if (!obj) {
                         adapter.setObject('services.ifttt', {
-                            _id: adapter.namespace + '.services.ifttt',
+                            _id: `${adapter.namespace}.services.ifttt`,
                             type: 'state',
                             common: {
                                 name: 'IFTTT value',
@@ -1152,13 +1152,13 @@ function main() {
             }
 
             if (adapter.config.instance && !adapter.config.instance.startsWith('system.adapter.')) {
-                adapter.config.instance = 'system.adapter.' + adapter.config.instance;
+                adapter.config.instance = `system.adapter.${adapter.config.instance}`;
             }
             if (adapter.config.allowAdmin && !adapter.config.allowAdmin.startsWith('system.adapter.')) {
-                adapter.config.allowAdmin = 'system.adapter.' + adapter.config.allowAdmin;
+                adapter.config.allowAdmin = `system.adapter.${adapter.config.allowAdmin}`;
             }
             if (adapter.config.lovelace && !adapter.config.lovelace.startsWith('system.adapter.')) {
-                adapter.config.lovelace = 'system.adapter.' + adapter.config.lovelace;
+                adapter.config.lovelace = `system.adapter.${adapter.config.lovelace}`;
             }
 
             adapter.subscribeStates('smart.*');
