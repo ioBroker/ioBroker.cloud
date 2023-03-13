@@ -686,7 +686,7 @@ function connect() {
                         .then(response => cb(null, response.status, response.headers, response.data))
                         .catch(error => {
                             if (error.response) {
-                                adapter.log.error('Cannot request admin pages: ' + (error.response.data || error.response.status));
+                                adapter.log.error(`Cannot request admin pages: ${error.response.data || error.response.status}`);
                                 cb(error.code, error.response.status || 501, error.response.headers, error.response.data);
                             } else {
                                 adapter.log.error('Cannot request admin pages: no response');
