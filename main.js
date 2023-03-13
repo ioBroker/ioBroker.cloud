@@ -70,7 +70,7 @@ function startAdapter(options) {
         },
         stateChange: (id, state) => {
             if (socket) {
-                if (id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
+                if (id === `${adapter.namespace}.services.ifttt` && state && !state.ack) {
                     sendDataToIFTTT({
                         id: id,
                         val: state.val,
