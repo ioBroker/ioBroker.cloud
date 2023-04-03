@@ -77,6 +77,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) Corrected error with `name` command
+* (bluefox) Corrected `text2speech` functionality
 
 ### 4.3.1 (2022-12-22)
 * (bluefox) Downgrade of axios package to 0.27.2

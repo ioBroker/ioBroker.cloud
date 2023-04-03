@@ -154,6 +154,33 @@ function startAdapter(options) {
                         ioSocket && ioSocket.send(socket, obj.command, obj.message.id, obj.message.data);
                         break;
 
+                    case 'tts': {
+                        if (obj.callback) {
+                            const params = {
+                                text: typeof obj.message === 'object' ? obj.message.text : obj.message,
+                                apiKey: apikey,
+                                textType: obj.message.textType || 'text',
+                                voiceId: obj.message.voiceId || 'Marlene',
+                            };
+                            axios.post(`${adapter.config.cloudUrl.replace(/:(\d+)$/, ':3001')}/api/v1/polly`, params, {
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                responseType: 'arraybuffer',
+                            })
+                                .then(response => {
+                                    if (response.data) {
+                                        const base64 = Buffer.from(response.data, 'binary').toString('base64');
+                                        obj.callback && adapter.sendTo(obj.from, obj.command, {base64}, obj.callback);
+                                    } else {
+                                        obj.callback && adapter.sendTo(obj.from, obj.command, {error: 'no data'}, obj.callback);
+                                    }
+                                })
+                                .catch(e => adapter.sendTo(obj.from, obj.command, {error: (e.response && e.response.data) || e.toString()}, obj.callback))
+                        }
+                        break;
+                    }
+
                     default:
                         adapter.log.warn(`Unknown command_: ${obj.command}`);
                         break;
