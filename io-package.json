@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "4.3.1",
+    "version": "4.4.0",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "4.4.0": {
+        "en": "Corrected error with `name` command\nCorrected `text2speech` functionality",
+        "de": "Fehler behoben mit Namensbefehl\nKorrigierte Text2speech-Funktionalität",
+        "ru": "Исправлена ошибка с командой имени\nИсправлена функция text2speech",
+        "pt": "Erro corrigido com comando de nome\nFuncionalidade de texto2speech correta",
+        "nl": "Gecorrigeerde fout met de naam\nVertaling:",
+        "fr": "Erreur corrigée avec commande de nom\nCorrection de la fonctionnalité text2speech",
+        "it": "Errore corretto con comando nome\nFunzionalità di text2speech corretta",
+        "es": "Error corregido con comando nombre\nFunción de texto corregido2 altavoz",
+        "pl": "Nieprawdopodobny błąd z nazwiskiem\nCzytelnia tekst2",
+        "uk": "Виправлена помилка з командуванням імені\nВиправлено функціональність тексту2speech",
+        "zh-cn": "姓名指挥错误\n更正案文2"
+      },
       "4.3.1": {
         "en": "Downgrade of axios package to 0.27.2",
         "de": "Abwärts von Axios Paket auf 0,27.2",
@@ -101,18 +114,6 @@
         "es": "Preparativos adicionales para el Admin 6",
         "pl": "Administrowane przygotowania do Admin 6",
         "zh-cn": "增 编 6"
-      },
-      "4.1.2": {
-        "en": "Added preparations for Admin 6\nAdded better error reporting\nRemoved outdated `request` library\nUsed common sockets (could be buggy)",
-        "de": "Weitere Vorbereitungen für Admin 6\nBessere Fehlermeldung\nEntfernte veraltete Anfrage-Bibliothek\nVerwendete häufige Steckdosen (sollte Buggy sein)",
-        "ru": "Добавлены препараты для Admin 6\nДобавлена лучшая отчетность об ошибке\nУдаленная библиотека запросов\nИспользуемые общие розетки (может быть багги)",
-        "pt": "Preparações adicionadas para Admin 6\nAdicionado melhor relatório de erro\nBiblioteca de solicitação desatualizada\nTomadas comuns usadas (pode ser buggy)",
-        "nl": "Aangepaste voorbereidingen voor Admin 6\nVoeg betere fouten toe\nVerwijder de bibliotheek\nGebruikte gemeenschappelijke sokken",
-        "fr": "Préparations supplémentaires pour Admin 6\nAjout d'une meilleure déclaration d'erreur\nBibliothèque de demandes désuètes\nDouilles courantes usagées (peut être buggy)",
-        "it": "Aggiunto preparazioni per Admin 6\nAggiunto migliore segnalazione di errore\nLibreria di richiesta obsoleta\nUsato prese comuni (potrebbe essere buggy)",
-        "es": "Preparativos adicionales para el Admin 6\nMás información sobre errores\nBiblioteca de solicitud desactualizada\nEnchufes comunes usados (puede ser buggy)",
-        "pl": "Administrowane przygotowania do Admin 6\nPoniższy raport dotyczący błędów\nPrzewidywać się\nStosowane gniazda (could be buggy)",
-        "zh-cn": "增 编 6\n增加较好的错误报告\n删除过时要求图书馆\nA. 使用共同配量(可偷运)"
       }
     },
     "authors": [

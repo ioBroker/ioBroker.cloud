@@ -75,7 +75,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.4.0 (2023-04-03)
 * (bluefox) Corrected error with `name` command
 * (bluefox) Corrected `text2speech` functionality
 
