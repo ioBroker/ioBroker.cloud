@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "4.4.0",
+    "version": "4.4.1",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "4.4.1": {
+        "en": "allowed to use \"neural\" voices for aws text-to-speech engine",
+        "de": "erlaubt, neuronale stimmen für aws text-to-speech-engine zu verwenden",
+        "ru": "разрешено использовать нейронные голоса для aws text-to-speech engine",
+        "pt": "permitido usar vozes neurais para aws text-to-speech motor",
+        "nl": "_",
+        "fr": "autorisé à utiliser des voix neurales pour le moteur texte-à-speech",
+        "it": "permesso di utilizzare voci neurali per aws text-to-speech motore",
+        "es": "permite utilizar las voces neuronales para un motor de texto a voz",
+        "pl": "pozwoliło to na użycie głosu neuronowego dla silnika tekst-to-speech",
+        "uk": "допускається використання нейронних голосів для aws текстово-дозволених двигунів",
+        "zh-cn": "允许对文本-技术工程师使用微妙的声音"
+      },
       "4.4.0": {
         "en": "Corrected error with `name` command\nCorrected `text2speech` functionality",
         "de": "Fehler behoben mit Namensbefehl\nKorrigierte Text2speech-Funktionalität",
@@ -102,18 +115,6 @@
         "es": "Nueva versión utilizada de la biblioteca de sockets.",
         "pl": "Jest to nowa wersja biblioteki gniazda.",
         "zh-cn": "使用新的手库图书馆。."
-      },
-      "4.2.0": {
-        "en": "Added preparations for Admin 6",
-        "de": "Weitere Vorbereitungen für Admin 6",
-        "ru": "Добавлены препараты для Admin 6",
-        "pt": "Preparações adicionadas para Admin 6",
-        "nl": "Aangepaste voorbereidingen voor Admin 6",
-        "fr": "Préparations supplémentaires pour Admin 6",
-        "it": "Aggiunto preparazioni per Admin 6",
-        "es": "Preparativos adicionales para el Admin 6",
-        "pl": "Administrowane przygotowania do Admin 6",
-        "zh-cn": "增 编 6"
       }
     },
     "authors": [
