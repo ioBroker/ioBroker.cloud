@@ -161,6 +161,7 @@ function startAdapter(options) {
                                 apiKey: apikey,
                                 textType: obj.message.textType || 'text',
                                 voiceId: obj.message.voiceId || 'Marlene',
+                                engine: obj.message.engine,
                             };
                             axios.post(`${adapter.config.cloudUrl.replace(/:(\d+)$/, ':3001')}/api/v1/polly`, params, {
                                 headers: {
@@ -176,7 +177,7 @@ function startAdapter(options) {
                                         obj.callback && adapter.sendTo(obj.from, obj.command, {error: 'no data'}, obj.callback);
                                     }
                                 })
-                                .catch(e => adapter.sendTo(obj.from, obj.command, {error: (e.response && e.response.data) || e.toString()}, obj.callback))
+                                .catch(e => adapter.sendTo(obj.from, obj.command, {error: (e.response && e.response.data) || e.toString()}, obj.callback));
                         }
                         break;
                     }
