@@ -28,19 +28,6 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
-      "5.0.0": {
-        "en": "updated socket classes and fixed vis-2 error if connected via cloud",
-        "de": "aktualisierte steckdosenklassen und fester vis-2 fehler, wenn über cloud verbunden",
-        "ru": "обновленные классы розеток и фиксированная ошибка vis-2, если они подключены через облако",
-        "pt": "classes de soquete atualizadas e erro vis-2 fixo se conectado via nuvem",
-        "nl": "bijgewerkte socket klassen en vaste vis-2 fout indien verbonden via cloud",
-        "fr": "classes de socket mises à jour et erreur vis-2 fixe si connecté via cloud",
-        "it": "classi di socket aggiornate e errore vis-2 fisso se collegato tramite cloud",
-        "es": "clases actualizadas de socket y error fijo vis-2 si conectado a través de la nube",
-        "pl": "zaktualizowane klasy gniazd i stały błąd vis-2 jeśli podłączony przez chmurę",
-        "uk": "оновлені класи розетки і виправлені помилки в дюймах-2, якщо підключено через хмару",
-        "zh-cn": "更新套接字类, 如果通过云连接则固定为 2 个错误"
-      },
       "4.4.1": {
         "en": "allowed to use \"neural\" voices for aws text-to-speech engine",
         "de": "erlaubt, neuronale stimmen für aws text-to-speech-engine zu verwenden",
@@ -156,7 +143,12 @@
       "sentry": {
         "dsn": "https://4e98835e3b074c49a3e31d51a46801a2@sentry.iobroker.net/33"
       }
-    }
+    },
+    "licenseInformation": {
+      "type": "free",
+      "link": "https://github.com/ioBroker/ioBroker.cloud/blob/master/LICENSE"
+    },
+    "tier": 2
   },
   "protectedNative": [
     "login",

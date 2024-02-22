@@ -75,8 +75,9 @@ You can deactivate HTTPS and authentication on this web instance, but better is 
 -->
 
 ## Changelog
-### 5.0.0 (2024-02-22)
+### **WORK IN PROGRESS**
 * (bluefox) updated socket classes and fixed vis-2 error if connected via cloud
+* (bluefox) minimum required node.js version is 16
 
 ### 4.4.1 (2023-04-17)
 * (bluefox) allowed to use "neural" voices for aws text-to-speech engine
