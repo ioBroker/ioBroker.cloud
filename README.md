@@ -45,7 +45,7 @@ You may write "*" in white list and all services will be allowed.
 
 From version 2.0.5 you can use GET request in form `[GET]https://iobroker.net/service/custom_<NAME>/<user-app-key>/<data>` to place the `\<data\>` into `cloud.0.services.custom_\<NAME\>`.
 
-Here you can find instructions how to use it with [tasker](doc/tasker.md).
+Here you can find instructions on how to use it with [tasker](doc/tasker.md).
 
 IFTTT service is allowed only if IFTTT key is set.
 
@@ -67,7 +67,7 @@ You can use following commands (only pro):
 ### Limitations
 If HTTPs (Security) or authentication is enabled on defined web-instance, it does not work.
 
-You can deactivate HTTPS and authentication on these web instance, but better is to create a new web instance that is bound to `localhost` and select this instance in cloud-settings.
+You can deactivate HTTPS and authentication on this web instance, but better is to create a new web instance that is bound to `localhost` and select this instance in cloud-settings.
 
 <!--
 	Placeholder for the next version (at the beginning of the line):
@@ -75,6 +75,9 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) updated socket classes and fixed vis-2 error if connected via cloud
+
 ### 4.4.1 (2023-04-17)
 * (bluefox) allowed to use "neural" voices for aws text-to-speech engine
 
@@ -96,7 +99,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 * (bluefox) Corrected error with services list and admin6
 
 ### 4.2.1 (2022-07-20)
-* (bluefox) Used new version of socket library.
+* (bluefox) Used a new version of a socket library.
 
 ### 4.2.0 (2022-07-05)
 * (bluefox) Added preparations for Admin 6
@@ -213,7 +216,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 * (grimneko) update readme for IFTTT
 
 ### 2.1.0 (2017-12-06)
-* (bluefox) Allow to disable alexa service by state
+* (bluefox) Allowed disabling alexa service by state
 
 ### 2.0.8 (2017-11-28)
 * (bluefox / Philipp Beckers) Translations
@@ -222,29 +225,29 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 * (bluefox) Changes for socket-io
 
 ### 2.0.6 (2017-10-26)
-* (bluefox) Fix small error in configuration
+* (bluefox) Fixed small error in configuration
 * (bluefox) Send uuid to cloud for authentication
 
 ### 2.0.5 (2017-09-26)
 * (bluefox) The small custom service reaction improvement
 
 ### 2.0.4 (2017-09-12)
-* (bluefox) Allow access to admin via iobroker.pro
-* (c-klinger) Add settings for the connection timeout
+* (bluefox) Allowed access to admin via iobroker.pro
+* (c-klinger) Added settings for the connection timeout
 
 ### 1.0.8 (2017-07-13)
-* (bluefox) Allow control light colors
+* (bluefox) Allowed control light colors
 
 ### 1.0.7 (2017-06-26)
 * (bluefox) AI deactivated
-* (bluefox) change ping interval from 10 to 30 seconds
+* (bluefox) changed a ping interval from 10 to 30 seconds
 * (bluefox) fix double auth on connect
 
 ### 1.0.3 (2017-05-23)
 * (bluefox) Rename some german words
 
 ### 1.0.2 (2017-05-23)
-* (bluefox) Support of IFTTT
+* (bluefox) Support for IFTTT
 
 ### 1.0.0 (2017-05-22)
 * (bluefox) Catch an error if the invalid smart name set
@@ -252,7 +255,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 ### 0.8.2 (2017-04-24)
 * (bluefox) controls of colors (english only)
 * (bluefox) request temperature (target temperature and sensor temperature, english only)
-* (bluefox) support of double names
+* (bluefox) support for double names
 
 ### 0.7.1 (2017-04-05)
 * (bluefox) Fixed reconnection
@@ -271,7 +274,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 * (bluefox) Add workaround for alexa reconnection
 
 ### 0.6.9 (2017-02-17)
-* (bluefox) Allow to use more than one smart name
+* (bluefox) Allowed using more than one smart name
 
 ### 0.6.8 (2017-02-16)
 * (bluefox) Fix deactivation of enums
@@ -331,7 +334,7 @@ You can deactivate HTTPS and authentication on these web instance, but better is
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2016-2023 bluefox <dogafox@gmail.com>
+Copyright (c) 2016-2024 bluefox <dogafox@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
