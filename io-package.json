@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "5.0.0",
+    "version": "5.0.1",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "5.0.1": {
+        "en": "updated socket classes and fixed vis-2 error if connected via cloud\nminimum required node.js version is 16",
+        "de": "aktualisierte steckdosenklassen und fester vis-2 fehler, wenn über cloud verbunden\nminimal erforderliche node.js-version ist 16",
+        "ru": "обновленные классы розеток и фиксированная ошибка vis-2, если они подключены через облако\nминимальная требуемая версия node.js - 16",
+        "pt": "classes de soquete atualizadas e erro vis-2 fixo se conectado via nuvem\nnode.js versão mínima necessária é 16",
+        "nl": "bijgewerkte socket klassen en vaste vis-2 fout indien verbonden via cloud\nminimaal vereiste node.js versie is 16",
+        "fr": "classes de socket mises à jour et erreur vis-2 fixe si connecté via cloud\nla version minimum requise node.js est 16",
+        "it": "classi di socket aggiornate e errore vis-2 fisso se collegato tramite cloud\nversione minima richiesta node.js è 16",
+        "es": "clases actualizadas de socket y error fijo vis-2 si conectado a través de la nube\nla versión mínima requerida node.js es 16",
+        "pl": "zaktualizowane klasy gniazd i stały błąd vis-2 jeśli podłączony przez chmurę\nminimum wymagane node.js wersja jest 16",
+        "uk": "оновлені класи розетки і виправлені помилки в дюймах-2, якщо підключено через хмару\nмінімальний необхідний вузол.js версія 16",
+        "zh-cn": "更新套接字类, 如果通过云连接则固定为 2 个错误\n最小节点.js版本为 16"
+      },
       "4.4.1": {
         "en": "allowed to use \"neural\" voices for aws text-to-speech engine",
         "de": "erlaubt, neuronale stimmen für aws text-to-speech-engine zu verwenden",
