@@ -75,7 +75,7 @@ You can deactivate HTTPS and authentication on this web instance, but better is 
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.0.0 (2024-02-22)
 * (bluefox) updated socket classes and fixed vis-2 error if connected via cloud
 
 ### 4.4.1 (2023-04-17)

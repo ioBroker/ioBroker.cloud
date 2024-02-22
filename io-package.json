@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "4.4.1",
+    "version": "5.0.0",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "5.0.0": {
+        "en": "updated socket classes and fixed vis-2 error if connected via cloud",
+        "de": "aktualisierte steckdosenklassen und fester vis-2 fehler, wenn über cloud verbunden",
+        "ru": "обновленные классы розеток и фиксированная ошибка vis-2, если они подключены через облако",
+        "pt": "classes de soquete atualizadas e erro vis-2 fixo se conectado via nuvem",
+        "nl": "bijgewerkte socket klassen en vaste vis-2 fout indien verbonden via cloud",
+        "fr": "classes de socket mises à jour et erreur vis-2 fixe si connecté via cloud",
+        "it": "classi di socket aggiornate e errore vis-2 fisso se collegato tramite cloud",
+        "es": "clases actualizadas de socket y error fijo vis-2 si conectado a través de la nube",
+        "pl": "zaktualizowane klasy gniazd i stały błąd vis-2 jeśli podłączony przez chmurę",
+        "uk": "оновлені класи розетки і виправлені помилки в дюймах-2, якщо підключено через хмару",
+        "zh-cn": "更新套接字类, 如果通过云连接则固定为 2 个错误"
+      },
       "4.4.1": {
         "en": "allowed to use \"neural\" voices for aws text-to-speech engine",
         "de": "erlaubt, neuronale stimmen für aws text-to-speech-engine zu verwenden",
@@ -103,18 +116,6 @@
         "es": "Error corregido con lista de servicios y admin6",
         "pl": "Poprawny błąd z listą serwisową i admin6",
         "zh-cn": "服务清单和注6的更正错误"
-      },
-      "4.2.1": {
-        "en": "Used new version of socket library.",
-        "de": "Gebrauchte neue Version der Steckdosenbibliothek.",
-        "ru": "Используется новая версия библиотеки розеток.",
-        "pt": "Usada nova versão da biblioteca de soquete.",
-        "nl": "Gebruikte nieuwe versie van de socket bibliotheek.",
-        "fr": "Nouvelle version utilisée de la bibliothèque de sockets.",
-        "it": "Usata nuova versione di libreria socket.",
-        "es": "Nueva versión utilizada de la biblioteca de sockets.",
-        "pl": "Jest to nowa wersja biblioteki gniazda.",
-        "zh-cn": "使用新的手库图书馆。."
       }
     },
     "authors": [
