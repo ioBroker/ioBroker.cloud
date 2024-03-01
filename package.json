@@ -35,7 +35,7 @@
     "@iobroker/testing": "^4.1.0",
     "@types/node": "^20.11.19",
     "mocha": "^10.3.0",
-    "chai": "^4.4.1"
+    "chai": "^5.1.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.cloud/issues"
