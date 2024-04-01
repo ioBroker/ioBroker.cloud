@@ -20,7 +20,7 @@
     "url": "https://github.com/ioBroker/ioBroker.cloud"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.0.4",
+    "@iobroker/adapter-core": "^3.0.6",
     "@iobroker/socket-classes": "1.5.0",
     "socket.io-client": "~1.7.4",
     "cookie-parser": "^1.4.6",
