@@ -35,32 +35,30 @@ Blockly.Words['ifttt_log_error']     = {"en": "error",                          
 // Blockly.Sendto is global variable and defined in javascript/admin/google-blockly/own/blocks_sendto.js
 
 Blockly.Sendto.blocks['ifttt'] =
-    '<block type="ifttt">'
-    + '     <value name="INSTANCE">'
-    + '     </value>'
-    + '     <value name="EVENT">'
-    + '         <shadow type="text">'
-    + '             <field name="TEXT">state</field>'
-    + '         </shadow>'
-    + '     </value>'
-    + '     <value name="VALUE1">'
-    + '         <shadow type="text">'
-    + '             <field name="TEXT">value1</field>'
-    + '         </shadow>'
-    + '     </value>'
-    + '     <value name="VALUE2">'
-    + '         <shadow type="text">'
-    + '             <field name="TEXT">value2</field>'
-    + '         </shadow>'
-    + '     </value>'
-    + '     <value name="VALUE3">'
-    + '         <shadow type="text">'
-    + '             <field name="TEXT">value3</field>'
-    + '         </shadow>'
-    + '     </value>'
-    + '     <value name="LOG">'
-    + '     </value>'
-    + '</block>';
+    '<block type="ifttt">' +
+    '  <field name="INSTANCE">.0</field>' +
+    '  <field name="LOG"></field>' +
+    '  <value name="EVENT">' +
+    '    <shadow type="text">' +
+    '      <field name="TEXT">state</field>' +
+    '    </shadow>' +
+    '  </value>' +
+    '  <value name="VALUE1">' +
+    '    <shadow type="text">' +
+    '      <field name="TEXT">value1</field>' +
+    '    </shadow>' +
+    '  </value>' +
+    '  <value name="VALUE2">' +
+    '    <shadow type="text">' +
+    '      <field name="TEXT">value2</field>' +
+    '    </shadow>' +
+    '  </value>' +
+    '  <value name="VALUE3">' +
+    '    <shadow type="text">' +
+    '      <field name="TEXT">value3</field>' +
+    '    </shadow>' +
+    '  </value>' +
+    '</block>';
 
 Blockly.Blocks['ifttt'] = {
     init: function() {
@@ -107,7 +105,7 @@ Blockly.Blocks['ifttt'] = {
                 [Blockly.Translate('ifttt_log_info'),  'log'],
                 [Blockly.Translate('ifttt_log_debug'), 'debug'],
                 [Blockly.Translate('ifttt_log_warn'),  'warn'],
-                [Blockly.Translate('ifttt_log_error'), 'error']
+                [Blockly.Translate('ifttt_log_error'), 'error'],
             ]), 'LOG');
 
         this.setInputsInline(false);
@@ -117,7 +115,7 @@ Blockly.Blocks['ifttt'] = {
         this.setColour(Blockly.Sendto.HUE);
         this.setTooltip(Blockly.Translate('ifttt_tooltip'));
         this.setHelpUrl(Blockly.Translate('ifttt_help'));
-    }
+    },
 };
 
 Blockly.JavaScript['ifttt'] = function(block) {
