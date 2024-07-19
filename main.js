@@ -528,7 +528,7 @@ function onCloudError(error) {
     adapter.log.error(`Cloud says: ${error}`);
 }
 
-function onCloudStop(data) {
+function onCloudStop() {
     adapter.getForeignObject(`system.adapter.${adapter.namespace}`, (err, obj) => {
         err && adapter.log.error(`[onCloudStop]: ${err}`);
         if (obj) {
