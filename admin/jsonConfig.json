@@ -15,10 +15,10 @@
                     "type": "select",
                     "label": "Server",
                     "hidden": "!data.useCredentials",
-                    "noTranslation":  true,
+                    "noTranslation": true,
                     "options": [
-                        {"label": "iobroker.pro", "value": "iobroker.pro"},
-                        {"label": "iobroker.net", "value": "iobroker.net"}
+                        { "label": "iobroker.pro", "value": "iobroker.pro" },
+                        { "label": "iobroker.net", "value": "iobroker.net" }
                     ]
                 },
                 "apikey": {
