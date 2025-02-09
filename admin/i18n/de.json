@@ -1,6 +1,6 @@
 {
     "(Set to 0 if behavior not desired)": "(Auf 0 setzen, falls dieses Verhalten unerwünscht ist)",
-    "(you can separate names with comma)": "Es können mehrere kommaseparierte Namen eingeben werden",
+    "(you can separate names with comma)": "Mehrere Namen können separiert mit Kommas angegeben werden",
     "APP-KEY": "APP-KEY",
     "Active": "Aktiv",
     "Add device": "Gerät hinzufügen",
@@ -59,7 +59,7 @@
     "Smart Enums": "Smart Aufzählungen",
     "Smart Media": "Smart Media",
     "Smart name": "Smart-Name",
-    "To apply this setting, the restart of adapter must be done. Agree?": "Um diese Einstellung zu ändern, es ist erforderlich diese Instanz neu zu starten. Einverstanden?",
+    "To apply this setting, the restart of adapter must be done. Agree?": "Um diese Einstellung zu ändern ist es erforderlich, diese Instanz neu zu starten. Einverstanden?",
     "Type": "Typ",
     "Types": "Typen",
     "Use following link for IFTTT": "Benutze folgenden Link für IFTTT",
