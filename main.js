@@ -7,7 +7,6 @@ const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const SocketCloud = require('./lib/socketCloud.js');
 const axios = require('axios');
 const pack = require('./io-package.json');
-const adapterName = require('./package.json').name.split('.').pop();
 
 let socket = null;
 let ioSocket = null;
@@ -21,6 +20,7 @@ let apikey = '';
 let server = 'http://localhost:8082';
 let adminServer = 'http://localhost:8081';
 let lovelaceServer = 'http://localhost:8091';
+let webSupportsConfig = false;
 
 let TEXT_PING_TIMEOUT = 'Ping timeout';
 let redirectRunning = false; // is redirect in progress
@@ -39,10 +39,11 @@ let adapter;
 function startAdapter(options) {
     options = options || {};
     Object.assign(options, {
-        name: adapterName,
+        name: 'cloud',
         objectChange: (id, obj) => {
             if (id === adapter.config.instance) {
-                const _server = getConnectionString(obj);
+                webSupportsConfig = obj.common.version.split('.')[0] >= '7';
+                const _server = getConnectionString(obj, 'web');
                 if (_server !== server) {
                     server = _server;
                     adapter.log.info(
@@ -51,7 +52,7 @@ function startAdapter(options) {
                     startConnect(true);
                 }
             } else if (id === adapter.config.allowAdmin) {
-                const _adminServer = getConnectionString(obj);
+                const _adminServer = getConnectionString(obj, 'admin');
                 if (_adminServer !== adminServer) {
                     adminServer = _adminServer;
                     adapter.log.info(
@@ -60,7 +61,7 @@ function startAdapter(options) {
                     startConnect(true);
                 }
             } else if (id === adapter.config.lovelace) {
-                const _lovelaceServer = getConnectionString(obj);
+                const _lovelaceServer = getConnectionString(obj, 'lovelace');
                 if (_lovelaceServer !== lovelaceServer) {
                     lovelaceServer = _lovelaceServer;
                     adapter.log.info(
@@ -168,7 +169,7 @@ function startAdapter(options) {
                     case 'cmdStderr':
                     case 'cmdExit':
                     case 'getHostInfo':
-                        // send to cloud
+                        // send it to the cloud
                         ioSocket && ioSocket.send(socket, obj.command, obj.message.id, obj.message.data);
                         break;
 
@@ -229,9 +230,9 @@ function startAdapter(options) {
     return adapter;
 }
 
-function getConnectionString(obj) {
+function getConnectionString(obj, name) {
     let conn = null;
-    if (obj && obj.common && obj.native) {
+    if (obj?.common && obj.native) {
         if (obj.native.auth) {
             adapter.log.error(
                 `Cannot activate ${obj._id.replace('system.adapter.', '')} for cloud, because authentication is enabled. Please create extra instance for cloud`,
@@ -255,7 +256,7 @@ function getConnectionString(obj) {
         }
     } else {
         conn = null;
-        adapter.log.error(`Unknown instance ${obj ? obj._id : 'undefined'}`);
+        adapter.log.error(`Unknown instance for ${name} "${obj?._id || ''}"`);
     }
     return conn;
 }
@@ -606,7 +607,10 @@ function startConnect(immediately) {
         clearInterval(connectTimer);
         connectTimer = null;
     }
-    connectTimer = setInterval(connect, adapter.config.cloudUrl.includes('https://iobroker.pro:') ? 30000 : 60000); // on pro there are not so many users as on net.
+    connectTimer = setInterval(
+        () => connect(),
+        adapter.config.cloudUrl.includes('https://iobroker.pro:') ? 30000 : 60000,
+    ); // on pro there are not so many users as on net.
     if (immediately) {
         connect();
     }
@@ -646,9 +650,28 @@ function answerWithReason(instance, name, cb) {
     cb && cb(`${name} is inactive`, 404, [], `${name} is inactive`);
 }
 
-function connect() {
+async function connect() {
     if (waiting) {
         return;
+    }
+    if (adapter.config.allowAdmin) {
+        const obj = await adapter.getForeignObjectAsync(adapter.config.allowAdmin).catch(() => null);
+        if (obj) {
+            adminServer = getConnectionString(obj, 'admin');
+        }
+    }
+    if (adapter.config.lovelace) {
+        const obj = await adapter.getForeignObjectAsync(adapter.config.lovelace).catch(() => null);
+        if (obj) {
+            lovelaceServer = getConnectionString(obj, 'lovelace');
+        }
+    }
+    if (adapter.config.instance) {
+        const obj = await adapter.getForeignObjectAsync(adapter.config.instance).catch(() => null);
+        if (obj) {
+            webSupportsConfig = obj.common.version.split('.')[0] >= '7';
+            server = getConnectionString(obj, 'web');
+        }
     }
 
     adapter.log.debug(`Connection attempt to ${adapter.config.cloudUrl} ...`);
@@ -668,6 +691,16 @@ function connect() {
         timeout: parseInt(adapter.config.connectionTimeout, 10) || 10000,
         reconnectionDelayMax: 120000,
     });
+
+    if (server || lovelaceServer || adminServer) {
+        initConnect(socket, {
+            apikey,
+            uuid,
+            version: pack.common.version,
+            allowAdmin: adapter.config.allowAdmin,
+            lovelace: adapter.config.lovelace,
+        });
+    }
 
     socket.on('connect_error', error => adapter.log.error(`Error while connecting to cloud: ${error}`));
 
@@ -852,6 +885,34 @@ function connect() {
                     answerWithReason(adapter.config.lovelace, 'Lovelace', cb);
                 }
             } else if (server) {
+                if (url === '/') {
+                    // cloud wants to know the list of possible instances
+                    if (webSupportsConfig) {
+                        axios
+                            .get(`${server}/config.json`, {
+                                responseType: 'arraybuffer',
+                                validateStatus: status => status < 400,
+                            })
+                            .then(response => cb(null, response.status, response.headers, response.data))
+                            .catch(error => {
+                                if (error.response) {
+                                    adapter.log.error(
+                                        `Cannot request web pages "${server + url}": ${error.response.data || error.response.status}`,
+                                    );
+                                    cb(
+                                        error.code,
+                                        error.response.status || 501,
+                                        error.response.headers,
+                                        error.response.data,
+                                    );
+                                } else {
+                                    adapter.log.error(`Cannot request web pages"${server + url}": no response`);
+                                    cb('no response', 501, {}, 'no response from web');
+                                }
+                            });
+                        return;
+                    }
+                }
                 // web
                 axios
                     .get(server + url, { responseType: 'arraybuffer', validateStatus: status => status < 400 })
@@ -861,7 +922,12 @@ function connect() {
                             adapter.log.error(
                                 `Cannot request web pages "${server + url}": ${error.response.data || error.response.status}`,
                             );
-                            cb(error.code, error.response.status || 501, error.response.headers, error.response.data);
+                            cb(
+                                error.code,
+                                error.response.status || 501,
+                                error.response.headers,
+                                error.response.data,
+                            );
                         } else {
                             adapter.log.error(`Cannot request web pages"${server + url}": no response`);
                             cb('no response', 501, {}, 'no response from web');
@@ -1019,51 +1085,6 @@ function connect() {
         console.error(`Some error: ${error}`);
         startConnect();
     });
-
-    return new Promise(resolve => {
-        if (adapter.config.instance) {
-            adapter
-                .getForeignObjectAsync(adapter.config.instance)
-                .then(obj => {
-                    server = getConnectionString(obj);
-                    resolve();
-                })
-                .catch(() => null);
-        } else {
-            resolve();
-        }
-    })
-        .then(() => {
-            if (adapter.config.allowAdmin) {
-                return adapter
-                    .getForeignObjectAsync(adapter.config.allowAdmin)
-                    .then(obj => (adminServer = getConnectionString(obj)))
-                    .catch(() => null);
-            } else {
-                return Promise.resolve();
-            }
-        })
-        .then(() => {
-            if (adapter.config.lovelace) {
-                return adapter
-                    .getForeignObjectAsync(adapter.config.lovelace)
-                    .then(obj => (lovelaceServer = getConnectionString(obj)))
-                    .catch(() => null);
-            } else {
-                return Promise.resolve();
-            }
-        })
-        .then(() => {
-            if (socket && (server || lovelaceServer || adminServer)) {
-                initConnect(socket, {
-                    apikey,
-                    uuid,
-                    version: pack.common.version,
-                    allowAdmin: adapter.config.allowAdmin,
-                    lovelace: adapter.config.lovelace,
-                });
-            }
-        });
 }
 
 function createInstancesStates(callback, objs) {
@@ -1261,14 +1282,14 @@ function main() {
     appKeyPromise
         .then(_apikey => {
             apikey = _apikey;
-            if (apikey && apikey.startsWith('@pro_')) {
-                if (
-                    !adapter.config.cloudUrl.startsWith('https://iobroker.pro:') &&
-                    !adapter.config.cloudUrl.startsWith('https://iobroker.info:')
-                ) {
-                    // yes .info and not .net (was debug server somewhere)
-                    adapter.config.cloudUrl = 'https://iobroker.pro:10555';
-                }
+            if (apikey?.startsWith('@pro_')) {
+                // if (
+                //     !adapter.config.cloudUrl.startsWith('https://iobroker.pro:') &&
+                //     !adapter.config.cloudUrl.startsWith('https://iobroker.info:')
+                // ) {
+                //     // yes .info and not .net (was debug server somewhere)
+                //     adapter.config.cloudUrl = 'https://iobroker.pro:10555';
+                // }
             } else {
                 adapter.config.allowAdmin = false;
                 adapter.config.lovelace = false;
