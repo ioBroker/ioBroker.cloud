@@ -341,7 +341,7 @@ export class CloudAdapter extends Adapter {
         }
     }
 
-    pingConnection(): void {
+    pingConnection = (): void => {
         if (!this.timeouts.detectDisconnect) {
             if (this.cloudConnected && this.ioSocket) {
                 // cannot use "ping" because reserved by socket.io
@@ -562,7 +562,7 @@ export class CloudAdapter extends Adapter {
         this.log.info(`Server asked to wait for ${seconds || 60} seconds`);
         if (this.socket) {
             this.socket.disconnect();
-            // @ts-expect-error fix later
+            // @ts-expect-error It is allowed to call without any arguments. Types are wrong
             this.socket.off();
             this.socket = null;
         }
@@ -596,7 +596,7 @@ export class CloudAdapter extends Adapter {
             this.config.cloudUrl = data.url;
             if (this.socket) {
                 this.socket.disconnect();
-                // @ts-expect-error fix later
+                // @ts-expect-error It is allowed to call without any arguments. Types are wrong
                 this.socket.off();
             }
             this.startConnect();
@@ -620,7 +620,7 @@ export class CloudAdapter extends Adapter {
                             this.config.cloudUrl = data.url!;
                             if (this.socket) {
                                 this.socket.disconnect();
-                                // @ts-expect-error fix later
+                                // @ts-expect-error It is allowed to call without any arguments. Types are wrong
                                 this.socket.off();
                             }
                             this.startConnect();
@@ -758,7 +758,7 @@ export class CloudAdapter extends Adapter {
 
         if (this.socket) {
             this.socket.disconnect();
-            // @ts-expect-error fix later
+            // @ts-expect-error It is allowed to call without any arguments. Types are wrong
             this.socket.off();
         }
 

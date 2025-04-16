@@ -279,7 +279,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
             });
         }
     }
-    pingConnection() {
+    pingConnection = () => {
         if (!this.timeouts.detectDisconnect) {
             if (this.cloudConnected && this.ioSocket) {
                 // cannot use "ping" because reserved by socket.io
@@ -291,7 +291,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
                 }, this.config.pingTimeout);
             }
         }
-    }
+    };
     checkPing() {
         if (this.cloudConnected) {
             this.pingTimer ||= setInterval(this.pingConnection, 30000);
@@ -490,7 +490,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
         this.log.info(`Server asked to wait for ${seconds || 60} seconds`);
         if (this.socket) {
             this.socket.disconnect();
-            // @ts-expect-error fix later
+            // @ts-expect-error It is allowed to call without any arguments. Types are wrong
             this.socket.off();
             this.socket = null;
         }
@@ -518,7 +518,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
             this.config.cloudUrl = data.url;
             if (this.socket) {
                 this.socket.disconnect();
-                // @ts-expect-error fix later
+                // @ts-expect-error It is allowed to call without any arguments. Types are wrong
                 this.socket.off();
             }
             this.startConnect();
@@ -538,7 +538,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
                             this.config.cloudUrl = data.url;
                             if (this.socket) {
                                 this.socket.disconnect();
-                                // @ts-expect-error fix later
+                                // @ts-expect-error It is allowed to call without any arguments. Types are wrong
                                 this.socket.off();
                             }
                             this.startConnect();
@@ -655,7 +655,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
         this.log.debug(`Connection attempt to ${this.config.cloudUrl} ...`);
         if (this.socket) {
             this.socket.disconnect();
-            // @ts-expect-error fix later
+            // @ts-expect-error It is allowed to call without any arguments. Types are wrong
             this.socket.off();
         }
         this.socket = (0, socket_io_client_1.default)(this.config.cloudUrl, {
