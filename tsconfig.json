@@ -1,14 +1,25 @@
+// Root tsconfig to set the settings and power editor support for all TS files
 {
+    "compileOnSave": true,
     "compilerOptions": {
-        "target": "es5" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', or 'ESNEXT'. */,
-        "module": "commonjs" /* Specify module code generation: 'none', commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
-        "lib": ["es6"] /* Specify library files to be included in the compilation:  */,
-        "allowJs": true /* Allow JavaScript files to be compiled. */,
-        "checkJs": true /* Report errors in .js files. */,
-        "resolveJsonModule": true, /* Allow resolving JSON files*/
-        "noEmit": true /* Do not emit outputs. */,
-        "strict": false /* Enable all strict type-checking options. */,
-        "noImplicitAny": false /* Raise error on expressions and declarations with an implied 'any' type. */
+        "allowJs": true,
+        "checkJs": true,
+        "esModuleInterop": true,
+        "inlineSourceMap": false,
+        "module": "Node16",
+        "moduleResolution": "node16",
+        "noEmit": true,
+        "noEmitOnError": true,
+        "outDir": "./dist",
+        "removeComments": false,
+        "resolveJsonModule": true,
+        "skipLibCheck": true, // Don't report errors in 3rd party definitions
+        "sourceMap": true,
+        "strict": true,
+        "target": "es2022",
+        "types": ["node", "@iobroker/types"],
+        "useUnknownInCatchVariables": false
     },
-    "include": ["main.js", "lib/**/*.js"]
+    "include": ["lib/**/*.ts", "*.ts"],
+    "exclude": ["node_modules", "admin", "test"]
 }

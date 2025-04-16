@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.3",
-    "@iobroker/socket-classes": "2.2.2",
+    "@iobroker/socket-classes": "2.2.12",
     "socket.io-client": "~1.7.4",
     "cookie-parser": "^1.4.7",
     "axios": "^1.8.4",
@@ -34,28 +34,35 @@
     "@iobroker/adapter-dev": "^1.4.0",
     "@iobroker/eslint-config": "^2.0.1",
     "@iobroker/testing": "^5.0.4",
-    "@types/node": "^22.13.14",
+    "@iobroker/types": "^7.0.6",
+    "@iobroker/ws-server": "^4.3.7",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/node": "^22.14.1",
+    "@types/socket.io-client": "^1.4.36",
+    "@types/ws": "^8.18.1",
     "mocha": "^11.1.0",
-    "chai": "^4.5.0"
+    "chai": "^4.5.0",
+    "typescript": "^5.8.3"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.cloud/issues"
   },
-  "main": "main.js",
+  "main": "dist/main.js",
   "files": [
     "admin/",
     "doc/",
     "img/",
-    "lib/",
+    "dist/",
     "io-package.json",
-    "LICENSE",
-    "main.js"
+    "LICENSE"
   ],
   "scripts": {
     "test:unit": "mocha test/unitAdapter --exit",
     "test:package": "mocha test/packageFiles --exit",
     "test:integration": "mocha test/integrationAdapter --exit",
     "test": "mocha --exit",
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint -c eslint.config.mjs",
     "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
