@@ -354,7 +354,7 @@ export class CloudAdapter extends Adapter {
                 }, this.config.pingTimeout);
             }
         }
-    }
+    };
 
     checkPing(): void {
         if (this.cloudConnected) {
@@ -727,6 +727,91 @@ export class CloudAdapter extends Adapter {
         }
     }
 
+    private patchIndexHtml(page: Buffer | string): Buffer {
+        page = typeof page === 'string' ? page : page.toString('utf-8');
+        const lines = page.split('\n');
+        // extract list of tabs
+        const beforeList = [];
+        let list = [];
+        const afterList = [];
+        let listFound: false | true | 'after' = false;
+        // Find 'list = [' and remember everything before it
+        for (let i = 0; i < lines.length; i++) {
+            if (!listFound) {
+                if (lines[i].startsWith('list = [')) {
+                    listFound = true;
+                    list.push(lines[i]);
+                } else {
+                    beforeList.push(lines[i]);
+                }
+            } else if (listFound === true) {
+                // Find after list '];' and remember everything after it
+                if (lines[i].includes('];')) {
+                    listFound = 'after';
+                    list.push(lines[i]);
+                } else {
+                    list.push(lines[i]);
+                }
+            } else if (listFound === 'after') {
+                afterList.push(lines[i]);
+            }
+        }
+        // Modify the list
+        // parse list
+        try {
+            const listData: {
+                name: string;
+                img: string;
+                link: string;
+                localLink: string;
+                color: string;
+                pro?: boolean;
+                id: string;
+                instance: number;
+            }[] = JSON.parse(
+                list
+                    .join('\n')
+                    .trim()
+                    .replace(/list = /, '')
+                    .replace(/;$/, ''),
+            );
+            // Remove all double entries
+            const uniqueList: {
+                name: string;
+                img: string;
+                link: string;
+                localLink: string;
+                color: string;
+                pro?: boolean;
+                id: string;
+                instance: number;
+            }[] = [];
+
+            for (const item of listData) {
+                if (!uniqueList.find(el => el.link === item.link)) {
+                    if (
+                        this.config.onlyViewer &&
+                        (item.link === 'admin/index.html' || item.link.includes('edit.html'))
+                    ) {
+                        continue;
+                    }
+                    uniqueList.push(item);
+                }
+            }
+            list = `list = ${JSON.stringify(uniqueList, null, 2)};`.split('\n');
+        } catch (e) {
+            this.log.error(`Cannot parse list from index.html: ${e}`);
+            return Buffer.from(page);
+        }
+
+        // Combine everything together
+        return Buffer.from(
+            `${beforeList.join('\n')}
+${list.join('\n')}
+${afterList.join('\n')}`,
+        );
+    }
+
     async connect(): Promise<void> {
         if (this.waiting) {
             return;
@@ -1062,9 +1147,14 @@ export class CloudAdapter extends Adapter {
                                 responseType: 'arraybuffer',
                                 validateStatus: status => status < 400,
                             })
-                            .then(response =>
-                                cb(null, response.status, response.headers as Record<string, string>, response.data),
-                            )
+                            .then(response => {
+                                // if url === '/'  or url === '/index.html' modify the answer
+                                if (url === '/' || url === '/index.html') {
+                                    response.data = this.patchIndexHtml(response.data);
+                                }
+
+                                cb(null, response.status, response.headers as Record<string, string>, response.data);
+                            })
                             .catch(error => {
                                 if (error.response) {
                                     this.log.error(

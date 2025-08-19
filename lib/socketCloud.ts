@@ -343,15 +343,10 @@ export default class SocketCloud extends SocketAdmin {
     }
 
     send(socket: SocketClient, cmd: 'ifttt', data?: any): void;
-
     send(socket: SocketClient, cmd: 'pingg'): void;
-
     send(socket: SocketClient, cmd: 'objectChange', id: string, data: ioBroker.Object | null | undefined): void;
-
     send(socket: SocketClient, cmd: 'stateChange', id: string, data: ioBroker.State | null | undefined): void;
-
     send(socket: SocketClient, cmd: 'log', msg: ioBroker.LogMessage): void;
-
     send(
         socket: SocketClient,
         cmd: 'cmdStdout' | 'cmdStderr' | 'cmdExit' | 'getHostInfo',

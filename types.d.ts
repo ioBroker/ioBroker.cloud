@@ -22,4 +22,5 @@ export interface CloudAdapterConfig {
     server: 'iobroker.pro' | 'iobroker.net';
     text2command: `${number}`;
     useCredentials: boolean;
+    onlyViewer: boolean;
 }

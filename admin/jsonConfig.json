@@ -106,6 +106,16 @@
                     "label": "Restart on disconnect",
                     "sm": 12
                 },
+                "onlyViewer": {
+                    "newLine": true,
+                    "type": "checkbox",
+                    "label": "Only viewer mode",
+                    "help": "In this mode, the adapter will hide admin and vis editor",
+                    "sm": 12,
+                    "style": {
+                        "marginBottom": "16px"
+                    }
+                },
                 "allowAdmin": {
                     "newLine": true,
                     "type": "instance",
@@ -115,6 +125,7 @@
                     "sm": 12,
                     "md": 6,
                     "lg": 4,
+                    "hidden": "!!data.onlyViewer",
                     "label": "Allow admin access",
                     "help": "only on pro",
                     "disabled": "(data.useCredentials && data.server !== 'iobroker.pro') || (!data.useCredentials && !data.apikey.startsWith('@pro_'))"
@@ -136,6 +147,7 @@
                     "type": "alive",
                     "textAlive": "",
                     "instance": "${data.allowAdmin}",
+                    "hidden": "!!data.onlyViewer",
                     "sm": 12,
                     "md": 6,
                     "lg": 4
