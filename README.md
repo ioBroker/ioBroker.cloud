@@ -75,7 +75,7 @@ You can deactivate HTTPS and authentication on this web instance, but better is 
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.1.0 (2025-08-19)
 * (bluefox) updated socket classes
 * (bluefox) minimum required node.js version is 18
 * (bluefox) used `@iobroker/eslint-config`
