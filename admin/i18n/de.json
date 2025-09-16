@@ -10,7 +10,7 @@
     "Allow admin access (only pro)": "Erlaube Zugriff auf Admin (nur pro)",
     "Allow lovelace access": "Zugang zu lovelace",
     "Allow self-signed certificates": "Erlaube selbst-signierte Zertifikate",
-    "Are you sure?": "Wirklich sicher?",
+    "Are you sure?": "Bist Du sicher?",
     "Authentication must be disabled. You can create second instance extra for cloud.": "Die Authentifizierung muss deaktiviert sein. Sie können eine zweite Instanz extra für Cloud erstellen.",
     "Cancel": "Abbrechen",
     "Cannot add this object": "Dieses Objekt kann nicht hinzugefügt werden, da es nicht unterstützt wird.",
