@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "5.1.0",
+    "version": "5.1.1",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "5.1.1": {
+        "en": "Fixing cloud connection error",
+        "de": "Fehler der Cloud-Verbindung beheben",
+        "ru": "Исправление ошибки облачного соединения",
+        "pt": "Corrigir erro de conexão na nuvem",
+        "nl": "Fout bij het herstellen van cloudverbinding",
+        "fr": "Correction d'une erreur de connexion au cloud",
+        "it": "Risolvere l'errore di connessione cloud",
+        "es": "Error de conexión de nube de fijación",
+        "pl": "Ustawienie błędu połączenia w chmurze",
+        "uk": "Виправлення помилки хмарного підключення",
+        "zh-cn": "正在修复云连接错误"
+      },
       "5.1.0": {
         "en": "updated socket classes\nminimum required node.js version is 18\nused `@iobroker/eslint-config`\nRewritten with TypeScript\nAdded the possibility to hide vis(2) editor in the cloud",
         "de": "aktualisierte steckdosenklassen\nminimal erforderliche node.js-version ist 18\n`@iobroker/eslint-config`\nNeu geschrieben mit TypeScript\nHinzufügen der Möglichkeit, vis(2) Editor in der Cloud zu verstecken",
@@ -105,18 +118,6 @@
         "pl": "Poprawka z miłością",
         "uk": "Правильна робота з любов'ю",
         "zh-cn": "与亲爱之道的辅助工作"
-      },
-      "4.2.3": {
-        "en": "Prepare for future js-controller versions\nCorrected error with iobroker.pro and delete object",
-        "de": "Bereiten Sie sich auf zukünftige js-Controller-Versionen\nFehler behoben mit iobroker.pro und Objekt löschen",
-        "ru": "Подготовьтесь к будущим версиям js-controller\nИсправлена ошибка с iobroker.pro и удалить объект",
-        "pt": "Prepare-se para futuras versões js-controller\nErro corrigido com iobroker.pro e excluir objeto",
-        "nl": "Bereid je voor op toekomstige Js-controller versie\nGecorrigeerde fout met iobroker. Pro en wit object",
-        "fr": "Préparez-vous pour les versions futures de js-controller\nErreur corrigée avec iobroker.pro et supprimer objet",
-        "it": "Prepararsi per le future versioni js-controller\nErrore corretto con iobroker.pro ed eliminare oggetto",
-        "es": "Prepararse para futuras versiones js-controller\nError corregido con iobroker.pro y eliminar objeto",
-        "pl": "Prepare for future js-controller version\nPoprawiony błąd z iobrokerem i usunął obiekt",
-        "zh-cn": "今后防污版本的编制\n装有碘化器的错误。"
       }
     },
     "authors": [
