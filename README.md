@@ -76,7 +76,7 @@ You can deactivate HTTPS and authentication on this web instance, but better is 
 
 ## Changelog
 ### **WORK IN PROGRESS**
-* (bluefox) updated socket classes
+* (bluefox) Fixing cloud connection error
 
 ### 5.1.0 (2025-08-19)
 * (bluefox) updated socket classes
