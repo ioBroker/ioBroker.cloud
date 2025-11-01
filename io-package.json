@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "5.1.1",
+    "version": "5.1.2",
     "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
@@ -28,6 +28,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "5.1.2": {
+        "en": "Fixing cloud connection error",
+        "de": "Fehler der Cloud-Verbindung beheben",
+        "ru": "Исправление ошибки облачного соединения",
+        "pt": "Corrigir erro de conexão na nuvem",
+        "nl": "Fout bij het herstellen van cloudverbinding",
+        "fr": "Correction d'une erreur de connexion au cloud",
+        "it": "Risolvere l'errore di connessione cloud",
+        "es": "Error de conexión de nube de fijación",
+        "pl": "Ustawienie błędu połączenia w chmurze",
+        "uk": "Виправлення помилки хмарного підключення",
+        "zh-cn": "正在修复云连接错误"
+      },
       "5.1.1": {
         "en": "Fixing cloud connection error",
         "de": "Fehler der Cloud-Verbindung beheben",
@@ -105,19 +118,6 @@
         "pl": "Downgrade Axios (ang.)",
         "uk": "Downgrade axios пакет до 0.27.2",
         "zh-cn": "A. 总表的职等至0.27.2"
-      },
-      "4.3.0": {
-        "en": "Corrected work with lovelace",
-        "de": "Korrigierte Arbeit mit Lovelace",
-        "ru": "Правильная работа с lovelace",
-        "pt": "Trabalho corrigido com lovelace",
-        "nl": "Gecorrigeerd werk met lovelace",
-        "fr": "Travail corrigé avec lovelace",
-        "it": "Lavoro corretto con lovelace",
-        "es": "Trabajo corregido con lovelace",
-        "pl": "Poprawka z miłością",
-        "uk": "Правильна робота з любов'ю",
-        "zh-cn": "与亲爱之道的辅助工作"
       }
     },
     "authors": [
