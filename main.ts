@@ -1,6 +1,17 @@
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core'; // Get common this utils
 import SocketCloud from './lib/socketCloud';
 import axios from 'axios';
+
+import Ws from 'ws';
+
+declare global {
+    // @ts-expect-error
+    var WebSocket: typeof Ws;
+}
+
+// @ts-expect-error Give to socket.io the old ws lib and not the Node.js `undici`
+global.WebSocket = Ws;
+
 import SocketIOClient from 'socket.io-client';
 import type { CloudAdapterConfig } from './types';
 import type { Socket as SocketClient } from '@iobroker/ws-server';
@@ -270,7 +281,7 @@ export class CloudAdapter extends Adapter {
                 );
                 return conn;
             } else if (!obj.common.enabled) {
-                this.log.error(
+                this.log.warn(
                     `Instance ${obj._id.replace('system.adapter.', '')} not enabled. Please enable adapter instance for cloud`,
                 );
                 return conn;

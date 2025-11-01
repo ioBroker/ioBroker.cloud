@@ -7,6 +7,9 @@ exports.CloudAdapter = void 0;
 const adapter_core_1 = require("@iobroker/adapter-core"); // Get common this utils
 const socketCloud_1 = __importDefault(require("./lib/socketCloud"));
 const axios_1 = __importDefault(require("axios"));
+const ws_1 = __importDefault(require("ws"));
+// @ts-expect-error Give to socket.io the old ws lib and not the Node.js `undici`
+global.WebSocket = ws_1.default;
 const socket_io_client_1 = __importDefault(require("socket.io-client"));
 const TEXT_PING_TIMEOUT = 'Ping timeout';
 class CloudAdapter extends adapter_core_1.Adapter {
