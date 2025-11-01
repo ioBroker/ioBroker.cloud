@@ -227,7 +227,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
                 return conn;
             }
             else if (!obj.common.enabled) {
-                this.log.error(`Instance ${obj._id.replace('system.adapter.', '')} not enabled. Please enable adapter instance for cloud`);
+                this.log.warn(`Instance ${obj._id.replace('system.adapter.', '')} not enabled. Please enable adapter instance for cloud`);
                 return conn;
             }
             conn = `http${obj.native.secure ? 's' : ''}://`;
