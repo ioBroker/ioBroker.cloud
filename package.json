@@ -24,7 +24,7 @@
     "@iobroker/socket-classes": "2.2.20",
     "socket.io-client": "~1.7.4",
     "cookie-parser": "^1.4.7",
-    "axios": "^1.11.0",
+    "axios": "^1.13.2",
     "ws": "^8.18.3"
   },
   "devDependencies": {
