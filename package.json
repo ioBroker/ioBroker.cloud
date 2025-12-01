@@ -37,7 +37,7 @@
     "@iobroker/types": "^7.0.7",
     "@iobroker/ws-server": "^4.3.9",
     "@types/cookie-parser": "^1.4.10",
-    "@types/node": "^24.9.2",
+    "@types/node": "^24.10.1",
     "@types/socket.io-client": "^1.4.36",
     "@types/ws": "^8.18.1",
     "mocha": "^11.7.4",
