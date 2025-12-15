@@ -2,7 +2,6 @@
   "common": {
     "name": "cloud",
     "version": "5.1.2",
-    "title": "Cloud connection",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
