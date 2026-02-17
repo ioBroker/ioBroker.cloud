@@ -13,7 +13,7 @@ export default [
         },
     },
     {
-        ignores: ['dist/*', 'test/*', 'dist/**/*', 'admin/**/*'],
+        ignores: ['build/*', 'test/*', 'build/**/*', 'admin/**/*'],
     },
     {
         // disable temporary the rule 'jsdoc/require-param' and enable 'jsdoc/require-jsdoc'

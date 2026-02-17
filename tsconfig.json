@@ -10,7 +10,7 @@
         "moduleResolution": "node16",
         "noEmit": true,
         "noEmitOnError": true,
-        "outDir": "./dist",
+        "outDir": "./build",
         "removeComments": false,
         "resolveJsonModule": true,
         "skipLibCheck": true, // Don't report errors in 3rd party definitions
@@ -20,6 +20,6 @@
         "types": ["node", "@iobroker/types"],
         "useUnknownInCatchVariables": false
     },
-    "include": ["lib/**/*.ts", "*.ts"],
+    "include": ["src/**/*.ts", "src/**/*.d.ts"],
     "exclude": ["node_modules", "admin", "test"]
 }

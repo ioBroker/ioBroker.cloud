@@ -1,8 +1,9 @@
 import EventEmitter from 'node:events';
+import type { AddressInfo } from 'node:net';
 import WebSocket from 'ws'; // used for lovelace
+
 import { SocketAdmin, type SocketSettings } from '@iobroker/socket-classes';
 import type { Socket as SocketClient } from '@iobroker/ws-server';
-import type { AddressInfo } from 'node:net';
 
 process.on('uncaughtException', (err: Error): void => {
     // Handle the error safely

@@ -142,7 +142,7 @@
     "materialize": true,
     "dependencies": [
       {
-        "js-controller": ">=3.1.3"
+        "js-controller": ">=6.0.11"
       }
     ],
     "preserveSettings": "smartName",
@@ -197,59 +197,87 @@
     "useCredentials": true
   },
   "instanceObjects": [
-    {
-      "_id": "info",
-      "type": "channel",
-      "common": {
-        "name": "Information"
+      {
+          "_id": "info",
+          "type": "channel",
+          "common": {
+              "name": "Information"
+          },
+          "native": {}
       },
-      "native": {}
-    },
-    {
-      "_id": "info.connection",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": "If connected to cloud",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
+      {
+          "_id": "info.connection",
+          "type": "state",
+          "common": {
+              "role": "indicator.connected",
+              "name": "If connected to cloud",
+              "type": "boolean",
+              "read": true,
+              "write": false,
+              "def": false
+          },
+          "native": {}
       },
-      "native": {}
-    },
-    {
-      "_id": "info.userOnCloud",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": "If user is connected over cloud",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
+      {
+          "_id": "info.userOnCloud",
+          "type": "state",
+          "common": {
+              "role": "indicator.connected",
+              "name": "If user is connected over cloud",
+              "type": "boolean",
+              "read": true,
+              "write": false,
+              "def": false
+          },
+          "native": {}
       },
-      "native": {}
-    },
-    {
-      "_id": "info.remoteTill",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Time till pro access is available",
-        "type": "string",
-        "read": true,
-        "write": false
+      {
+          "_id": "info.remoteTill",
+          "type": "state",
+          "common": {
+              "role": "state",
+              "name": "Time till pro access is available",
+              "type": "string",
+              "read": true,
+              "write": false
+          },
+          "native": {}
       },
-      "native": {}
-    },
-    {
-      "_id": "services",
-      "type": "channel",
-      "common": {
-        "name": "Information"
+      {
+          "_id": "remote",
+          "type": "channel",
+          "common": {
+              "name": "Remote commands"
+          },
+          "native": {}
       },
-      "native": {}
-    }
+      {
+          "_id": "remote.command",
+          "type": "state",
+          "common": {
+              "role": "state",
+              "name": "Received remote command from the app via cloud",
+              "type": "string",
+              "read": true,
+              "write": false
+          },
+          "native": {}
+      },
+      {
+          "_id": "devices",
+          "type": "folder",
+          "common": {
+              "name": "Remote devices"
+          },
+          "native": {}
+      },
+      {
+          "_id": "services",
+          "type": "channel",
+          "common": {
+              "name": "Information"
+          },
+          "native": {}
+      }
   ]
 }

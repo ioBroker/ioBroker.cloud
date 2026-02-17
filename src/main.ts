@@ -13,8 +13,8 @@ declare global {
 global.WebSocket = Ws;
 
 import SocketIOClient from 'socket.io-client';
-import type { CloudAdapterConfig } from './types';
 import type { Socket as SocketClient } from '@iobroker/ws-server';
+import type { CloudAdapterConfig } from './types';
 
 const TEXT_PING_TIMEOUT = 'Ping timeout';
 
@@ -34,6 +34,8 @@ export class CloudAdapter extends Adapter {
     private adminServer: string | null = 'http://localhost:8081';
     private lovelaceServer: string | null = 'http://localhost:8091';
     private webSupportsConfig = false;
+    private checkedNames: Set<string> = new Set();
+
     private timeouts: {
         terminate: NodeJS.Timeout | null;
         onCloudWait: NodeJS.Timeout | null;
@@ -127,8 +129,54 @@ export class CloudAdapter extends Adapter {
         this.ioSocket?.send(this.socket as any as SocketClient, 'objectChange', id, obj);
     }
 
-    onStateChange(id: string, state: ioBroker.State | null | undefined): void {
-        if (this.socket) {
+    async onStateChange(id: string, state: ioBroker.State | null | undefined): Promise<void> {
+        if (id.endsWith('remote.command')) {
+            // this is command from the app in form {"deviceName": "some.id", "value": "value", "name": "valueName"}, like {"deviceName": "samsung", "value": "123.1;23.12", "valueName": "currentLocation"}
+            if (state?.val) {
+                try {
+                    const data = JSON.parse(state.val as string);
+                    if (data.deviceName && data.name) {
+                        if (!this.checkedNames.has(data.deviceName)) {
+                            // ensure that device channel exists
+                            const channelObj = await this.getObjectAsync(data.deviceName);
+                            if (!channelObj) {
+                                await this.setObjectAsync(data.deviceName, {
+                                    type: 'channel',
+                                    common: {
+                                        name: data.deviceName,
+                                    },
+                                    native: {},
+                                });
+                            }
+                            this.checkedNames.add(data.deviceName);
+                        }
+                        // set state with value
+                        if (!this.checkedNames.has(`${data.deviceName}.${data.name}`)) {
+                            // ensure that state exists
+                            const stateObj = await this.getObjectAsync(`${data.deviceName}.${data.name}`);
+                            if (!stateObj) {
+                                await this.setObjectAsync(`${data.deviceName}.${data.name}`, {
+                                    type: 'state',
+                                    common: {
+                                        name: data.name,
+                                        type: typeof data.value as ioBroker.CommonType,
+                                        read: true,
+                                        write: false,
+                                        role: 'state',
+                                    },
+                                    native: {},
+                                });
+                            }
+                            this.checkedNames.add(`${data.deviceName}.${data.name}`);
+                        }
+
+                        await this.setStateAsync(`${data.deviceName}.${data.name}`, data.value, true);
+                    }
+                } catch {
+                    this.log.warn(`Cannot parse command: ${state.val}`);
+                }
+            }
+        } else if (this.socket) {
             if (id === `${this.namespace}.services.ifttt` && state && !state.ack) {
                 this.sendDataToIFTTT({
                     id: id,
@@ -1602,6 +1650,7 @@ ${afterList.join('\n')}`,
         }
 
         this.subscribeStates('smart.*');
+        this.subscribeStates('remote.command');
         if (this.config.instance) {
             try {
                 await this.subscribeForeignObjectsAsync(this.config.instance);
