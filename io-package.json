@@ -12,6 +12,7 @@
       "it": "Connessione cloud",
       "es": "Conexión a la nube",
       "pl": "Połączenie w chmurze",
+      "uk": "Облачное соединение",
       "zh-cn": "云连接"
     },
     "desc": {
@@ -24,6 +25,7 @@
       "it": "Collega il tuo server ioBroker al cloud ioBroker",
       "es": "Conecta tu ioBroker servidor a la ioBroker en la nube",
       "pl": "Łączy serwer ioBroker na ioBroker chmura",
+      "uk": "Підключає ваш сервер ioBroker к облаку ioBroker",
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
@@ -39,32 +41,6 @@
         "pl": "Ustawienie błędu połączenia w chmurze",
         "uk": "Виправлення помилки хмарного підключення",
         "zh-cn": "正在修复云连接错误"
-      },
-      "5.1.1": {
-        "en": "Fixing cloud connection error",
-        "de": "Fehler der Cloud-Verbindung beheben",
-        "ru": "Исправление ошибки облачного соединения",
-        "pt": "Corrigir erro de conexão na nuvem",
-        "nl": "Fout bij het herstellen van cloudverbinding",
-        "fr": "Correction d'une erreur de connexion au cloud",
-        "it": "Risolvere l'errore di connessione cloud",
-        "es": "Error de conexión de nube de fijación",
-        "pl": "Ustawienie błędu połączenia w chmurze",
-        "uk": "Виправлення помилки хмарного підключення",
-        "zh-cn": "正在修复云连接错误"
-      },
-      "5.1.0": {
-        "en": "updated socket classes\nminimum required node.js version is 18\nused `@iobroker/eslint-config`\nRewritten with TypeScript\nAdded the possibility to hide vis(2) editor in the cloud",
-        "de": "aktualisierte steckdosenklassen\nminimal erforderliche node.js-version ist 18\n`@iobroker/eslint-config`\nNeu geschrieben mit TypeScript\nHinzufügen der Möglichkeit, vis(2) Editor in der Cloud zu verstecken",
-        "ru": "обновленные классы розеток\nминимальная требуемая версия node.js - 18\nиспользуемый '@iobroker/eslint-config'\nПереписано с помощью TypeScript\nДобавлена возможность скрыть редактор vis(2) в облаке",
-        "pt": "classes de socket atualizadas\na versão mínima necessária do nodo.js é 18\nusado `@iobroker/eslint-config`\nReescrito com TypeScript\nAdicionado a possibilidade de ocultar vis(2) editor na nuvem",
-        "nl": "bijgewerkte socketklassen\nminimaal vereiste node.js versie is 18\ngebruikte \"@iobroker/eslint-config\"\nHerschreven met TypeScript\nToegevoegd de mogelijkheid om vis(2) editor te verbergen in de cloud",
-        "fr": "classes de socket mises à jour\nla version minimum requise node.js est 18\nutilisé `@iobroker/eslint-config`\nRéécrit avec TypeScript\nAjout de la possibilité de masquer l'éditeur vis(2) dans le cloud",
-        "it": "classi di socket aggiornate\nversione minima richiesta node.js è 18\nusato `@iobroker/eslint-config`\nRescritto con TypeScript\nAggiunto la possibilità di nascondere vis(2) editor nel cloud",
-        "es": "clases actualizadas de socket\nmínimo requerido node.js versión es 18\nutilizado `@iobroker/eslint-config`\nReescrito con TipoScript\nAñadido la posibilidad de ocultar vis(2) editor en la nube",
-        "pl": "zaktualizowane klasy gniazd\nminimum wymagane node.js wersja 18\nused '@ iobroker / eslint- configment'\nPrzepisane za pomocą TypeScript\nDodano możliwość ukrycia edytora vis (2) w chmurze",
-        "uk": "оновлені класи розетки\nмінімальний необхідний вузол.js версія 18\n`@iobroker/eslint-config``\nНаписання з TypeScript\nДодано можливість приховати вісь(2) редактор у хмарі",
-        "zh-cn": "更新套接字类\n最小需要的节点.js版本为 18\n使用“iio经纪人/slint-config”\n用类型脚本重写\n在云中添加隐藏对齐编辑器的可能性"
       },
       "5.0.1": {
         "en": "updated socket classes and fixed vis-2 error if connected via cloud\nminimum required node.js version is 16",
@@ -138,7 +114,6 @@
     "type": "communication",
     "messagebox": true,
     "stopBeforeUpdate": true,
-    "materialize": true,
     "dependencies": [
       {
         "js-controller": ">=6.0.11"

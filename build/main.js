@@ -26,6 +26,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
     adminServer = 'http://localhost:8081';
     lovelaceServer = 'http://localhost:8091';
     webSupportsConfig = false;
+    checkedNames = new Set();
     timeouts = {
         terminate: null,
         onCloudWait: null,
@@ -103,8 +104,55 @@ class CloudAdapter extends adapter_core_1.Adapter {
         }
         this.ioSocket?.send(this.socket, 'objectChange', id, obj);
     }
-    onStateChange(id, state) {
-        if (this.socket) {
+    async onStateChange(id, state) {
+        if (id.endsWith('remote.command')) {
+            // this is command from the app in form {"deviceName": "some.id", "value": "value", "name": "valueName"}, like {"deviceName": "samsung", "value": "123.1;23.12", "valueName": "currentLocation"}
+            if (state?.val) {
+                try {
+                    const data = JSON.parse(state.val);
+                    if (data.deviceName && data.name) {
+                        if (!this.checkedNames.has(data.deviceName)) {
+                            // ensure that device channel exists
+                            const channelObj = await this.getObjectAsync(data.deviceName);
+                            if (!channelObj) {
+                                await this.setObjectAsync(data.deviceName, {
+                                    type: 'channel',
+                                    common: {
+                                        name: data.deviceName,
+                                    },
+                                    native: {},
+                                });
+                            }
+                            this.checkedNames.add(data.deviceName);
+                        }
+                        // set state with value
+                        if (!this.checkedNames.has(`${data.deviceName}.${data.name}`)) {
+                            // ensure that state exists
+                            const stateObj = await this.getObjectAsync(`${data.deviceName}.${data.name}`);
+                            if (!stateObj) {
+                                await this.setObjectAsync(`${data.deviceName}.${data.name}`, {
+                                    type: 'state',
+                                    common: {
+                                        name: data.name,
+                                        type: typeof data.value,
+                                        read: true,
+                                        write: false,
+                                        role: 'state',
+                                    },
+                                    native: {},
+                                });
+                            }
+                            this.checkedNames.add(`${data.deviceName}.${data.name}`);
+                        }
+                        await this.setStateAsync(`${data.deviceName}.${data.name}`, data.value, true);
+                    }
+                }
+                catch {
+                    this.log.warn(`Cannot parse command: ${state.val}`);
+                }
+            }
+        }
+        else if (this.socket) {
             if (id === `${this.namespace}.services.ifttt` && state && !state.ack) {
                 this.sendDataToIFTTT({
                     id: id,
@@ -1322,6 +1370,7 @@ ${afterList.join('\n')}`);
             this.config.lovelace = `system.adapter.${this.config.lovelace}`;
         }
         this.subscribeStates('smart.*');
+        this.subscribeStates('remote.command');
         if (this.config.instance) {
             try {
                 await this.subscribeForeignObjectsAsync(this.config.instance);
