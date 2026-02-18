@@ -9,3 +9,4 @@ nbproject
 
 #ignore .commitinfo created by ioBroker release script
 .commitinfo
+/.claude/settings.local.json

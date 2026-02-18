@@ -20,7 +20,7 @@ const TEXT_PING_TIMEOUT = 'Ping timeout';
 
 export class CloudAdapter extends Adapter {
     declare config: CloudAdapterConfig;
-    private redirectRunning = false; // is redirect in progress
+    private redirectRunning = false; // is redirect in progress?
     private socket: SocketIOClient.Socket | null = null;
     private ioSocket: SocketCloud | null = null;
 
@@ -131,31 +131,52 @@ export class CloudAdapter extends Adapter {
 
     async onStateChange(id: string, state: ioBroker.State | null | undefined): Promise<void> {
         if (id.endsWith('remote.command')) {
-            // this is command from the app in form {"deviceName": "some.id", "value": "value", "name": "valueName"}, like {"deviceName": "samsung", "value": "123.1;23.12", "valueName": "currentLocation"}
+            // this is the command from the app in form {"deviceName": "some.id", "value": "value", "name": "valueName"}, like {"deviceName": "samsung", "value": "123.1;23.12", "valueName": "currentLocation"}
             if (state?.val) {
                 try {
                     const data = JSON.parse(state.val as string);
                     if (data.deviceName && data.name) {
-                        if (!this.checkedNames.has(data.deviceName)) {
+                        const deviceId = `devices.${data.deviceName}`;
+                        if (!this.checkedNames.has(deviceId)) {
                             // ensure that device channel exists
-                            const channelObj = await this.getObjectAsync(data.deviceName);
+                            const channelObj = await this.getObjectAsync(deviceId);
                             if (!channelObj) {
-                                await this.setObjectAsync(data.deviceName, {
-                                    type: 'channel',
+                                await this.setObjectAsync(deviceId, {
+                                    type: 'device',
                                     common: {
                                         name: data.deviceName,
+                                        statusStates: {
+                                            onlineId: `${this.namespace}.devices.${data.deviceName}.alive`,
+                                        },
                                     },
                                     native: {},
                                 });
+                                await this.setObjectAsync(`${deviceId}.alive`, {
+                                    type: 'state',
+                                    common: {
+                                        name: 'If app is running and connected',
+                                        write: false,
+                                        read: true,
+                                        type: 'boolean',
+                                        role: 'indicator.reachable',
+                                    },
+                                    native: {},
+                                });
+                                await this.setStateAsync(`${deviceId}.alive`, {
+                                    val: true,
+                                    ack: true,
+                                    expire: 60,
+                                });
                             }
-                            this.checkedNames.add(data.deviceName);
+                            this.checkedNames.add(deviceId);
                         }
                         // set state with value
-                        if (!this.checkedNames.has(`${data.deviceName}.${data.name}`)) {
+                        if (!this.checkedNames.has(`${deviceId}.${data.name}`)) {
                             // ensure that state exists
-                            const stateObj = await this.getObjectAsync(`${data.deviceName}.${data.name}`);
+                            const stateObj = await this.getObjectAsync(`${deviceId}.${data.name}`);
                             if (!stateObj) {
-                                await this.setObjectAsync(`${data.deviceName}.${data.name}`, {
+                                const obj: ioBroker.StateObject = {
+                                    _id: `${this.namespace}.devices.${data.deviceName}.${data.name}`,
                                     type: 'state',
                                     common: {
                                         name: data.name,
@@ -165,12 +186,66 @@ export class CloudAdapter extends Adapter {
                                         role: 'state',
                                     },
                                     native: {},
-                                });
+                                };
+                                if (data.name === 'batteryState') {
+                                    obj.common.states = { 0: 'unknown', 1: 'unplugged', 2: 'charging', 3: 'full' };
+                                } else if (data.name === 'batteryLevel') {
+                                    obj.common.role = 'battery';
+                                    obj.common.unit = '%';
+                                    obj.common.min = 0;
+                                    obj.common.max = 100;
+                                } else if (data.name === 'brightness') {
+                                    obj.common.role = 'level.brightness';
+                                    obj.common.unit = '%';
+                                    obj.common.min = 0;
+                                    obj.common.max = 100;
+                                }
+
+                                await this.setObjectAsync(`${deviceId}.${data.name}`, obj);
                             }
-                            this.checkedNames.add(`${data.deviceName}.${data.name}`);
+                            if (data.name === 'currentLocation') {
+                                // add just location for vis: "longitude;latitude"
+                                const stateObj = await this.getObjectAsync(`${deviceId}.position`);
+                                if (!stateObj) {
+                                    const obj: ioBroker.StateObject = {
+                                        _id: `${this.namespace}.${deviceId}.position`,
+                                        type: 'state',
+                                        common: {
+                                            name: data.name,
+                                            type: 'string',
+                                            read: true,
+                                            write: false,
+                                            role: 'value.gps',
+                                        },
+                                        native: {},
+                                    };
+                                    await this.setObjectAsync(`${deviceId}.position`, obj);
+                                }
+                            }
+                            this.checkedNames.add(`${deviceId}.${data.name}`);
                         }
 
-                        await this.setStateAsync(`${data.deviceName}.${data.name}`, data.value, true);
+                        if (data.name === 'alive') {
+                            await this.setStateAsync(`${deviceId}.${data.name}`, {
+                                val: data.value,
+                                expire: 60,
+                                ack: true,
+                            });
+                        } else {
+                            await this.setStateAsync(`${deviceId}.${data.name}`, data.value, true);
+                            if (data.name === 'currentLocation') {
+                                try {
+                                    const json = JSON.parse(data.value);
+                                    await this.setStateAsync(
+                                        `${deviceId}.position`,
+                                        `${json?.coords?.longitude};${json?.coords?.latitude}`,
+                                        true,
+                                    );
+                                } catch {
+                                    this.log.error(`Cannot parse location: ${data.value}`);
+                                }
+                            }
+                        }
                     }
                 } catch {
                     this.log.warn(`Cannot parse command: ${state.val}`);
@@ -1043,6 +1118,7 @@ ${afterList.join('\n')}`,
                                 .get(this.adminServer + url, {
                                     responseType: 'arraybuffer',
                                     validateStatus: status => status < 400,
+                                    maxRedirects: 0,
                                 })
                                 .then(response =>
                                     cb(
@@ -1090,6 +1166,7 @@ ${afterList.join('\n')}`,
                                 .get(this.adminServer + url, {
                                     responseType: 'arraybuffer',
                                     validateStatus: status => status < 400,
+                                    maxRedirects: 0,
                                 })
                                 .then(response =>
                                     cb(
@@ -1133,6 +1210,7 @@ ${afterList.join('\n')}`,
                                 .get(this.lovelaceServer + url, {
                                     responseType: 'arraybuffer',
                                     validateStatus: status => status < 400,
+                                    maxRedirects: 0,
                                 })
                                 .then(response =>
                                     cb(
@@ -1205,6 +1283,7 @@ ${afterList.join('\n')}`,
                             .get(this.server + url, {
                                 responseType: 'arraybuffer',
                                 validateStatus: status => status < 400,
+                                maxRedirects: 0,
                             })
                             .then(response => {
                                 // if url === '/'  or url === '/index.html' modify the answer
