@@ -60,6 +60,26 @@
                     "instance": "${data.instance}",
                     "sm": 12,
                     "md": 4
+                },
+                "_qrCodeLabel": {
+                    "newLine": true,
+                    "type": "header",
+                    "size": 4,
+                    "label": "QR code for ioBroker.visu app",
+                    "help": "Scan this QR code with the ioBroker app to fill in the connection details automatically.",
+                    "hidden": "!data.useCredentials || !data.instance || data.server !== 'iobroker.pro'"
+                },
+                "_qrCode": {
+                    "newLine": true,
+                    "lg": 4,
+                    "sm": 12,
+                    "md": 6,
+                    "type": "qrCodeSendTo",
+                    "command": "qrCode",
+                    "sendFirstByClick": true,
+                    "tooltip": "Scan this QR code with the ioBroker app to fill in the connection details automatically.",
+                    "jsonData": "{\"login\": \"${data.login}\", \"pass\": \"${data.pass}\", \"instance\": \"${data.instance}\"}",
+                    "hidden": "!data.useCredentials || !data.instance || data.server !== 'iobroker.pro'"
                 }
             }
         },

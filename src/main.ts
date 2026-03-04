@@ -264,7 +264,75 @@ export class CloudAdapter extends Adapter {
         }
     }
 
-    onMessage(obj: ioBroker.Message): void {
+    async readVisuAppInstructions(data: {
+        login: string;
+        pass: string;
+        instance: string;
+    }): Promise<{ qrCode?: string; error?: string }> {
+        let webObj: ioBroker.InstanceObject | null | undefined = null;
+        if (!data.instance) {
+            // First get the web server instance
+            const instancesRecord = await this.getObjectViewAsync('system', 'instance', {
+                startkey: 'system.adapter.web.',
+                endkey: 'system.adapter.web.\u9999',
+            });
+            const instances = instancesRecord.rows.map(instance => instance.value);
+            for (let i = 0; i < instances.length; i++) {
+                const inst = instances[i];
+                if (inst.common.enabled) {
+                    webObj = inst;
+                    break;
+                }
+            }
+            // If no enabled instance found, take first one
+            if (webObj === null && instances.length) {
+                webObj = instances[0];
+            }
+        } else {
+            webObj = (await this.getForeignObjectAsync(`system.adapter.${data.instance}`)) as
+                | ioBroker.InstanceObject
+                | null
+                | undefined;
+        }
+
+        if (webObj) {
+            const native = webObj.native as
+                | { bind?: string; port: string | number; auth?: boolean; secure: boolean }
+                | undefined;
+            const addresses: string[] = [];
+            if (native?.bind === '0.0.0.0') {
+                // Read the host information from system configuration
+                const hostConfig = await this.getForeignObjectAsync(`system.host.${webObj?.common.host}`);
+                if (hostConfig?.native?.hardware?.networkInterfaces) {
+                    // List all IP4 external interfaces
+                    const interfaces = hostConfig.native.hardware.networkInterfaces;
+                    Object.keys(interfaces).forEach(ifName => {
+                        interfaces[ifName]?.forEach((iface: any) => {
+                            if (iface.family === 'IPv4' && !iface.internal) {
+                                addresses.push(`${iface.address}/${iface.netmask}`);
+                            }
+                        });
+                    });
+                }
+            } else {
+                addresses.push(native?.bind as string);
+            }
+
+            if (native?.auth && native?.secure) {
+                return { error: 'error_ssl' };
+            }
+
+            const text = `iotConfig|port:${native?.port}|ips:${addresses.join(',')}|cu:${data.login || this.config.login}|cp:${data.pass || this.config.pass}|https:${!!native?.secure}|auth:${!!native?.auth}`;
+            // Convert to base64
+            const base64 = btoa(text);
+
+            return { qrCode: base64 };
+        } else {
+            return { error: 'error_no_web' };
+        }
+    }
+
+    async onMessage(obj: ioBroker.Message): Promise<void> {
         if (obj) {
             switch (obj.command) {
                 case 'ifttt':
@@ -311,7 +379,7 @@ export class CloudAdapter extends Adapter {
                             obj.message.server,
                             obj.message.login,
                             obj.message.pass,
-                            (err, key) => {
+                            (_err, key) => {
                                 const text = `https://${obj.message.server}/service/custom_<NAME>/${key}/<data>`;
                                 if (obj.callback) {
                                     this.sendTo(obj.from, obj.command, text, obj.callback);
@@ -322,6 +390,17 @@ export class CloudAdapter extends Adapter {
                         const text = `https://${obj.message.apikey.startsWith('@pro_') ? 'iobroker.pro' : 'iobroker.net'}/service/custom_<NAME>/${obj.message.apikey}/<data>`;
                         if (obj.callback) {
                             this.sendTo(obj.from, obj.command, text, obj.callback);
+                        }
+                    }
+                    break;
+
+                case 'qrCode':
+                    if (typeof obj.message === 'object') {
+                        const result = await this.readVisuAppInstructions(
+                            obj.message as { login: string; pass: string; instance: string },
+                        );
+                        if (obj.callback) {
+                            this.sendTo(obj.from, obj.command, result.error ? result : result.qrCode, obj.callback);
                         }
                     }
                     break;

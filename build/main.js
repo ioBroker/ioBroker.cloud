@@ -239,7 +239,64 @@ class CloudAdapter extends adapter_core_1.Adapter {
             }
         }
     }
-    onMessage(obj) {
+    async readVisuAppInstructions(data) {
+        let webObj = null;
+        if (!data.instance) {
+            // First get the web server instance
+            const instancesRecord = await this.getObjectViewAsync('system', 'instance', {
+                startkey: 'system.adapter.web.',
+                endkey: 'system.adapter.web.\u9999',
+            });
+            const instances = instancesRecord.rows.map(instance => instance.value);
+            for (let i = 0; i < instances.length; i++) {
+                const inst = instances[i];
+                if (inst.common.enabled) {
+                    webObj = inst;
+                    break;
+                }
+            }
+            // If no enabled instance found, take first one
+            if (webObj === null && instances.length) {
+                webObj = instances[0];
+            }
+        }
+        else {
+            webObj = (await this.getForeignObjectAsync(`system.adapter.${data.instance}`));
+        }
+        if (webObj) {
+            const native = webObj.native;
+            const addresses = [];
+            if (native?.bind === '0.0.0.0') {
+                // Read the host information from system configuration
+                const hostConfig = await this.getForeignObjectAsync(`system.host.${webObj?.common.host}`);
+                if (hostConfig?.native?.hardware?.networkInterfaces) {
+                    // List all IP4 external interfaces
+                    const interfaces = hostConfig.native.hardware.networkInterfaces;
+                    Object.keys(interfaces).forEach(ifName => {
+                        interfaces[ifName]?.forEach((iface) => {
+                            if (iface.family === 'IPv4' && !iface.internal) {
+                                addresses.push(`${iface.address}/${iface.netmask}`);
+                            }
+                        });
+                    });
+                }
+            }
+            else {
+                addresses.push(native?.bind);
+            }
+            if (native?.auth && native?.secure) {
+                return { error: 'error_ssl' };
+            }
+            const text = `iotConfig|port:${native?.port}|ips:${addresses.join(',')}|cu:${data.login || this.config.login}|cp:${data.pass || this.config.pass}|https:${!!native?.secure}|auth:${!!native?.auth}`;
+            // Convert to base64
+            const base64 = btoa(text);
+            return { qrCode: base64 };
+        }
+        else {
+            return { error: 'error_no_web' };
+        }
+    }
+    async onMessage(obj) {
         if (obj) {
             switch (obj.command) {
                 case 'ifttt':
@@ -275,7 +332,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
                         return;
                     }
                     if (obj.message.useCredentials) {
-                        this._readAppKeyFromCloud(obj.message.server, obj.message.login, obj.message.pass, (err, key) => {
+                        this._readAppKeyFromCloud(obj.message.server, obj.message.login, obj.message.pass, (_err, key) => {
                             const text = `https://${obj.message.server}/service/custom_<NAME>/${key}/<data>`;
                             if (obj.callback) {
                                 this.sendTo(obj.from, obj.command, text, obj.callback);
@@ -286,6 +343,14 @@ class CloudAdapter extends adapter_core_1.Adapter {
                         const text = `https://${obj.message.apikey.startsWith('@pro_') ? 'iobroker.pro' : 'iobroker.net'}/service/custom_<NAME>/${obj.message.apikey}/<data>`;
                         if (obj.callback) {
                             this.sendTo(obj.from, obj.command, text, obj.callback);
+                        }
+                    }
+                    break;
+                case 'qrCode':
+                    if (typeof obj.message === 'object') {
+                        const result = await this.readVisuAppInstructions(obj.message);
+                        if (obj.callback) {
+                            this.sendTo(obj.from, obj.command, result.error ? result : result.qrCode, obj.callback);
                         }
                     }
                     break;
