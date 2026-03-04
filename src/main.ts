@@ -327,9 +327,8 @@ export class CloudAdapter extends Adapter {
             const base64 = btoa(text);
 
             return { qrCode: base64 };
-        } else {
-            return { error: 'error_no_web' };
         }
+        return { error: 'error_no_web' };
     }
 
     async onMessage(obj: ioBroker.Message): Promise<void> {

@@ -29,19 +29,6 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
-      "6.0.0": {
-        "en": "Added communication with new android application\nDropped support node 18\nImplemented QR Code for ioBroker.visu app",
-        "de": "Kommunikation mit neuer Android-Anwendung hinzugefügt\nAbgekürzter Stützknoten 183\nImplementierung von QR Code für ioBroker. Visu App",
-        "ru": "Добавлена связь с новым приложением Android\nСброшенный узел поддержки 18\nРеализованный QR Код для ioBroker. visu приложение",
-        "pt": "Adicionada comunicação com nova aplicação android\nNó de suporte abandonado 18\nQR implementado Código para ioBroker. app visu",
-        "nl": "Toegevoegd communicatie met nieuwe android toepassing\nOndersteuningsknoop laten vallen 18\nGeïmplementeerd QR Code voor ioBroker. visu app",
-        "fr": "Ajout de la communication avec la nouvelle application android\nNoeud de soutien abandonné 18\nMise en œuvre du QR Code pour ioBroker. visu app",
-        "it": "Aggiunto la comunicazione con nuova applicazione Android\nNodo supporto goccia 18\nQR implementato Codice per ioBroker. visu app",
-        "es": "Comunicación agregada con nueva aplicación androide\nNodo de apoyo retirado 18\nQR aplicada Código para ioBroker. visu app",
-        "pl": "Dodano komunikację z nowym androidem\nZrzucony węzeł wsparcia 18\nWdrożony QR Kod dla joBrokera. visu app",
-        "uk": "Додано зв'язок з новим додатком для андроїд\nDropped опору вузол 18 років\nРеалізовано QR Код для ioBroker. додаток Visu",
-        "zh-cn": "与新和机器人应用程序添加通信\n已丢弃支持节点 第 18 条\n已执行 QR ioBroker的代码。 虚拟应用"
-      },
       "5.1.2": {
         "en": "Fixing cloud connection error",
         "de": "Fehler der Cloud-Verbindung beheben",
