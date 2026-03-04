@@ -292,9 +292,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
             const base64 = btoa(text);
             return { qrCode: base64 };
         }
-        else {
-            return { error: 'error_no_web' };
-        }
+        return { error: 'error_no_web' };
     }
     async onMessage(obj) {
         if (obj) {

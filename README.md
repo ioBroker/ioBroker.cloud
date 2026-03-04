@@ -84,7 +84,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.0.1 (2026-03-04)
 * (bluefox) Added communication with new android application
 * (bluefox) Dropped support node 18
 * (bluefox) Implemented QR Code for ioBroker.visu app
