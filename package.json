@@ -35,7 +35,7 @@
     "@iobroker/eslint-config": "^2.2.0",
     "@iobroker/testing": "^5.2.2",
     "@iobroker/types": "^7.1.0",
-    "@iobroker/ws-server": "^4.3.11",
+    "@iobroker/ws-server": "^4.4.1",
     "@types/cookie-parser": "^1.4.10",
     "@types/node": "^25.5.0",
     "@types/socket.io-client": "^1.4.36",
