@@ -84,6 +84,9 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+- (copilot) Adapter requires node.js >= 22 now
+
 ### 6.0.1 (2026-03-04)
 * (bluefox) Added communication with new android application
 * (bluefox) Dropped support node 18
