@@ -356,6 +356,8 @@ Now they could be found in `cloud.X.devices.NAME`:
 ### 0.1.0 (2016-08-01)
 * (bluefox) support of read/write files
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 The MIT License (MIT)
 
