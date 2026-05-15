@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.0.2",
+    "version": "6.0.3",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.0.3": {
+        "en": "Respect the types of states if writing from visu app",
+        "de": "Überprüfen Sie die Arten von Zuständen, wenn Sie von visu app schreiben",
+        "ru": "Уважайте типы государств, если пишете из приложения visu",
+        "pt": "Respeitar os tipos de estados se escrever a partir do aplicativo visu",
+        "nl": "Respecteer de soorten staten als het schrijven van visu app",
+        "fr": "Respecter les types d'états si l'écriture de visu app",
+        "it": "Rispettare i tipi di stati se la scrittura da app visu",
+        "es": "Respetar los tipos de estados si escribe de la aplicación visu",
+        "pl": "Szanuj typy stanów, jeśli pisanie z aplikacji visu",
+        "uk": "Повага типів станів, якщо написання від додатку visu",
+        "zh-cn": "如果使用 visu app 写作, 则尊重状态类型"
+      },
       "6.0.1": {
         "en": "Added communication with new android application\nDropped support node 18\nImplemented QR Code for ioBroker.visu app",
         "de": "Kommunikation mit neuer Android-Anwendung hinzugefügt\nAbgekürzter Stützknoten 183\nImplementierung von QR Code für ioBroker. Visu App",
