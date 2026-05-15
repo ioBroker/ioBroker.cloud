@@ -35,6 +35,7 @@ export class CloudAdapter extends Adapter {
     private lovelaceServer: string | null = 'http://localhost:8091';
     private webSupportsConfig = false;
     private checkedNames: Set<string> = new Set();
+    private objCache: Record<string, ioBroker.Object | false> = {};
 
     private timeouts: {
         terminate: NodeJS.Timeout | null;
@@ -137,6 +138,7 @@ export class CloudAdapter extends Adapter {
                     const data = JSON.parse(state.val as string);
                     if (data.deviceName && data.name) {
                         const deviceId = `devices.${data.deviceName}`;
+                        const id = `${deviceId}.${data.name}`;
                         if (!this.checkedNames.has(deviceId)) {
                             // ensure that device channel exists
                             const channelObj = await this.getObjectAsync(deviceId);
@@ -171,12 +173,12 @@ export class CloudAdapter extends Adapter {
                             this.checkedNames.add(deviceId);
                         }
                         // set state with value
-                        if (!this.checkedNames.has(`${deviceId}.${data.name}`)) {
+                        if (!this.checkedNames.has(id)) {
                             // ensure that state exists
-                            const stateObj = await this.getObjectAsync(`${deviceId}.${data.name}`);
+                            const stateObj = await this.getObjectAsync(id);
                             if (!stateObj) {
                                 const obj: ioBroker.StateObject = {
-                                    _id: `${this.namespace}.devices.${data.deviceName}.${data.name}`,
+                                    _id: `${this.namespace}.${id}`,
                                     type: 'state',
                                     common: {
                                         name: data.name,
@@ -189,19 +191,22 @@ export class CloudAdapter extends Adapter {
                                 };
                                 if (data.name === 'batteryState') {
                                     obj.common.states = { 0: 'unknown', 1: 'unplugged', 2: 'charging', 3: 'full' };
+                                    obj.common.type = 'number';
                                 } else if (data.name === 'batteryLevel') {
                                     obj.common.role = 'battery';
                                     obj.common.unit = '%';
                                     obj.common.min = 0;
                                     obj.common.max = 100;
+                                    obj.common.type = 'number';
                                 } else if (data.name === 'brightness') {
                                     obj.common.role = 'level.brightness';
                                     obj.common.unit = '%';
                                     obj.common.min = 0;
                                     obj.common.max = 100;
+                                    obj.common.type = 'number';
                                 }
 
-                                await this.setObjectAsync(`${deviceId}.${data.name}`, obj);
+                                await this.setObjectAsync(id, obj);
                             }
                             if (data.name === 'currentLocation') {
                                 // add just location for vis: "longitude;latitude"
@@ -222,17 +227,38 @@ export class CloudAdapter extends Adapter {
                                     await this.setObjectAsync(`${deviceId}.position`, obj);
                                 }
                             }
-                            this.checkedNames.add(`${deviceId}.${data.name}`);
+                            this.checkedNames.add(id);
                         }
 
                         if (data.name === 'alive') {
-                            await this.setStateAsync(`${deviceId}.${data.name}`, {
-                                val: data.value,
+                            await this.setStateAsync(`${deviceId}.alive`, {
+                                val:
+                                    data.value === true ||
+                                    data.value === 'true' ||
+                                    data.value === '1' ||
+                                    data.value === 1,
                                 expire: 60,
                                 ack: true,
                             });
                         } else {
-                            await this.setStateAsync(`${deviceId}.${data.name}`, data.value, true);
+                            // read the object
+                            this.objCache[id] ??= (await this.getObjectAsync(id)) || false;
+                            if (!this.objCache[id]) {
+                                this.log.error(`Object "${deviceId}.${data.name}": does not exist`);
+                                return;
+                            }
+                            let value: ioBroker.StateValue = data.value;
+                            if (this.objCache[id].common.type === 'number') {
+                                value = parseFloat(data.value);
+                            } else if (this.objCache[id].common.type === 'boolean') {
+                                value =
+                                    data.value === true ||
+                                    data.value === 'true' ||
+                                    data.value === 1 ||
+                                    data.value === '1';
+                            }
+
+                            await this.setStateAsync(id, value, true);
                             if (data.name === 'currentLocation') {
                                 try {
                                     const json = JSON.parse(data.value);
