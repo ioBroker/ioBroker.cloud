@@ -37,7 +37,7 @@
     "@iobroker/types": "^7.1.2",
     "@iobroker/ws-server": "^4.4.1",
     "@types/cookie-parser": "^1.4.10",
-    "@types/node": "^25.8.0",
+    "@types/node": "^25.9.1",
     "@types/socket.io-client": "^1.4.36",
     "@types/ws": "^8.18.1",
     "typescript": "~5.9.3"
