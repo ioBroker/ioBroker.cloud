@@ -1447,6 +1447,12 @@ ${afterList.join('\n')}`);
         if (this.config.deviceOffLevel === undefined) {
             this.config.deviceOffLevel = 30;
         }
+        // Fix command object
+        const commandObj = await this.getObjectAsync('remote.command');
+        if (commandObj?.common && !commandObj.common.write) {
+            commandObj.common.write = true;
+            await this.setForeignObject(commandObj._id, commandObj);
+        }
         this.config.deviceOffLevel = parseFloat(this.config.deviceOffLevel) || 0;
         this.config.concatWord = (this.config.concatWord || '').toString().trim();
         this.config.apikey = (this.config.apikey || '').trim();
