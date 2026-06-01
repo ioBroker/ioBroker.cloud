@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.0.4",
+    "version": "6.0.5",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.0.5": {
+        "en": "Corrected the command object to be writable",
+        "de": "Korrektur des Befehlsobjekts, das schreibbar ist",
+        "ru": "Исправлен командный объект, подлежащий написанию",
+        "pt": "Corrigido o objeto de comando a ser gravável",
+        "nl": "Het commando-object gecorrigeerd om te schrijven",
+        "fr": "Correction de l'objet de commande à écrire",
+        "it": "Corretto l'oggetto di comando da usare",
+        "es": "Corregido el objeto de comando para ser writable",
+        "pl": "Poprawiono obiekt polecenia do zapisu",
+        "uk": "Виправлено об'єкт команд, який повинен бути жорстким",
+        "zh-cn": "更正命令对象为可写"
+      },
       "6.0.4": {
         "en": "Respect the types of states if writing from visu app",
         "de": "Überprüfen Sie die Arten von Zuständen, wenn Sie von visu app schreiben",
@@ -106,19 +119,6 @@
         "pl": "Nieprawdopodobny błąd z nazwiskiem\nCzytelnia tekst2",
         "uk": "Виправлена помилка з командуванням імені\nВиправлено функціональність тексту2speech",
         "zh-cn": "姓名指挥错误\n更正案文2"
-      },
-      "4.3.1": {
-        "en": "Downgrade of axios package to 0.27.2",
-        "de": "Abwärts von Axios Paket auf 0,27.2",
-        "ru": "Улучшение пакета axios до 0.27.2",
-        "pt": "Downgrade de pacote de axios para 0,27.2",
-        "nl": "Downgrade Axios pakket naar 0.27",
-        "fr": "Mise à niveau du paquet axios à 0,27.2",
-        "it": "Downgrade del pacchetto assios a 0.27.2",
-        "es": "Reducción del paquete de axios a 0.27.2",
-        "pl": "Downgrade Axios (ang.)",
-        "uk": "Downgrade axios пакет до 0.27.2",
-        "zh-cn": "A. 总表的职等至0.27.2"
       }
     },
     "authors": [
