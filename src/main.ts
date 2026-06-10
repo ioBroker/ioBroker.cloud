@@ -1,4 +1,4 @@
-import { Adapter, type AdapterOptions } from '@iobroker/adapter-core'; // Get common this utils
+import { Adapter, type AdapterOptions, Credentials } from '@iobroker/adapter-core'; // Get common this utils
 import SocketCloud from './lib/socketCloud';
 import axios from 'axios';
 
@@ -36,6 +36,8 @@ export class CloudAdapter extends Adapter {
     private webSupportsConfig = false;
     private checkedNames: Set<string> = new Set();
     private objCache: Record<string, ioBroker.Object | false> = {};
+    private login: string = '';
+    private password: string = '';
 
     private timeouts: {
         terminate: NodeJS.Timeout | null;
@@ -294,8 +296,24 @@ export class CloudAdapter extends Adapter {
         login: string;
         pass: string;
         instance: string;
+        credentialId: string;
+        credentialType: 'manual' | 'manager';
     }): Promise<{ qrCode?: string; error?: string }> {
         let webObj: ioBroker.InstanceObject | null | undefined = null;
+        let login: string;
+        let password: string;
+        if (data.credentialType === 'manager') {
+            const credentials = await Credentials.getCredentials<{ login: string; password: string }>(
+                this,
+                data.credentialId,
+            );
+            login = credentials.values.login;
+            password = credentials.values.password;
+        } else {
+            login = data.login || this.login;
+            password = data.pass || this.password;
+        }
+
         if (!data.instance) {
             // First get the web server instance
             const instancesRecord = await this.getObjectViewAsync('system', 'instance', {
@@ -348,7 +366,7 @@ export class CloudAdapter extends Adapter {
                 return { error: 'error_ssl' };
             }
 
-            const text = `iotConfig|port:${native?.port}|ips:${addresses.join(',')}|cu:${data.login || this.config.login}|cp:${data.pass || this.config.pass}|https:${!!native?.secure}|auth:${!!native?.auth}`;
+            const text = `iotConfig|port:${native?.port}|ips:${addresses.join(',')}|cu:${login}|cp:${password}|https:${!!native?.secure}|auth:${!!native?.auth}`;
             // Convert to base64
             const base64 = btoa(text);
 
@@ -372,17 +390,33 @@ export class CloudAdapter extends Adapter {
                         return;
                     }
                     if (obj.message.useCredentials) {
-                        this._readAppKeyFromCloud(
-                            obj.message.server,
-                            obj.message.login,
-                            obj.message.pass,
-                            (err, key) => {
-                                const text = `https://${obj.message.server}/ifttt/${key}`;
+                        let login: string;
+                        let pass: string;
+                        if (obj.message.credentialType === 'manager') {
+                            const credentials = await Credentials.getCredentials<{ login: string; password: string }>(
+                                this,
+                                obj.message.credentialId,
+                            );
+                            if (credentials) {
+                                login = credentials.values.login;
+                                pass = credentials.values.password;
+                            } else {
                                 if (obj.callback) {
-                                    this.sendTo(obj.from, obj.command, text, obj.callback);
+                                    this.sendTo(obj.from, obj.command, 'invalid credentials', obj.callback);
                                 }
-                            },
-                        );
+                                return;
+                            }
+                        } else {
+                            login = obj.message.login;
+                            pass = obj.message.pass;
+                        }
+
+                        this._readAppKeyFromCloud(obj.message.server, login, pass, (err, key) => {
+                            const text = `https://${obj.message.server}/ifttt/${key}`;
+                            if (obj.callback) {
+                                this.sendTo(obj.from, obj.command, text, obj.callback);
+                            }
+                        });
                     } else {
                         const text = `https://${obj.message.apikey.startsWith('@pro_') ? 'iobroker.pro' : 'iobroker.net'}/ifttt/${obj.message.apikey}`;
                         if (obj.callback) {
@@ -400,17 +434,32 @@ export class CloudAdapter extends Adapter {
                     }
 
                     if (obj.message.useCredentials) {
-                        this._readAppKeyFromCloud(
-                            obj.message.server,
-                            obj.message.login,
-                            obj.message.pass,
-                            (_err, key) => {
-                                const text = `https://${obj.message.server}/service/custom_<NAME>/${key}/<data>`;
+                        let login: string;
+                        let pass: string;
+                        if (obj.message.credentialType === 'manager') {
+                            const credentials = await Credentials.getCredentials<{ login: string; password: string }>(
+                                this,
+                                obj.message.credentialId,
+                            );
+                            if (credentials) {
+                                login = credentials.values.login;
+                                pass = credentials.values.password;
+                            } else {
                                 if (obj.callback) {
-                                    this.sendTo(obj.from, obj.command, text, obj.callback);
+                                    this.sendTo(obj.from, obj.command, 'invalid credentials', obj.callback);
                                 }
-                            },
-                        );
+                                return;
+                            }
+                        } else {
+                            login = obj.message.login;
+                            pass = obj.message.pass;
+                        }
+                        this._readAppKeyFromCloud(obj.message.server, login, pass, (_err, key) => {
+                            const text = `https://${obj.message.server}/service/custom_<NAME>/${key}/<data>`;
+                            if (obj.callback) {
+                                this.sendTo(obj.from, obj.command, text, obj.callback);
+                            }
+                        });
                     } else {
                         const text = `https://${obj.message.apikey.startsWith('@pro_') ? 'iobroker.pro' : 'iobroker.net'}/service/custom_<NAME>/${obj.message.apikey}/<data>`;
                         if (obj.callback) {
@@ -422,7 +471,13 @@ export class CloudAdapter extends Adapter {
                 case 'qrCode':
                     if (typeof obj.message === 'object') {
                         const result = await this.readVisuAppInstructions(
-                            obj.message as { login: string; pass: string; instance: string },
+                            obj.message as {
+                                login: string;
+                                pass: string;
+                                instance: string;
+                                credentialId: string;
+                                credentialType: 'manual' | 'manager';
+                            },
                         );
                         if (obj.callback) {
                             this.sendTo(obj.from, obj.command, result.error ? result : result.qrCode, obj.callback);
@@ -1595,7 +1650,7 @@ ${afterList.join('\n')}`,
         axios
             .post(url, null, {
                 headers: {
-                    Authorization: `Basic ${Buffer.from(`${this.config.login}:${this.config.pass}`).toString('base64')}`,
+                    Authorization: `Basic ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
                 },
                 validateStatus: (status: number): boolean => status < 400,
             })
@@ -1648,8 +1703,8 @@ ${afterList.join('\n')}`,
         cb: (error: string | null, key?: string) => void,
     ): void {
         server ||= this.config.server;
-        login ||= this.config.login;
-        password ||= this.config.pass;
+        login ||= this.login;
+        password ||= this.password;
 
         if (!server.length) {
             cb('Servername not provided. Please check your configuration!');
@@ -1736,6 +1791,28 @@ ${afterList.join('\n')}`,
             this.config.deviceOffLevel = 30;
         }
 
+        if (this.config.credentialType === 'manager') {
+            if (!this.config.credentialId) {
+                this.log.error('Credentials not provided. Please check your configuration!.');
+            } else {
+                const credentials = await Credentials.getCredentials<{ login: string; password: string }>(
+                    this,
+                    this.config.credentialId,
+                );
+                if (credentials) {
+                    this.login = credentials.values.login;
+                    this.password = credentials.values.password;
+                } else {
+                    this.login = '';
+                    this.password = '';
+                    this.log.error(`Credentials "${this.config.credentialId}" not found.`);
+                }
+            }
+        } else {
+            this.login = this.config.login || '';
+            this.password = this.config.pass || '';
+        }
+
         // Fix command object
         const commandObj = await this.getObjectAsync('remote.command');
         if (commandObj?.common && !commandObj.common.write) {
@@ -1751,15 +1828,13 @@ ${afterList.join('\n')}`,
             : this.config.replaces?.split(',') || null;
         this.config.cloudUrl = (this.config.cloudUrl || '').toString();
 
-        this.config.pass = this.config.pass || '';
-        this.config.login = this.config.login || '';
-        this.config.server = this.config.server || 'iobroker.pro';
+        this.config.server ||= 'iobroker.pro';
 
-        if (this.config.login !== (this.config.login || '').trim().toLowerCase()) {
+        if (this.login !== (this.login || '').trim().toLowerCase()) {
             this.log.error('Please write your login only in lowercase!');
         }
 
-        if (this.config.login && this.config.pass && this.config.useCredentials) {
+        if (this.login && this.password && this.config.useCredentials) {
             if (this.config.server === 'iobroker.pro') {
                 this.config.cloudUrl = this.config.cloudUrl.replace('iobroker.net', 'iobroker.pro');
             } else if (this.config.server === 'iobroker.net') {
