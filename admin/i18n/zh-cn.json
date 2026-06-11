@@ -81,6 +81,7 @@
     "clear": "清楚的",
     "default": "默认的",
     "disabled": "残疾人",
+    "error_credentials": "无法读取已保存的凭据。请检查所选凭据。",
     "error_no_web": "未找到 Web 实例。请安装并启用 Web 适配器。",
     "error_ssl": "ioBroker visu 无法在安全 Web 服务器上进行身份验证。请禁用身份验证或 SSL。",
     "help_tip": "没有应用程序-钥匙? 让它在<a href=\"https://iobroker.pro/accessRemote\" target=\"_blank\">https://iobroker.pro</a>验访问或在<a href=\"https://iobroker.net\" target=\"_blank\">https://iobroker.net</a>免费的，但有限的访问",

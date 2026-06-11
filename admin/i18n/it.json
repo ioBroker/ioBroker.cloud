@@ -81,6 +81,7 @@
     "clear": "Cancellare",
     "default": "Lingua di sistema predefinita",
     "disabled": "Disabilitato",
+    "error_credentials": "Impossibile leggere le credenziali salvate. Verifica le credenziali selezionate.",
     "error_no_web": "Nessuna istanza web trovata. Installa e abilita l'adattatore web.",
     "error_ssl": "ioBroker visu non riesce ad autenticarsi su un server web sicuro. Disabilita l'autenticazione o SSL.",
     "help_tip": "No APP-KEY? Ottienila su <a href=\"https://iobroker.pro/accessRemote\" target=\"_blank\"> https://iobroker.pro </a> per l'accesso protetto o su <a href=\"https://iobroker.net\" target=\"_blank\">https://iobroker.net</a> gratuitamente, con accesso protetto ma limitato",

@@ -38,12 +38,16 @@
                     ],
                     "label": "Credentials type",
                     "hidden": "!data.useCredentials",
-                    "default": "manual"
+                    "default": "manual",
+                    "sx": 12,
+                    "md": 6
                 },
                 "credentialId": {
                     "type": "credential",
                     "label": "Credentials",
-                    "hidden": "!data.useCredentials || data.credentialType !== 'manager'"
+                    "hidden": "!data.useCredentials || data.credentialType !== 'manager'",
+                    "sx": 12,
+                    "md": 6
                 },
                 "login": {
                     "newLine": true,

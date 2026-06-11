@@ -147,7 +147,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=7.8.3"
+        "admin": ">=7.9.0"
       }
     ],
     "preserveSettings": "smartName",
@@ -181,6 +181,8 @@
     "language": "",
     "login": "email.com",
     "pass": "",
+    "credentialType": "manual",
+    "credentialId": "",
     "server": "iobroker.pro",
     "apikey": "",
     "instance": "web.0",

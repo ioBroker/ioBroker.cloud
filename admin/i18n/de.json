@@ -81,6 +81,7 @@
     "clear": "löschen",
     "default": "Standard",
     "disabled": "deaktiviert",
+    "error_credentials": "Die gespeicherten Zugangsdaten konnten nicht gelesen werden. Bitte überprüfen Sie die ausgewählten Zugangsdaten.",
     "error_no_web": "Es wurde keine Webinstanz gefunden. Bitte installieren und aktivieren Sie den Webadapter.",
     "error_ssl": "ioBroker visu kann sich nicht auf einem sicheren Webserver authentifizieren. Bitte deaktivieren Sie entweder die Authentifizierung oder SSL.",
     "help_tip": "Kein APP-KEY? Diesen kann man unter <a href=\"https://iobroker.pro/accessRemote\" target=\"_blank\">https://iobroker.pro</a> für gesicherten Zugriff oder <a href=\"https://iobroker.net\" target=\"_blank\">https://iobroker.net</a> für kostenlosen Zugriff (gesichert aber begrenzt) bekommen.",

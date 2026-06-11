@@ -81,6 +81,7 @@
     "clear": "limpiar",
     "default": "defecto",
     "disabled": "discapacitado",
+    "error_credentials": "No se pudieron leer las credenciales almacenadas. Compruebe las credenciales seleccionadas.",
     "error_no_web": "No se encontró ninguna instancia web. Instale y habilite el adaptador web.",
     "error_ssl": "ioBroker visu no puede autenticarse en un servidor web seguro. Desactive la autenticación o SSL.",
     "help_tip": "Sin APP-KEY? Obténgalo en <a href=\"https://iobroker.pro/accessRemote\" target=\"_blank\"> https://iobroker.pro </a> para obtener acceso validado o en <a href = \"https: // iobroker .net \"target =\" _blank \"> https://iobroker.net </a> de forma gratuita, pero con acceso limitado",

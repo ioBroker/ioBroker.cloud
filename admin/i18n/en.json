@@ -81,6 +81,7 @@
     "clear": "clear",
     "default": "default",
     "disabled": "disabled",
+    "error_credentials": "Stored credentials could not be read. Please check the selected credentials.",
     "error_no_web": "No web instance found. Please install and enable web adapter.",
     "error_ssl": "ioBroker visu cannot authenticate on a secure web server. Please disable either authentication or SSL.",
     "help_tip": "No APP-KEY? Get it on <a href=\"https://iobroker.pro/accessRemote\" target=\"_blank\">https://iobroker.pro</a> for validated access or on <a href=\"https://iobroker.net\" target=\"_blank\">https://iobroker.net</a> for free, but limited access",

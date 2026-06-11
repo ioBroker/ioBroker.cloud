@@ -81,6 +81,7 @@
     "clear": "nettoyer",
     "default": "défaut",
     "disabled": "désactivée",
+    "error_credentials": "Impossible de lire les identifiants enregistrés. Veuillez vérifier les identifiants sélectionnés.",
     "error_no_web": "Aucune instance web trouvée. Veuillez installer et activer l'adaptateur web.",
     "error_ssl": "ioBroker visu ne peut pas s'authentifier sur un serveur web sécurisé. Veuillez désactiver l'authentification ou le protocole SSL.",
     "help_tip": "Pas de clé APP? Obtenez-le sur <a href=\"https://iobroker.pro/accessRemote\" target=\"_blank\"> https://iobroker.pro </a> pour un accès validé ou sur <a href=\"https://iobroker.net\" target=\"_blank\">https://iobroker.net</a> gratuitement, mais accès limité",

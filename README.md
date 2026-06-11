@@ -84,6 +84,9 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added support of credentials manager
+
 ### 6.0.5 (2026-06-01)
 * (bluefox) Corrected the command object to be writable
 

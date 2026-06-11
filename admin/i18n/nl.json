@@ -81,6 +81,7 @@
     "clear": "wissen",
     "default": "standaard",
     "disabled": "invalide",
+    "error_credentials": "De opgeslagen inloggegevens konden niet worden gelezen. Controleer de geselecteerde inloggegevens.",
     "error_no_web": "Geen webinstantie gevonden. Installeer en activeer de webadapter.",
     "error_ssl": "ioBroker visu kan zich niet authenticeren op een beveiligde webserver. Schakel authenticatie of SSL uit.",
     "help_tip": "Geen APP-SLEUTEL? Download het op <a href=\"https://iobroker.pro/accessRemote\" target=\"_blank\"> https://iobroker.pro </a> voor gevalideerde toegang of op <a href=\"https://iobroker.net\" target=\"_blank\">https://iobroker.net</a> gratis, maar beperkte toegang",

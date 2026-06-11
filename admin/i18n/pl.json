@@ -81,6 +81,7 @@
     "clear": "Oczyścić",
     "default": "domyślna",
     "disabled": "niepełnosprawny",
+    "error_credentials": "Nie udało się odczytać zapisanych danych logowania. Sprawdź wybrane dane logowania.",
     "error_no_web": "Nie znaleziono żadnej instancji sieciowej. Zainstaluj i włącz adapter sieciowy.",
     "error_ssl": "ioBroker visu nie może uwierzytelnić się na bezpiecznym serwerze WWW. Wyłącz uwierzytelnianie lub SSL.",
     "help_tip": "Brak klucza aplikacji? Pobierz na <a href=\"https://iobroker.pro/accessRemote\" target=\"_blank\"> https://iobroker.pro </a> w celu zweryfikowania dostępu lub na <a href = \"https: // iobroker .net \"target =\" _blank \"> https://iobroker.net </a> dla bezpłatnego, ale ograniczonego dostępu",
