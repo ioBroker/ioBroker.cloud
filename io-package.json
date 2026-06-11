@@ -29,19 +29,6 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
-      "6.1.0": {
-        "en": "Added support of credentials manager",
-        "de": "Zusätzliche Unterstützung des Anmeldermanagers",
-        "ru": "Добавлена поддержка менеджера по учетным данным",
-        "pt": "Adicionado suporte ao gestor de credenciais",
-        "nl": "Toegevoegde ondersteuning van credentials manager",
-        "fr": "Soutien supplémentaire du gestionnaire des pouvoirs",
-        "it": "Aggiunto supporto di credenziali manager",
-        "es": "Añadido el apoyo del administrador de credenciales",
-        "pl": "Dodano wsparcie menedżera mandatów",
-        "uk": "Додано підтримку менеджера облікових записів",
-        "zh-cn": "证书管理器的支持增加"
-      },
       "6.0.5": {
         "en": "Corrected the command object to be writable",
         "de": "Korrektur des Befehlsobjekts, das schreibbar ist",

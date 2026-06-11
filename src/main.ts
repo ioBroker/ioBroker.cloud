@@ -38,6 +38,7 @@ export class CloudAdapter extends Adapter {
     private objCache: Record<string, ioBroker.Object | false> = {};
     private login: string = '';
     private password: string = '';
+    private unsubscribeCredentials: (() => Promise<void>) | null = null;
 
     private timeouts: {
         terminate: NodeJS.Timeout | null;
@@ -76,6 +77,10 @@ export class CloudAdapter extends Adapter {
     }
 
     onUnload(callback: () => void): void {
+        if (this.unsubscribeCredentials) {
+            void this.unsubscribeCredentials().catch(() => undefined);
+            this.unsubscribeCredentials = null;
+        }
         if (this.connectTimer) {
             clearInterval(this.connectTimer);
             this.connectTimer = null;
@@ -102,6 +107,10 @@ export class CloudAdapter extends Adapter {
     }
 
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
+        if (id.startsWith(Credentials.CREDENTIALS_PREFIX)) {
+            // handled by subscribeCredentials; credential objects must never be forwarded to the cloud
+            return;
+        }
         if (id === this.config.instance) {
             this.webSupportsConfig = obj?.common.version.split('.')[0] >= '7';
             const _server = this.getConnectionString(obj as ioBroker.InstanceObject | null | undefined, 'web');
@@ -297,7 +306,7 @@ export class CloudAdapter extends Adapter {
         credentialId?: string;
         login?: string;
         pass?: string;
-    }): Promise<{ login: string; password: string } | null> {
+    }): Promise<Credentials.LoginPasswordCredentials | null> {
         if (data.credentialType === 'manager') {
             if (!data.credentialId) {
                 this.log.error('Credentials not provided. Please check your configuration!');
@@ -1802,6 +1811,30 @@ ${afterList.join('\n')}`,
         });
         this.login = credentials?.login || '';
         this.password = credentials?.password || '';
+
+        if (this.config.credentialType === 'manager' && this.config.credentialId) {
+            try {
+                this.unsubscribeCredentials =
+                    await Credentials.subscribeCredentials<Credentials.LoginPasswordCredentials>(
+                        this,
+                        this.config.credentialId,
+                        (_id, changedCredentials) => {
+                            if (
+                                !changedCredentials ||
+                                changedCredentials.values.login !== this.login ||
+                                changedCredentials.values.password !== this.password
+                            ) {
+                                this.log.info('Credentials changed. Restarting adapter...');
+                                this.restart();
+                            }
+                        },
+                    );
+            } catch (error) {
+                this.log.error(
+                    `Cannot subscribe to credentials "${this.config.credentialId}": ${error instanceof Error ? error.message : String(error)}`,
+                );
+            }
+        }
 
         // Fix command object
         const commandObj = await this.getObjectAsync('remote.command');
