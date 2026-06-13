@@ -84,7 +84,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### 6.1.1 (2026-06-11)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Added support of credentials manager
 
 ### 6.0.5 (2026-06-01)

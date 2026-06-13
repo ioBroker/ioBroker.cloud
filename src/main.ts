@@ -107,7 +107,7 @@ export class CloudAdapter extends Adapter {
     }
 
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
-        if (id.startsWith(Credentials.CREDENTIALS_PREFIX)) {
+        if (Credentials?.CREDENTIALS_PREFIX && id.startsWith(Credentials.CREDENTIALS_PREFIX)) {
             // handled by subscribeCredentials; credential objects must never be forwarded to the cloud
             return;
         }
@@ -310,6 +310,10 @@ export class CloudAdapter extends Adapter {
         if (data.credentialType === 'manager') {
             if (!data.credentialId) {
                 this.log.error('Credentials not provided. Please check your configuration!');
+                return null;
+            }
+            if (!Credentials?.getCredentials) {
+                this.log.error('You need js-controller 7.2 for credentials.');
                 return null;
             }
             try {
@@ -1812,7 +1816,7 @@ ${afterList.join('\n')}`,
         this.login = credentials?.login || '';
         this.password = credentials?.password || '';
 
-        if (this.config.credentialType === 'manager' && this.config.credentialId) {
+        if (this.config.credentialType === 'manager' && this.config.credentialId && Credentials?.subscribeCredentials) {
             try {
                 this.unsubscribeCredentials =
                     await Credentials.subscribeCredentials<Credentials.LoginPasswordCredentials>(
