@@ -28,6 +28,9 @@ class CloudAdapter extends adapter_core_1.Adapter {
     webSupportsConfig = false;
     checkedNames = new Set();
     objCache = {};
+    login = '';
+    password = '';
+    unsubscribeCredentials = null;
     timeouts = {
         terminate: null,
         onCloudWait: null,
@@ -54,6 +57,10 @@ class CloudAdapter extends adapter_core_1.Adapter {
         });
     }
     onUnload(callback) {
+        if (this.unsubscribeCredentials) {
+            void this.unsubscribeCredentials().catch(() => undefined);
+            this.unsubscribeCredentials = null;
+        }
         if (this.connectTimer) {
             clearInterval(this.connectTimer);
             this.connectTimer = null;
@@ -78,6 +85,10 @@ class CloudAdapter extends adapter_core_1.Adapter {
         callback();
     }
     onObjectChange(id, obj) {
+        if (adapter_core_1.Credentials?.CREDENTIALS_PREFIX && id.startsWith(adapter_core_1.Credentials.CREDENTIALS_PREFIX)) {
+            // handled by subscribeCredentials; credential objects must never be forwarded to the cloud
+            return;
+        }
         if (id === this.config.instance) {
             this.webSupportsConfig = obj?.common.version.split('.')[0] >= '7';
             const _server = this.getConnectionString(obj, 'web');
@@ -264,6 +275,27 @@ class CloudAdapter extends adapter_core_1.Adapter {
             }
         }
     }
+    async resolveCredentials(data) {
+        if (data.credentialType === 'manager') {
+            if (!data.credentialId) {
+                this.log.error('Credentials not provided. Please check your configuration!');
+                return null;
+            }
+            if (!adapter_core_1.Credentials?.getCredentials) {
+                this.log.error('You need js-controller 7.2 for credentials.');
+                return null;
+            }
+            try {
+                const credentials = await adapter_core_1.Credentials.getCredentials(this, data.credentialId);
+                return { login: credentials.values.login, password: credentials.values.password };
+            }
+            catch (error) {
+                this.log.error(`Cannot read credentials "${data.credentialId}": ${error instanceof Error ? error.message : String(error)}`);
+                return null;
+            }
+        }
+        return { login: data.login || this.login, password: data.pass || this.password };
+    }
     async readVisuAppInstructions(data) {
         let webObj = null;
         if (!data.instance) {
@@ -312,7 +344,11 @@ class CloudAdapter extends adapter_core_1.Adapter {
             if (native?.auth && native?.secure) {
                 return { error: 'error_ssl' };
             }
-            const text = `iotConfig|port:${native?.port}|ips:${addresses.join(',')}|cu:${data.login || this.config.login}|cp:${data.pass || this.config.pass}|https:${!!native?.secure}|auth:${!!native?.auth}`;
+            const credentials = await this.resolveCredentials(data);
+            if (!credentials) {
+                return { error: 'error_credentials' };
+            }
+            const text = `iotConfig|port:${native?.port}|ips:${addresses.join(',')}|cu:${credentials.login}|cp:${credentials.password}|https:${!!native?.secure}|auth:${!!native?.auth}`;
             // Convert to base64
             const base64 = btoa(text);
             return { qrCode: base64 };
@@ -333,8 +369,15 @@ class CloudAdapter extends adapter_core_1.Adapter {
                         return;
                     }
                     if (obj.message.useCredentials) {
-                        this._readAppKeyFromCloud(obj.message.server, obj.message.login, obj.message.pass, (err, key) => {
-                            const text = `https://${obj.message.server}/ifttt/${key}`;
+                        const credentials = await this.resolveCredentials(obj.message);
+                        if (!credentials) {
+                            if (obj.callback) {
+                                this.sendTo(obj.from, obj.command, 'invalid credentials', obj.callback);
+                            }
+                            return;
+                        }
+                        this._readAppKeyFromCloud(obj.message.server, credentials.login, credentials.password, (err, key) => {
+                            const text = err || `https://${obj.message.server}/ifttt/${key}`;
                             if (obj.callback) {
                                 this.sendTo(obj.from, obj.command, text, obj.callback);
                             }
@@ -355,8 +398,15 @@ class CloudAdapter extends adapter_core_1.Adapter {
                         return;
                     }
                     if (obj.message.useCredentials) {
-                        this._readAppKeyFromCloud(obj.message.server, obj.message.login, obj.message.pass, (_err, key) => {
-                            const text = `https://${obj.message.server}/service/custom_<NAME>/${key}/<data>`;
+                        const credentials = await this.resolveCredentials(obj.message);
+                        if (!credentials) {
+                            if (obj.callback) {
+                                this.sendTo(obj.from, obj.command, 'invalid credentials', obj.callback);
+                            }
+                            return;
+                        }
+                        this._readAppKeyFromCloud(obj.message.server, credentials.login, credentials.password, (err, key) => {
+                            const text = err || `https://${obj.message.server}/service/custom_<NAME>/${key}/<data>`;
                             if (obj.callback) {
                                 this.sendTo(obj.from, obj.command, text, obj.callback);
                             }
@@ -1331,7 +1381,7 @@ ${afterList.join('\n')}`);
         axios_1.default
             .post(url, null, {
             headers: {
-                Authorization: `Basic ${Buffer.from(`${this.config.login}:${this.config.pass}`).toString('base64')}`,
+                Authorization: `Basic ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
             },
             validateStatus: (status) => status < 400,
         })
@@ -1375,8 +1425,8 @@ ${afterList.join('\n')}`);
     }
     _readAppKeyFromCloud(server, login, password, cb) {
         server ||= this.config.server;
-        login ||= this.config.login;
-        password ||= this.config.pass;
+        login ||= this.login;
+        password ||= this.password;
         if (!server.length) {
             cb('Servername not provided. Please check your configuration!');
             return;
@@ -1447,6 +1497,30 @@ ${afterList.join('\n')}`);
         if (this.config.deviceOffLevel === undefined) {
             this.config.deviceOffLevel = 30;
         }
+        const credentials = await this.resolveCredentials({
+            credentialType: this.config.credentialType,
+            credentialId: this.config.credentialId,
+            login: this.config.login,
+            pass: this.config.pass,
+        });
+        this.login = credentials?.login || '';
+        this.password = credentials?.password || '';
+        if (this.config.credentialType === 'manager' && this.config.credentialId && adapter_core_1.Credentials?.subscribeCredentials) {
+            try {
+                this.unsubscribeCredentials =
+                    await adapter_core_1.Credentials.subscribeCredentials(this, this.config.credentialId, (_id, changedCredentials) => {
+                        if (!changedCredentials ||
+                            changedCredentials.values.login !== this.login ||
+                            changedCredentials.values.password !== this.password) {
+                            this.log.info('Credentials changed. Restarting adapter...');
+                            this.restart();
+                        }
+                    });
+            }
+            catch (error) {
+                this.log.error(`Cannot subscribe to credentials "${this.config.credentialId}": ${error instanceof Error ? error.message : String(error)}`);
+            }
+        }
         // Fix command object
         const commandObj = await this.getObjectAsync('remote.command');
         if (commandObj?.common && !commandObj.common.write) {
@@ -1460,13 +1534,11 @@ ${afterList.join('\n')}`);
             ? this.config.replaces
             : this.config.replaces?.split(',') || null;
         this.config.cloudUrl = (this.config.cloudUrl || '').toString();
-        this.config.pass = this.config.pass || '';
-        this.config.login = this.config.login || '';
-        this.config.server = this.config.server || 'iobroker.pro';
-        if (this.config.login !== (this.config.login || '').trim().toLowerCase()) {
+        this.config.server ||= 'iobroker.pro';
+        if (this.login !== (this.login || '').trim().toLowerCase()) {
             this.log.error('Please write your login only in lowercase!');
         }
-        if (this.config.login && this.config.pass && this.config.useCredentials) {
+        if (this.login && this.password && this.config.useCredentials) {
             if (this.config.server === 'iobroker.pro') {
                 this.config.cloudUrl = this.config.cloudUrl.replace('iobroker.net', 'iobroker.pro');
             }

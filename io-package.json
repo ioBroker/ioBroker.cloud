@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.0.5",
+    "version": "6.1.2",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.1.2": {
+        "en": "Added support of credentials manager",
+        "de": "Zusätzliche Unterstützung des Anmeldermanagers",
+        "ru": "Добавлена поддержка менеджера по учетным данным",
+        "pt": "Adicionado suporte ao gestor de credenciais",
+        "nl": "Toegevoegde ondersteuning van credentials manager",
+        "fr": "Soutien supplémentaire du gestionnaire des pouvoirs",
+        "it": "Aggiunto supporto di credenziali manager",
+        "es": "Añadido el apoyo del administrador de credenciales",
+        "pl": "Dodano wsparcie menedżera mandatów",
+        "uk": "Додано підтримку менеджера облікових записів",
+        "zh-cn": "证书管理器的支持增加"
+      },
       "6.0.5": {
         "en": "Corrected the command object to be writable",
         "de": "Korrektur des Befehlsobjekts, das schreibbar ist",
@@ -106,19 +119,6 @@
         "pl": "pozwoliło to na użycie głosu neuronowego dla silnika tekst-to-speech",
         "uk": "допускається використання нейронних голосів для aws текстово-дозволених двигунів",
         "zh-cn": "允许对文本-技术工程师使用微妙的声音"
-      },
-      "4.4.0": {
-        "en": "Corrected error with `name` command\nCorrected `text2speech` functionality",
-        "de": "Fehler behoben mit Namensbefehl\nKorrigierte Text2speech-Funktionalität",
-        "ru": "Исправлена ошибка с командой имени\nИсправлена функция text2speech",
-        "pt": "Erro corrigido com comando de nome\nFuncionalidade de texto2speech correta",
-        "nl": "Gecorrigeerde fout met de naam\nVertaling:",
-        "fr": "Erreur corrigée avec commande de nom\nCorrection de la fonctionnalité text2speech",
-        "it": "Errore corretto con comando nome\nFunzionalità di text2speech corretta",
-        "es": "Error corregido con comando nombre\nFunción de texto corregido2 altavoz",
-        "pl": "Nieprawdopodobny błąd z nazwiskiem\nCzytelnia tekst2",
-        "uk": "Виправлена помилка з командуванням імені\nВиправлено функціональність тексту2speech",
-        "zh-cn": "姓名指挥错误\n更正案文2"
       }
     },
     "authors": [
@@ -147,7 +147,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=7.8.3"
+        "admin": ">=7.9.0"
       }
     ],
     "preserveSettings": "smartName",
@@ -181,6 +181,8 @@
     "language": "",
     "login": "email.com",
     "pass": "",
+    "credentialType": "manual",
+    "credentialId": "",
     "server": "iobroker.pro",
     "apikey": "",
     "instance": "web.0",

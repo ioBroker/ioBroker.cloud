@@ -29,16 +29,36 @@
                     "label": "APP-KEY",
                     "help": "help_tip"
                 },
+                "credentialType": {
+                    "newLine": true,
+                    "type": "select",
+                    "options": [
+                        { "label":  "System credentials", "value":  "manager"},
+                        { "label":  "Manual", "value":  "manual"}
+                    ],
+                    "label": "Credentials type",
+                    "hidden": "!data.useCredentials",
+                    "default": "manual",
+                    "xs": 12,
+                    "md": 6
+                },
+                "credentialId": {
+                    "type": "credential",
+                    "label": "Credentials",
+                    "hidden": "!data.useCredentials || data.credentialType !== 'manager'",
+                    "xs": 12,
+                    "md": 6
+                },
                 "login": {
                     "newLine": true,
-                    "hidden": "!data.useCredentials",
+                    "hidden": "!data.useCredentials || data.credentialType === 'manager'",
                     "type": "text",
                     "sm": 12,
                     "md": 4,
                     "label": "Login"
                 },
                 "pass": {
-                    "hidden": "!data.useCredentials",
+                    "hidden": "!data.useCredentials || data.credentialType === 'manager'",
                     "type": "password",
                     "repeat": true,
                     "sm": 12,
@@ -78,7 +98,7 @@
                     "command": "qrCode",
                     "sendFirstByClick": true,
                     "tooltip": "Scan this QR code with the ioBroker app to fill in the connection details automatically.",
-                    "jsonData": "{\"login\": \"${data.login}\", \"pass\": \"${data.pass}\", \"instance\": \"${data.instance}\"}",
+                    "jsonData": "{\"login\": \"${data.login}\", \"pass\": \"${data.pass}\", \"instance\": \"${data.instance}\", \"credentialType\": \"${data.credentialType}\", \"credentialId\": \"${data.credentialId}\"}",
                     "hidden": "!data.useCredentials || !data.instance || data.server !== 'iobroker.pro'"
                 }
             }
@@ -202,7 +222,7 @@
                     "alsoDependsOn": ["useCredentials", "apikey", "login", "pass", "server"],
                     "label": "Use following link for IFTTT",
                     "command": "getIFTTTLink",
-                    "jsonData": "{\"apikey\": \"${data.apikey}\", \"useCredentials\": ${!!data.useCredentials}, \"login\": \"${data.login}\", \"pass\": \"${data.pass}\", \"server\": \"${data.server}\"}",
+                    "jsonData": "{\"apikey\": \"${data.apikey}\", \"useCredentials\": ${!!data.useCredentials}, \"login\": \"${data.login}\", \"pass\": \"${data.pass}\", \"server\": \"${data.server}\", \"credentialType\": \"${data.credentialType}\", \"credentialId\": \"${data.credentialId}\"}",
                     "copyToClipboard": true
                 },
                 "allowedServices": {
@@ -220,7 +240,7 @@
                     "container": "text",
                     "label": "Use following link for custom service",
                     "command": "getServiceLink",
-                    "jsonData": "{\"apikey\": \"${data.apikey}\", \"useCredentials\": ${!!data.useCredentials}, \"login\": \"${data.login}\", \"pass\": \"${data.pass}\", \"server\": \"${data.server}\"}",
+                    "jsonData": "{\"apikey\": \"${data.apikey}\", \"useCredentials\": ${!!data.useCredentials}, \"login\": \"${data.login}\", \"pass\": \"${data.pass}\", \"server\": \"${data.server}\", \"credentialType\": \"${data.credentialType}\", \"credentialId\": \"${data.credentialId}\"}",
                     "copyToClipboard": true
                 },
                 "text2command": {

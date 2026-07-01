@@ -15,6 +15,8 @@ export interface CloudAdapterConfig {
     lovelace: string | false;
     noCommon: boolean;
     pass: string;
+    credentialType?: 'manager' | 'manual';
+    credentialId?: string;
     pingTimeout: number;
     replaces: string[] | string | null;
     responseOID: string;
