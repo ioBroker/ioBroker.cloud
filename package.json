@@ -40,7 +40,7 @@
     "@types/node": "^20.19.42",
     "@types/socket.io-client": "^1.4.36",
     "@types/ws": "^8.18.1",
-    "typescript": "~6.0.3"
+    "typescript": "~7.0.2"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.cloud/issues"
