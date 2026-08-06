@@ -33,9 +33,10 @@
                     "newLine": true,
                     "type": "select",
                     "options": [
-                        { "label":  "System credentials", "value":  "manager"},
-                        { "label":  "Manual", "value":  "manual"}
+                        { "label": "System credentials", "value": "manager" },
+                        { "label": "Manual", "value": "manual" }
                     ],
+                    "credentialType": "cloud",
                     "label": "Credentials type",
                     "hidden": "!data.useCredentials",
                     "default": "manual",
