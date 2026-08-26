@@ -23,7 +23,7 @@ This is application key that the user can get on [https://iobroker.net](https://
 All requests from cloud adapter will be routed to specific WEB Instance. User must specify here the WEB instance; that will be shown to user, when he logs in https://iobroker.net site.
 
 ### Allow self-signed certificates
-If you use standard iobroker.net cloud, you can deactivate it. This option is only important if own cloud used.
+If you use standard iobroker.net cloud, you can deactivate it. This option is only important if your own cloud is used.
 
 ### Alexa settings
 ***Alexa is not supported in `cloud` adapter anymore. Use ioBroker.iot adapter for that.***
@@ -65,12 +65,12 @@ You can use the following commands (only pro):
 **Don't forget to add `simpleApi` to allowed services in the configuration.**
 
 ### Limitations
-If HTTPs (Security) or authentication is enabled on defined web-instance, it does not work.
+If HTTPs (Security) or authentication is enabled on a defined web-instance, it does not work.
 
 You can deactivate HTTPS and authentication on this web instance, but better is to create a new web instance that is bound to `localhost` and select this instance in cloud-settings.
 
 ## Android application
-With new android application the location of variables for brightness and location has been changed.
+With the new android application the location of variables for brightness and location has been changed.
 
 Now they could be found in `cloud.X.devices.NAME`: 
 - `cloud.X.devices.NAME.brightness`
@@ -86,6 +86,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 ## Changelog
 ### **WORK IN PROGRESS**
 - (copilot) Adapter requires node.js >= 22 now
+- (copilot) Migrated blockly to TypeScript
 
 ### 6.1.2 (2026-06-13)
 * (@GermanBluefox) Added support of credentials manager

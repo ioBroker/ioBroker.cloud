@@ -1,0 +1,14 @@
+{
+    "ifttt": "发短到过",
+    "ifttt_event": "事件",
+    "ifttt_log": "日志的水平",
+    "ifttt_log_debug": "调试",
+    "ifttt_log_error": "错误",
+    "ifttt_log_info": "的信息",
+    "ifttt_log_none": "没有",
+    "ifttt_log_warn": "警告",
+    "ifttt_tooltip": "送过来",
+    "ifttt_value1": "值1",
+    "ifttt_value2": "值2",
+    "ifttt_value3": "值3"
+}

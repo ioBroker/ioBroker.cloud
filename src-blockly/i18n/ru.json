@@ -1,0 +1,14 @@
+{
+    "ifttt": "Послать текст в IFTTT",
+    "ifttt_event": "событие",
+    "ifttt_log": "уровень журнала ",
+    "ifttt_log_debug": "отлаживать",
+    "ifttt_log_error": "ошибка",
+    "ifttt_log_info": "инфо",
+    "ifttt_log_none": "нет",
+    "ifttt_log_warn": "предупреждение",
+    "ifttt_tooltip": "Отправить с iftt",
+    "ifttt_value1": "стоимость 1",
+    "ifttt_value2": "стоимость 2",
+    "ifttt_value3": "значение 3"
+}

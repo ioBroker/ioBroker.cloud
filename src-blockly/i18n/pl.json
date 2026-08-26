@@ -1,0 +1,14 @@
+{
+    "ifttt": "Wysłać tekst z iftt",
+    "ifttt_event": "wydarzenie",
+    "ifttt_log": "poziom dziennika ",
+    "ifttt_log_debug": "debugować",
+    "ifttt_log_error": "błąd",
+    "ifttt_log_info": "informacje",
+    "ifttt_log_none": "nikt",
+    "ifttt_log_warn": "ostrzeżenie",
+    "ifttt_tooltip": "Wysłać z iftt",
+    "ifttt_value1": "cena 1",
+    "ifttt_value2": "cena 2",
+    "ifttt_value3": "wartość 3"
+}

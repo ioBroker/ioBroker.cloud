@@ -1,0 +1,14 @@
+{
+    "ifttt": "Sende Text zu IFTTT",
+    "ifttt_event": "event",
+    "ifttt_log": "log-level",
+    "ifttt_log_debug": "debug",
+    "ifttt_log_error": "Fehler",
+    "ifttt_log_info": "info",
+    "ifttt_log_none": "keiner",
+    "ifttt_log_warn": "Warnung",
+    "ifttt_tooltip": "Senden IFTTT",
+    "ifttt_value1": "Wert 1",
+    "ifttt_value2": "Wert 2",
+    "ifttt_value3": "Wert 3"
+}

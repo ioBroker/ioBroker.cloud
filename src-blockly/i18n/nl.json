@@ -1,0 +1,14 @@
+{
+    "ifttt": "Tekst verzenden naar IFTTT",
+    "ifttt_event": "gebeurtenis",
+    "ifttt_log": "log-niveau",
+    "ifttt_log_debug": "debug",
+    "ifttt_log_error": "fout",
+    "ifttt_log_info": "info",
+    "ifttt_log_none": "geen",
+    "ifttt_log_warn": "waarschuwing",
+    "ifttt_tooltip": "Verzenden naar IFTTT",
+    "ifttt_value1": "waarde 1",
+    "ifttt_value2": "waarde 2",
+    "ifttt_value3": "waarde 3"
+}
