@@ -1,77 +1,77 @@
 {
-    "name": "iobroker.cloud",
-    "version": "6.1.2",
-    "description": "This adapter allows to communicate different web applications with ioBroker.",
-    "author": {
-        "name": "bluefox",
-        "email": "dogafox@gmail.com"
-    },
-    "homepage": "https://github.com/ioBroker/ioBroker.cloud",
-    "keywords": [
-        "ioBroker",
-        "cloud",
-        "web"
-    ],
-    "engines": {
-        "node": ">=22.19.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/ioBroker/ioBroker.cloud"
-    },
-    "dependencies": {
-        "@iobroker/adapter-core": "^3.4.3",
-        "@iobroker/socket-classes": "2.3.8",
-        "socket.io-client": "~1.7.4",
-        "cookie-parser": "^1.4.7",
-        "axios": "^1.20.0",
-        "ws": "^8.21.3"
-    },
-    "devDependencies": {
-        "@alcalzone/release-script": "^5.2.1",
-        "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
-        "@alcalzone/release-script-plugin-license": "^5.2.2",
-        "@iobroker/adapter-dev": "^1.5.0",
-        "@iobroker/eslint-config": "^2.3.4",
-        "@iobroker/testing": "^5.3.0",
-        "@iobroker/types": "^7.2.2",
-        "@iobroker/ws-server": "^4.4.1",
-        "@types/cookie-parser": "^1.4.10",
-        "@types/node": "^22.20.1",
-        "@types/socket.io-client": "^1.4.36",
-        "@types/ws": "^8.18.1",
-        "blockly": "^13.2.1",
-        "esbuild": "^0.28.2",
-        "typescript": "~6.0.3"
-    },
-    "bugs": {
-        "url": "https://github.com/ioBroker/ioBroker.cloud/issues"
-    },
-    "main": "build/main.js",
-    "files": [
-        "admin/",
-        "doc/",
-        "img/",
-        "build/",
-        "io-package.json",
-        "LICENSE"
-    ],
-    "scripts": {
-        "test:unit": "mocha test/unitAdapter --exit",
-        "test:package": "mocha test/packageFiles --exit",
-        "test:integration": "mocha test/integrationAdapter --exit",
-        "test": "mocha --exit",
-        "build": "tsc -p tsconfig.build.json && npm run build:blockly",
-        "build:blockly": "tsc -p src-blockly/tsconfig.json && node src-blockly/build.mjs",
-        "lint": "eslint -c eslint.config.mjs",
-        "release": "release-script",
-        "release-patch": "release-script patch --yes",
-        "release-minor": "release-script minor --yes",
-        "release-major": "release-script major --yes",
-        "translate": "translate-adapter -b admin/i18n/en.json -b src-blockly/i18n/en.json",
-        "update-packages": "npx -y npm-check-updates --upgrade && cd src-blockly && npx -y npm-check-updates --upgrade",
-        "npm": "npm i && cd src-blockly && npm i"
-    },
-    "license": "MIT",
-    "readmeFilename": "README.md"
+  "name": "iobroker.cloud",
+  "version": "6.1.3",
+  "description": "This adapter allows to communicate different web applications with ioBroker.",
+  "author": {
+    "name": "bluefox",
+    "email": "dogafox@gmail.com"
+  },
+  "homepage": "https://github.com/ioBroker/ioBroker.cloud",
+  "keywords": [
+    "ioBroker",
+    "cloud",
+    "web"
+  ],
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ioBroker/ioBroker.cloud"
+  },
+  "dependencies": {
+    "@iobroker/adapter-core": "^3.4.3",
+    "@iobroker/socket-classes": "2.3.8",
+    "socket.io-client": "~1.7.4",
+    "cookie-parser": "^1.4.7",
+    "axios": "^1.20.0",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@alcalzone/release-script": "^5.2.1",
+    "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
+    "@alcalzone/release-script-plugin-license": "^5.2.2",
+    "@iobroker/adapter-dev": "^1.5.0",
+    "@iobroker/eslint-config": "^2.3.4",
+    "@iobroker/testing": "^5.3.0",
+    "@iobroker/types": "^7.2.2",
+    "@iobroker/ws-server": "^4.4.1",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/node": "^22.20.1",
+    "@types/socket.io-client": "^1.4.36",
+    "@types/ws": "^8.18.1",
+    "blockly": "^13.2.1",
+    "esbuild": "^0.28.2",
+    "typescript": "~6.0.3"
+  },
+  "bugs": {
+    "url": "https://github.com/ioBroker/ioBroker.cloud/issues"
+  },
+  "main": "build/main.js",
+  "files": [
+    "admin/",
+    "doc/",
+    "img/",
+    "build/",
+    "io-package.json",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test:unit": "mocha test/unitAdapter --exit",
+    "test:package": "mocha test/packageFiles --exit",
+    "test:integration": "mocha test/integrationAdapter --exit",
+    "test": "mocha --exit",
+    "build": "tsc -p tsconfig.build.json && npm run build:blockly",
+    "build:blockly": "tsc -p src-blockly/tsconfig.json && node src-blockly/build.mjs",
+    "lint": "eslint -c eslint.config.mjs",
+    "release": "release-script",
+    "release-patch": "release-script patch --yes",
+    "release-minor": "release-script minor --yes",
+    "release-major": "release-script major --yes",
+    "translate": "translate-adapter -b admin/i18n/en.json -b src-blockly/i18n/en.json",
+    "update-packages": "npx -y npm-check-updates --upgrade && cd src-blockly && npx -y npm-check-updates --upgrade",
+    "npm": "npm i && cd src-blockly && npm i"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md"
 }

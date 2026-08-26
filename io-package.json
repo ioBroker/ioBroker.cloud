@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.1.2",
+    "version": "6.1.3",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.1.3": {
+        "en": "Adapter requires node.js >= 22 now\nMigrated blockly to TypeScript",
+        "de": "Der Adapter benötigt jetzt Node.js >= 22.\nBlockly wurde auf TypeScript migriert.",
+        "ru": "Для работы адаптера требуется Node.js версии >= 22.\nПерешёл с Blockly на TypeScript.",
+        "pt": "O adaptador agora requer Node.js >= 22.\nMigrei o Blockly para TypeScript.",
+        "nl": "De adapter vereist nu Node.js versie 22 of hoger.\nBlockly gemigreerd naar TypeScript.",
+        "fr": "L'adaptateur nécessite désormais Node.js >= 22.\nMigration de Blockly vers TypeScript",
+        "it": "L'adattatore ora richiede Node.js >= 22\nMigrazione a blocchi a TypeScript",
+        "es": "El adaptador ahora requiere node.js >= 22.\nSe migró Blockly a TypeScript.",
+        "pl": "Adapter wymaga teraz node.js >= 22\nMigracja blokowa do TypeScript",
+        "uk": "Адаптер тепер вимагає node.js >= 22\nБлоково перенесено на TypeScript",
+        "zh-cn": "适配器现在需要 node.js 版本 >= 22。\n已将 Blockly 迁移到 TypeScript"
+      },
       "6.1.2": {
         "en": "Added support of credentials manager",
         "de": "Zusätzliche Unterstützung des Anmeldermanagers",
@@ -106,19 +119,6 @@
         "pl": "zaktualizowane klasy gniazd i stały błąd vis-2 jeśli podłączony przez chmurę\nminimum wymagane node.js wersja jest 16",
         "uk": "оновлені класи розетки і виправлені помилки в дюймах-2, якщо підключено через хмару\nмінімальний необхідний вузол.js версія 16",
         "zh-cn": "更新套接字类, 如果通过云连接则固定为 2 个错误\n最小节点.js版本为 16"
-      },
-      "4.4.1": {
-        "en": "allowed to use \"neural\" voices for aws text-to-speech engine",
-        "de": "erlaubt, neuronale stimmen für aws text-to-speech-engine zu verwenden",
-        "ru": "разрешено использовать нейронные голоса для aws text-to-speech engine",
-        "pt": "permitido usar vozes neurais para aws text-to-speech motor",
-        "nl": "_",
-        "fr": "autorisé à utiliser des voix neurales pour le moteur texte-à-speech",
-        "it": "permesso di utilizzare voci neurali per aws text-to-speech motore",
-        "es": "permite utilizar las voces neuronales para un motor de texto a voz",
-        "pl": "pozwoliło to na użycie głosu neuronowego dla silnika tekst-to-speech",
-        "uk": "допускається використання нейронних голосів для aws текстово-дозволених двигунів",
-        "zh-cn": "允许对文本-技术工程师使用微妙的声音"
       }
     },
     "authors": [
