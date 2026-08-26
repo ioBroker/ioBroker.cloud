@@ -146,9 +146,7 @@ export default class SocketCloud extends SocketAdmin {
                                 (instructions as { command: 'redirect'; url: string; notSave: boolean }).command ===
                                 'redirect'
                             ) {
-                                this.redirectAdapter(
-                                    instructions as { command: 'redirect'; url: string; notSave: boolean },
-                                );
+                                this.redirectAdapter(instructions);
                                 return;
                             } else if ((instructions as { command: 'wait'; delaySeconds: number }).command === 'wait') {
                                 this.waitForConnect(instructions as { command: 'wait'; delaySeconds: number });

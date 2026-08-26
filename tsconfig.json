@@ -11,6 +11,7 @@
         "noEmit": true,
         "noEmitOnError": true,
         "outDir": "./build",
+        "rootDir": "./src",
         "removeComments": false,
         "resolveJsonModule": true,
         "skipLibCheck": true, // Don't report errors in 3rd party definitions
