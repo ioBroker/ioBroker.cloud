@@ -84,7 +84,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.2.0 (2026-09-16)
 * (@GermanBluefox) Updated packages
 * (@GermanBluefox) Clear subscriptions on cloud disconnection
 
@@ -100,11 +100,6 @@ Now they could be found in `cloud.X.devices.NAME`:
 
 ### 6.0.4 (2026-05-17)
 * (bluefox) Respect the types of states if writing from visu app
-
-### 6.0.1 (2026-03-04)
-* (bluefox) Added communication with new android application
-* (bluefox) Dropped support node 18
-* (bluefox) Implemented QR Code for ioBroker.visu app
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

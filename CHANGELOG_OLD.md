@@ -1,4 +1,9 @@
 # Older changes
+## 6.0.1 (2026-03-04)
+* (bluefox) Added communication with new android application
+* (bluefox) Dropped support node 18
+* (bluefox) Implemented QR Code for ioBroker.visu app
+
 ## 5.1.2 (2025-11-01)
 * (bluefox) Fixing cloud connection error
 

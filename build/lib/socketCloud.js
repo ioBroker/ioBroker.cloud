@@ -23,6 +23,22 @@ class SocketCloud extends socket_classes_1.SocketAdmin {
         socket._apiKeyOk = false;
         this.addEventHandler('disconnect', socket => {
             socket._apiKeyOk = false;
+            // The web clients behind this connection are gone with it, and the cloud cannot send
+            // a `cloudDisconnect` for them anymore. Their subscriptions are counted in the commands:
+            // if they were not released, ioBroker kept delivering the state changes, the adapter kept
+            // forwarding them to the cloud, and only a restart of the adapter ended it.
+            // It is done here and not on `connect`, because on a reconnection the adapter mostly creates
+            // a new socket and a new SocketCloud (see `connect()` in main.ts), and the old sub-sockets
+            // would never be seen again. `disconnect` fires on the old socket in any case:
+            // on a transport drop directly, and on `socket.disconnect()` before the handlers are removed.
+            // `unsubscribeSocket` does not clear the subscribe list of a socket, so the sub-sockets
+            // are dropped right after it to release them only once.
+            if (socket._subSockets) {
+                for (const subSocket of Object.values(socket._subSockets)) {
+                    this.unsubscribeSocket(subSocket);
+                }
+                socket._subSockets = {};
+            }
             this.events.emit('disconnect');
         });
         this.initCommandsCloud();
@@ -77,6 +93,7 @@ class SocketCloud extends socket_classes_1.SocketAdmin {
     }
     initCommandsCloud() {
         this.addCommandHandler('connect', socket => {
+            // subscriptions of the former sub-sockets were already released on `disconnect`
             socket._subSockets = {};
             this.adapter.log.debug('Connected. Check api key...');
             socket._apiKeyOk = false;
@@ -89,6 +106,7 @@ class SocketCloud extends socket_classes_1.SocketAdmin {
                 //     reason: Description of command
                 //     url: redirect URL
                 //     notSave: true | false for url. Save it or just use it
+                //  }
                 if (instructions) {
                     if (typeof instructions !== 'object') {
                         void this.adapter.setState('info.remoteTill', new Date(instructions).toISOString(), true);
@@ -149,7 +167,7 @@ class SocketCloud extends socket_classes_1.SocketAdmin {
             }
             else {
                 this.unsubscribeSocket(socket);
-                // unsubscribe all sub-sockets, because a client does not use a multi-client
+                // unsubscribe all sub-sockets because a client does not use a multi-client
                 if (socket._subSockets) {
                     Object.keys(socket._subSockets).forEach(socketId => {
                         this.unsubscribeSocket(socket._subSockets[socketId]);
@@ -293,7 +311,7 @@ class SocketCloud extends socket_classes_1.SocketAdmin {
             socket = socket.___socket;
         }
         if (socket._apiKeyOk) {
-            // send on all clients
+            // send it on all clients
             socket.emit(cmd, id, data);
         }
     }

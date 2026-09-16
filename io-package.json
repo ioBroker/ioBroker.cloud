@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.1.3",
+    "version": "6.2.0",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.2.0": {
+        "en": "Updated packages\nClear subscriptions on cloud disconnection",
+        "de": "Neue Pakete\nAbos bei Cloud-Abbruch löschen",
+        "ru": "Обновленные пакеты\nОтменить подписку при отключении от облака",
+        "pt": "Pacotes novos\nLimpe assinaturas ao desconectar a nuvem",
+        "nl": "Bijgewerkte pakketten\nDuidelijke abonnementen bij het verbreken van de verbinding met de cloud",
+        "fr": "Packages mis à jour\nAbonnements clairs en cas de déconnexion au cloud",
+        "it": "Pacchi nuovi\nAbbonamenti chiari su cloud disconnection",
+        "es": "Paquetes nuevos\nBorrar suscripciones al desconectarse a la nube",
+        "pl": "Zaktualizowane pakiety\nWyczyść subskrypcje podczas odłączania w chmurze",
+        "uk": "Оновлені пакети\nОчистити підписки при відключенні хмари",
+        "zh-cn": "更新的软件包\n断开云连接时清除订阅"
+      },
       "6.1.3": {
         "en": "Adapter requires node.js >= 22 now\nMigrated blockly to TypeScript",
         "de": "Der Adapter benötigt jetzt Node.js >= 22.\nBlockly wurde auf TypeScript migriert.",
@@ -106,19 +119,6 @@
         "pl": "Ustawienie błędu połączenia w chmurze",
         "uk": "Виправлення помилки хмарного підключення",
         "zh-cn": "正在修复云连接错误"
-      },
-      "5.0.1": {
-        "en": "updated socket classes and fixed vis-2 error if connected via cloud\nminimum required node.js version is 16",
-        "de": "aktualisierte steckdosenklassen und fester vis-2 fehler, wenn über cloud verbunden\nminimal erforderliche node.js-version ist 16",
-        "ru": "обновленные классы розеток и фиксированная ошибка vis-2, если они подключены через облако\nминимальная требуемая версия node.js - 16",
-        "pt": "classes de soquete atualizadas e erro vis-2 fixo se conectado via nuvem\nnode.js versão mínima necessária é 16",
-        "nl": "bijgewerkte socket klassen en vaste vis-2 fout indien verbonden via cloud\nminimaal vereiste node.js versie is 16",
-        "fr": "classes de socket mises à jour et erreur vis-2 fixe si connecté via cloud\nla version minimum requise node.js est 16",
-        "it": "classi di socket aggiornate e errore vis-2 fisso se collegato tramite cloud\nversione minima richiesta node.js è 16",
-        "es": "clases actualizadas de socket y error fijo vis-2 si conectado a través de la nube\nla versión mínima requerida node.js es 16",
-        "pl": "zaktualizowane klasy gniazd i stały błąd vis-2 jeśli podłączony przez chmurę\nminimum wymagane node.js wersja jest 16",
-        "uk": "оновлені класи розетки і виправлені помилки в дюймах-2, якщо підключено через хмару\nмінімальний необхідний вузол.js версія 16",
-        "zh-cn": "更新套接字类, 如果通过云连接则固定为 2 个错误\n最小节点.js版本为 16"
       }
     },
     "authors": [
