@@ -84,6 +84,10 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Updated packages
+* (@GermanBluefox) Clear subscriptions on cloud disconnection
+
 ### 6.1.3 (2026-08-26)
 - (copilot) Adapter requires node.js >= 22 now
 - (copilot) Migrated blockly to TypeScript

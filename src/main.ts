@@ -1036,6 +1036,112 @@ export class CloudAdapter extends Adapter {
         }
     }
 
+    /**
+     * Process `/state/<id>` requests from the cloud. Identical to the `/state/:stateId` routes of the web adapter:
+     * GET reads the state value (`?json` returns the whole state object), POST writes the state.
+     * Body for POST is either `{"val": ..., "ack": ...}` or the value itself
+     */
+    private async processStateRequest(
+        url: string,
+        options: {
+            method: 'GET' | 'PATCH' | 'POST' | 'DELETE' | 'PUT';
+            body?: string | Record<string, any>;
+        },
+        cb: (error: null | string, status: number, headers: Record<string, string>, body: string) => void,
+    ): Promise<void> {
+        const method = (options?.method || 'GET').toUpperCase();
+        const [pathname, query] = url.split('?');
+        let stateName = '';
+
+        const send404 = (): void => {
+            const text = `File ${stateName} not found`;
+            cb(text, 404, { 'Content-Type': 'text/plain' }, text);
+        };
+
+        try {
+            stateName = decodeURIComponent(pathname.substring('/state/'.length));
+            if (method === 'GET' && stateName) {
+                const obj = await this.getForeignObjectAsync(stateName);
+                if (!obj) {
+                    send404();
+                } else {
+                    const state = await this.getForeignStateAsync(stateName);
+                    if (state !== null && state !== undefined) {
+                        const headers = { 'Content-Type': 'text/plain', 'Cache-Control': 'no-cache' };
+                        if (new URLSearchParams(query || '').has('json')) {
+                            cb(null, 200, headers, JSON.stringify(state));
+                        } else {
+                            cb(
+                                null,
+                                200,
+                                headers,
+                                state.val === undefined
+                                    ? 'undefined'
+                                    : state.val === null
+                                      ? 'null'
+                                      : typeof state.val === 'object'
+                                        ? JSON.stringify(state.val)
+                                        : state.val.toString(),
+                            );
+                        }
+                    } else {
+                        send404();
+                    }
+                }
+            } else if (method === 'POST' && stateName) {
+                if (!stateName.trim()) {
+                    cb('NO state found', 422, { 'Content-Type': 'text/html' }, `NO state found`);
+                    return;
+                }
+                const obj = await this.getForeignObjectAsync(stateName);
+                if (!obj) {
+                    send404();
+                } else {
+                    // Read post
+                    const body =
+                        typeof options.body === 'string'
+                            ? options.body
+                            : options.body === undefined || options.body === null
+                              ? ''
+                              : JSON.stringify(options.body);
+                    let data: ioBroker.SettableState;
+                    try {
+                        const maybeObject = JSON.parse(body);
+                        if (maybeObject.val !== undefined) {
+                            data = maybeObject;
+                        } else {
+                            data = { val: body };
+                        }
+                    } catch {
+                        // not an object
+                        data = { val: body };
+                    }
+                    if (obj.common.type === 'number') {
+                        data.val = parseFloat(data.val as string);
+                    } else if (obj.common.type === 'boolean') {
+                        data.val =
+                            data.val === true ||
+                            data.val === 'true' ||
+                            data.val === 1 ||
+                            data.val === '1' ||
+                            data.val === 'ON' ||
+                            data.val === 'on' ||
+                            data.val === 'AN' ||
+                            data.val === 'an';
+                    }
+                    await this.setForeignStateAsync(stateName, data);
+                    cb(null, 200, { 'Content-Type': 'application/json' }, JSON.stringify({ id: stateName }));
+                }
+            } else {
+                // No such route in web adapter
+                stateName = pathname;
+                send404();
+            }
+        } catch (e) {
+            cb(`500. Error: ${e}`, 500, { 'Content-Type': 'text/html' }, `500. Error: ${e}`);
+        }
+    }
+
     private patchIndexHtml(page: Buffer | string): Buffer {
         page = typeof page === 'string' ? page : page.toString('utf-8');
         const lines = page.split('\n');
@@ -1230,10 +1336,11 @@ ${afterList.join('\n')}`,
                                 }
                             });
                     }
+                } else if (url.startsWith('/state/')) {
+                    void this.processStateRequest(url, options, cb);
                 } else {
-                    this.log.error(`Unexpected request: ${url}`);
-
                     if (!this.server) {
+                        this.log.error(`Unexpected request: ${url}`);
                         this.answerWithReason(this.config.instance, 'web', cb);
                     } else {
                         axios({
