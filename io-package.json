@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.2.0",
+    "version": "6.2.1",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.2.1": {
+        "en": "Updated packages\nClear subscriptions on cloud disconnection",
+        "de": "Neue Pakete\nAbos bei Cloud-Abbruch löschen",
+        "ru": "Обновленные пакеты\nОтменить подписку при отключении от облака",
+        "pt": "Pacotes novos\nLimpe assinaturas ao desconectar a nuvem",
+        "nl": "Bijgewerkte pakketten\nDuidelijke abonnementen bij het verbreken van de verbinding met de cloud",
+        "fr": "Packages mis à jour\nAbonnements clairs en cas de déconnexion au cloud",
+        "it": "Pacchi nuovi\nAbbonamenti chiari su cloud disconnection",
+        "es": "Paquetes nuevos\nBorrar suscripciones al desconectarse a la nube",
+        "pl": "Zaktualizowane pakiety\nWyczyść subskrypcje podczas odłączania w chmurze",
+        "uk": "Оновлені пакети\nОчистити підписки при відключенні хмари",
+        "zh-cn": "更新的软件包\n断开云连接时清除订阅"
+      },
       "6.1.3": {
         "en": "Adapter requires node.js >= 22 now\nMigrated blockly to TypeScript",
         "de": "Der Adapter benötigt jetzt Node.js >= 22.\nBlockly wurde auf TypeScript migriert.",
