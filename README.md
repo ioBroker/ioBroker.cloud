@@ -84,7 +84,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### 6.2.0 (2026-09-16)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Updated packages
 * (@GermanBluefox) Clear subscriptions on cloud disconnection
 

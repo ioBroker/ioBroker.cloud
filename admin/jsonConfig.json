@@ -36,7 +36,6 @@
                         { "label": "System credentials", "value": "manager" },
                         { "label": "Manual", "value": "manual" }
                     ],
-                    "credentialType": "cloud",
                     "label": "Credentials type",
                     "hidden": "!data.useCredentials",
                     "default": "manual",
@@ -86,7 +85,7 @@
                     "newLine": true,
                     "type": "header",
                     "size": 4,
-                    "label": "QR code for ioBroker.visu app",
+                    "text": "QR code for ioBroker.visu app",
                     "help": "Scan this QR code with the ioBroker app to fill in the connection details automatically.",
                     "hidden": "!data.useCredentials || !data.instance || data.server !== 'iobroker.pro'"
                 },
