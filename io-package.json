@@ -201,7 +201,12 @@
     "allowAdmin": "",
     "lovelace": "",
     "noCommon": false,
-    "useCredentials": true
+    "useCredentials": true,
+    "sshEnabled": false,
+    "sshRules": [
+      { "host": "127.0.0.1", "ports": "" },
+      { "host": "localhost", "ports": "" }
+    ]
   },
   "instanceObjects": [
     {
@@ -231,6 +236,19 @@
       "common": {
         "role": "indicator.connected",
         "name": "If user is connected over cloud",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.sshAvailable",
+      "type": "state",
+      "common": {
+        "role": "indicator",
+        "name": "If an SSH server is reachable on 127.0.0.1:22",
         "type": "boolean",
         "read": true,
         "write": false,

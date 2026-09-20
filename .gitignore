@@ -10,3 +10,7 @@ nbproject
 #ignore .commitinfo created by ioBroker release script
 .commitinfo
 /.claude/settings.local.json
+
+src-admin/node_modules
+src-admin/build
+src-admin/.__mf__temp

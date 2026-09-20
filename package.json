@@ -61,7 +61,7 @@
     "test:package": "mocha test/packageFiles --exit",
     "test:integration": "mocha test/integrationAdapter --exit",
     "test": "mocha --exit",
-    "build": "tsc -p tsconfig.build.json && npm run build:blockly",
+    "build": "tsc -p tsconfig.build.json && npm run build:blockly && npm run build:admin",
     "build:blockly": "tsc -p src-blockly/tsconfig.json && node src-blockly/build.mjs",
     "lint": "eslint -c eslint.config.mjs",
     "release": "release-script",
@@ -70,7 +70,9 @@
     "release-major": "release-script major --yes",
     "translate": "translate-adapter -b admin/i18n/en.json -b src-blockly/i18n/en.json",
     "update-packages": "npx -y npm-check-updates --upgrade && cd src-blockly && npx -y npm-check-updates --upgrade",
-    "npm": "npm i && cd src-blockly && npm i"
+    "npm": "npm i && cd src-blockly && npm i && cd ../src-admin && npm i --legacy-peer-deps",
+    "build:admin": "node tasks-admin.mjs",
+    "build:admin:copy": "node tasks-admin.mjs --copy"
   },
   "license": "MIT",
   "readmeFilename": "README.md"

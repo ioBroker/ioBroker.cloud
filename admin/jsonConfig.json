@@ -202,6 +202,20 @@
                 }
             }
         },
+        "_remoteShell": {
+            "type": "panel",
+            "label": "Remote shell",
+            "items": {
+                "_sshSettings": {
+                    "type": "custom",
+                    "i18n": true,
+                    "guiApi": 2,
+                    "url": "custom/customComponents.js",
+                    "name": "ConfigCustomCloudSet/Components/SshSettings",
+                    "sm": 12
+                }
+            }
+        },
         "_services": {
             "type": "panel",
             "label": "Services and IFTTT",

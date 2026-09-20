@@ -101,5 +101,15 @@
     "tooltip_language": "Man kann hier die Sprache definieren um zwischen US Alexa Skill und DE Alexa Skill umschalten zu können.",
     "tooltip_noCommon": "Wenn diese Option aktiviert wird, so werden die Einstellungen nur für diese Instanz gespeichert. So ist es möglich in einer anderen Instanz andere Namen zu setzen.",
     "tooltip_responseOID": "Für jedes Kommando wird eine Textantwort generiert. Hier kannst du die Objekt ID angeben, an welche die Textantwort gesendet werden soll, z.B. sayit.0.tts.text.",
-    "tooltip_restartOnDisconnect": "Workaround für fehlende Kommunikation mit Alexa nach Verbindungsabbruch. Damit kann man zwingen den Adapter neu zu starten und das Problem umgehen."
+    "tooltip_restartOnDisconnect": "Workaround für fehlende Kommunikation mit Alexa nach Verbindungsabbruch. Damit kann man zwingen den Adapter neu zu starten und das Problem umgehen.",
+    "Remote shell": "Remote-Shell",
+    "Enable remote shell (SSH jump host)": "Remote-Shell aktivieren (SSH-Jump-Host)",
+    "Let the cloud tunnel ssh to this machine (ssh -J). Only on pro.": "Erlaubt der Cloud, SSH zu diesem Rechner zu tunneln (ssh -J). Nur mit Pro.",
+    "Allowed destinations": "Erlaubte Ziele",
+    "Each row: a host and the ports allowed on it. Empty list = nothing allowed.": "Pro Zeile: ein Host und die darauf erlaubten Ports. Leere Liste = nichts erlaubt.",
+    "Host / IP / range / CIDR": "Host / IP / Bereich / CIDR",
+    "Ports": "Ports",
+    "e.g. 127.0.0.1, localhost, 192.168.*, 192.168.1.0/24, 192.168.1.10-192.168.1.50": "z. B. 127.0.0.1, localhost, 192.168.*, 192.168.1.0/24, 192.168.1.10-192.168.1.50",
+    "e.g. 22 or 22, 8081 or 8000-8100. Empty, * or all = any port": "z. B. 22 oder 22, 8081 oder 8000-8100. Leer, * oder all = beliebiger Port",
+    "SSH server on this machine": "SSH-Server auf diesem Rechner"
 }

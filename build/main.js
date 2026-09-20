@@ -1,4 +1,37 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -6,8 +39,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloudAdapter = void 0;
 const adapter_core_1 = require("@iobroker/adapter-core"); // Get common this utils
 const socketCloud_1 = __importDefault(require("./lib/socketCloud"));
+const sshTunnel_1 = require("./lib/sshTunnel");
 const axios_1 = __importDefault(require("axios"));
 const ws_1 = __importDefault(require("ws"));
+const Net = __importStar(require("node:net"));
 // @ts-expect-error Give to socket.io the old ws lib and not the Node.js `undici`
 global.WebSocket = ws_1.default;
 const socket_io_client_1 = __importDefault(require("socket.io-client"));
@@ -16,6 +51,8 @@ class CloudAdapter extends adapter_core_1.Adapter {
     redirectRunning = false; // is redirect in progress?
     socket = null;
     ioSocket = null;
+    sshTunnel = null;
+    sshAvailable = false;
     pingTimer = null;
     cloudConnected = false;
     connectTimer = null;
@@ -75,6 +112,8 @@ class CloudAdapter extends adapter_core_1.Adapter {
                 this.timeouts[tm] = null;
             }
         });
+        this.sshTunnel?.destroy();
+        this.sshTunnel = null;
         try {
             this.socket?.close();
             this.ioSocket = null;
@@ -355,6 +394,45 @@ class CloudAdapter extends adapter_core_1.Adapter {
         }
         return { error: 'error_no_web' };
     }
+    /**
+     * Is an SSH server reachable on this machine? A plain TCP probe to `host:port` (default `127.0.0.1:22`),
+     * which is what the remote shell actually needs - a listening sshd the cloud tunnel can reach.
+     *
+     * @param host host to probe
+     * @param port port to probe
+     * @param timeout how long to wait before giving up, in ms
+     */
+    probeSsh(host = '127.0.0.1', port = 22, timeout = 1500) {
+        return new Promise(resolve => {
+            const socket = new Net.Socket();
+            let done = false;
+            const finish = (ok) => {
+                if (!done) {
+                    done = true;
+                    socket.destroy();
+                    resolve(ok);
+                }
+            };
+            socket.setTimeout(timeout);
+            socket.once('connect', () => finish(true));
+            socket.once('timeout', () => finish(false));
+            socket.once('error', () => finish(false));
+            try {
+                socket.connect(port, host);
+            }
+            catch {
+                finish(false);
+            }
+        });
+    }
+    /** Probe SSH and publish the result in `info.sshAvailable`, so the admin GUI can react to it. */
+    async checkSshAvailability() {
+        const available = await this.probeSsh();
+        this.sshAvailable = available;
+        await this.setStateAsync('info.sshAvailable', available, true);
+        this.log.debug(`SSH server on 127.0.0.1:22 is ${available ? 'reachable' : 'not reachable'}`);
+        return available;
+    }
     async onMessage(obj) {
         if (obj) {
             switch (obj.command) {
@@ -466,6 +544,18 @@ class CloudAdapter extends adapter_core_1.Adapter {
                                 this.sendTo(obj.from, obj.command, { error: (e.response && e.response.data) || e.toString() }, obj.callback);
                             }
                         });
+                    }
+                    break;
+                }
+                case 'getSshStatus': {
+                    // Answers the `textSendTo` control in the admin GUI: a fresh probe, rendered as a
+                    // coloured status line so the user sees whether the remote shell can reach an sshd.
+                    const available = await this.checkSshAvailability();
+                    const text = available
+                        ? 'SSH server reachable on 127.0.0.1:22'
+                        : 'No SSH server found on 127.0.0.1:22 - install/enable one to use the remote shell';
+                    if (obj.callback) {
+                        this.sendTo(obj.from, obj.command, { text, style: { color: available ? '#4caf50' : '#f44336' } }, obj.callback);
                     }
                     break;
                 }
@@ -893,6 +983,120 @@ class CloudAdapter extends adapter_core_1.Adapter {
         }
     }
     /**
+     * The states a visu app reports into when it stores its values in `vis.<X>` rather than through
+     * this adapter: `vis.<X>.<device>.<field>`.
+     *
+     * These six fields are all an app has to report, so they are all that can be created here - and
+     * they are created from the definitions below, not from anything the request carries. A client
+     * writing a value has no business deciding what an object in the tree looks like.
+     */
+    static VIS_STATE = /^vis\.\d+\.([^.]+)\.(battery\.level|battery\.state|brightness|currentLocation|alive|instanceId)$/;
+    /**
+     * The definition of one state a visu app reports into, or null when the id is not one of them.
+     *
+     * The same six definitions the web adapter holds: an app reaches the installation through
+     * either of the two, and what it finds in the tree afterwards must not depend on which of the
+     * two ways its value took.
+     *
+     * @param id the full state id, e.g. `vis.0.tablet.battery.level`
+     */
+    static visStateCommon(id) {
+        const match = CloudAdapter.VIS_STATE.exec(id);
+        if (!match) {
+            return null;
+        }
+        const device = match[1];
+        switch (match[2]) {
+            case 'battery.level':
+                return {
+                    name: `Battery status for (${device})`,
+                    type: 'number',
+                    role: 'battery',
+                    unit: '%',
+                    min: 0,
+                    max: 100,
+                    read: true,
+                    write: false,
+                };
+            case 'battery.state':
+                return {
+                    name: `Battery state for (${device})`,
+                    type: 'number',
+                    role: 'state',
+                    states: { 0: 'unknown', 1: 'unplugged', 2: 'charging', 3: 'full' },
+                    read: true,
+                    write: false,
+                };
+            // The one field that is also written from the other side: ioBroker sets the brightness
+            // of the display, the app follows it
+            case 'brightness':
+                return {
+                    name: `Brightness of (${device})`,
+                    type: 'number',
+                    role: 'level',
+                    unit: '%',
+                    min: 0,
+                    max: 100,
+                    read: true,
+                    write: true,
+                };
+            case 'currentLocation':
+                return {
+                    name: `Location of (${device})`,
+                    type: 'string',
+                    role: 'json',
+                    read: true,
+                    write: false,
+                };
+            case 'alive':
+                return {
+                    name: 'If app is running and connected',
+                    type: 'boolean',
+                    role: 'indicator.reachable',
+                    read: true,
+                    write: false,
+                };
+            case 'instanceId':
+                return {
+                    name: 'Configured Instance ID',
+                    type: 'string',
+                    role: 'text',
+                    read: true,
+                    write: false,
+                };
+            default:
+                return null;
+        }
+    }
+    /**
+     * Creates the state a visu app reports into, together with the device it belongs to, so the
+     * values show up as one device with an online indicator rather than as loose ids.
+     *
+     * The objects live in `vis.<X>`, a namespace of its own, which is why they are written as
+     * foreign objects - unlike the `devices.*` tree this adapter keeps for itself.
+     *
+     * @param stateId the state to create, already known to be one of [VIS_STATE]
+     * @param common its definition
+     */
+    async createVisState(stateId, common) {
+        const deviceId = stateId.split('.').slice(0, 3).join('.');
+        if (!this.checkedNames.has(deviceId)) {
+            if (!(await this.getForeignObjectAsync(deviceId))) {
+                await this.setForeignObjectAsync(deviceId, {
+                    type: 'device',
+                    common: {
+                        name: deviceId.split('.')[2],
+                        statusStates: { onlineId: `${deviceId}.alive` },
+                    },
+                    native: {},
+                });
+            }
+            this.checkedNames.add(deviceId);
+        }
+        await this.setForeignObjectAsync(stateId, { type: 'state', common, native: {} });
+        this.log.debug(`Created "${stateId}" for a visu app`);
+    }
+    /**
      * Process `/state/<id>` requests from the cloud. Identical to the `/state/:stateId` routes of the web adapter:
      * GET reads the state value (`?json` returns the whole state object), POST writes the state.
      * Body for POST is either `{"val": ..., "ack": ...}` or the value itself
@@ -939,22 +1143,53 @@ class CloudAdapter extends adapter_core_1.Adapter {
                     cb('NO state found', 422, { 'Content-Type': 'text/html' }, `NO state found`);
                     return;
                 }
-                const obj = await this.getForeignObjectAsync(stateName);
+                // Read post
+                const body = typeof options.body === 'string'
+                    ? options.body
+                    : options.body === undefined || options.body === null
+                        ? ''
+                        : JSON.stringify(options.body);
+                // One of the six states a visu app reports into. Talking to the installation
+                // directly the app meets the web adapter, which creates them; through the cloud the
+                // request ends here instead, so the same definitions have to exist on this side as
+                // well - otherwise a device can never report anything but the values of states that
+                // happen to exist already.
+                const visCommon = CloudAdapter.visStateCommon(stateName);
+                if (visCommon && !body) {
+                    // A reported value always carries its value in the body, so an empty one means
+                    // the payload was lost on the way - a cloud that forwards a POST without
+                    // reading it does exactly that. Writing it anyway would put `NaN` into a
+                    // battery level and `false` into `alive`, which is worse than not writing at
+                    // all: the state would look like an answer while it is the loss itself.
+                    const text = `Empty body for "${stateName}": the value of the app did not arrive`;
+                    this.log.warn(text);
+                    cb(text, 400, { 'Content-Type': 'text/plain' }, text);
+                    return;
+                }
+                let obj = await this.getForeignObjectAsync(stateName);
+                if (!obj && visCommon) {
+                    try {
+                        await this.createVisState(stateName, visCommon);
+                        obj = await this.getForeignObjectAsync(stateName);
+                    }
+                    catch (e) {
+                        this.log.warn(`Cannot create state "${stateName}": ${e}`);
+                    }
+                }
                 if (!obj) {
                     send404();
                 }
                 else {
-                    // Read post
-                    const body = typeof options.body === 'string'
-                        ? options.body
-                        : options.body === undefined || options.body === null
-                            ? ''
-                            : JSON.stringify(options.body);
                     let data;
                     try {
                         const maybeObject = JSON.parse(body);
                         if (maybeObject.val !== undefined) {
-                            data = maybeObject;
+                            // `create` carried the definition of the state to make while the visu
+                            // app in the field was built; the states it may create are known here
+                            // now. It is no part of a state, and a state carrying it is refused by
+                            // the controller, so it is dropped.
+                            const { create: _ignored, ...state } = maybeObject;
+                            data = state;
                         }
                         else {
                             data = { val: body };
@@ -977,6 +1212,12 @@ class CloudAdapter extends adapter_core_1.Adapter {
                                 data.val === 'on' ||
                                 data.val === 'AN' ||
                                 data.val === 'an';
+                    }
+                    if (visCommon) {
+                        // What an app reports is a report, not an order: it is written as
+                        // acknowledged whatever the request says, so the value does not sit in the
+                        // state as a command that still waits to be carried out.
+                        data.ack = true;
                     }
                     await this.setForeignStateAsync(stateName, data);
                     cb(null, 200, { 'Content-Type': 'application/json' }, JSON.stringify({ id: stateName }));
@@ -1473,6 +1714,24 @@ ${afterList.join('\n')}`);
                 }
             }
         });
+        // Remote shell (SSH jump host): the cloud forwards a direct-tcpip channel, we open the local TCP
+        // socket and pipe it. A fresh tunnel manager per connection - a reconnect kills every open tunnel.
+        this.sshTunnel?.destroy();
+        this.sshTunnel = new sshTunnel_1.CloudSshTunnel({
+            emit: (event, ...args) => {
+                this.socket?.emit(event, ...args);
+            },
+            log: {
+                debug: (m) => this.log.debug(m),
+                warn: (m) => this.log.warn(m),
+                error: (m) => this.log.error(m),
+            },
+            enabled: !!this.config.sshEnabled && this.apikey.startsWith('@pro_'),
+            rules: Array.isArray(this.config.sshRules) ? this.config.sshRules : [],
+        });
+        this.socket.on('sshOpen', (id, host, port) => this.sshTunnel?.open(id, host, Number(port)));
+        this.socket.on('sshData', (id, data) => this.sshTunnel?.write(id, data));
+        this.socket.on('sshClose', (id) => this.sshTunnel?.close(id));
         this.socket.on('error', (error) => {
             console.error(`Some error: ${error}`);
             this.startConnect();
@@ -1678,6 +1937,8 @@ ${afterList.join('\n')}`);
         }
         this.config.allowedServices = this.config.allowedServices.map(s => s.trim());
         await this.setStateAsync('info.connection', false, true);
+        // Signal whether an SSH server is reachable here, so the admin GUI can guide the remote-shell setup.
+        void this.checkSshAvailability();
         this.config.cloudUrl = this.config.cloudUrl || 'https://iobroker.net:10555';
         if (!this.apikey) {
             return this.log.error('No api-key found. Please get one on https://iobroker.net');
