@@ -1,0 +1,16 @@
+{
+    "ssh_checking": "Suche nach einem SSH-Server auf diesem Rechner...",
+    "ssh_available": "SSH-Server auf 127.0.0.1:22 erreichbar",
+    "ssh_not_available": "Kein SSH-Server auf 127.0.0.1:22 gefunden",
+    "ssh_hint_install": "Installiere und starte einen SSH-Server (sshd auf Port 22) auf diesem Rechner, um die Remote-Shell zu nutzen.",
+    "ssh_only_pro": "Die Remote-Shell ist nur mit iobroker.pro verfügbar.",
+    "ssh_enable": "Remote-Shell aktivieren (SSH-Jump-Host)",
+    "ssh_allowed": "Erlaubte Ziele",
+    "ssh_host": "Host / IP / Bereich / CIDR",
+    "ssh_ports": "Ports",
+    "ssh_host_ph": "127.0.0.1, 192.168.*, 192.168.1.0/24, 192.168.1.10-192.168.1.50",
+    "ssh_ports_ph": "22, 8000-8100 oder leer für alle",
+    "ssh_add": "Ziel hinzufügen",
+    "ssh_delete": "Löschen",
+    "ssh_note": "Jede Zeile erlaubt einen Host und die darauf erlaubten Ports. Leere Ports = beliebiger Port. Keine Zeilen = nichts erlaubt."
+}
