@@ -32,6 +32,7 @@ jobs:
       - uses: ioBroker/testing-action-check@v2
         with:
           node-version: '24.x'
+          install-command: 'npm run npm'
           lint: true
 
   # Runs adapter tests on all supported node versions and OSes
@@ -51,6 +52,7 @@ jobs:
         with:
           build: true
           os: 'ubuntu-latest'
+          install-command: 'npm run npm'
           node-version: ${{ matrix.node-version }}
 
   # Deploys the final package to NPM
@@ -74,6 +76,7 @@ jobs:
       - uses: ioBroker/testing-action-deploy@v1
         with:
           node-version: '24.x'
+          install-command: 'npm run npm'
           build: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
           sentry: true
