@@ -112,7 +112,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### 6.2.3 (2026-09-21)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Updated packages
 
 ### 6.2.1 (2026-09-17)
