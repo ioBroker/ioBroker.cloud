@@ -1,4 +1,7 @@
 # Older changes
+## 6.0.4 (2026-05-17)
+* (bluefox) Respect the types of states if writing from visu app
+
 ## 6.0.1 (2026-03-04)
 * (bluefox) Added communication with new android application
 * (bluefox) Dropped support node 18

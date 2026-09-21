@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.2.1",
+    "version": "6.2.2",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.2.2": {
+        "en": "Updated packages",
+        "de": "Neue Pakete",
+        "ru": "Обновленные пакеты",
+        "pt": "Pacotes novos",
+        "nl": "Bijgewerkte pakketten",
+        "fr": "Packages mis à jour",
+        "it": "Pacchi nuovi",
+        "es": "Paquetes nuevos",
+        "pl": "Zaktualizowane pakiety",
+        "uk": "Оновлені пакети",
+        "zh-cn": "更新的软件包"
+      },
       "6.2.1": {
         "en": "Updated packages\nClear subscriptions on cloud disconnection",
         "de": "Neue Pakete\nAbos bei Cloud-Abbruch löschen",
@@ -106,19 +119,6 @@
         "pl": "Dodano komunikację z nowym androidem\nZrzucony węzeł wsparcia 18\nWdrożony QR Kod dla joBrokera. visu app",
         "uk": "Додано зв'язок з новим додатком для андроїд\nDropped опору вузол 18 років\nРеалізовано QR Код для ioBroker. додаток Visu",
         "zh-cn": "与新和机器人应用程序添加通信\n已丢弃支持节点 第 18 条\n已执行 QR ioBroker的代码。 虚拟应用"
-      },
-      "5.1.2": {
-        "en": "Fixing cloud connection error",
-        "de": "Fehler der Cloud-Verbindung beheben",
-        "ru": "Исправление ошибки облачного соединения",
-        "pt": "Corrigir erro de conexão na nuvem",
-        "nl": "Fout bij het herstellen van cloudverbinding",
-        "fr": "Correction d'une erreur de connexion au cloud",
-        "it": "Risolvere l'errore di connessione cloud",
-        "es": "Error de conexión de nube de fijación",
-        "pl": "Ustawienie błędu połączenia w chmurze",
-        "uk": "Виправлення помилки хмарного підключення",
-        "zh-cn": "正在修复云连接错误"
       }
     },
     "authors": [
@@ -204,8 +204,14 @@
     "useCredentials": true,
     "sshEnabled": false,
     "sshRules": [
-      { "host": "127.0.0.1", "ports": "" },
-      { "host": "localhost", "ports": "" }
+      {
+        "host": "127.0.0.1",
+        "ports": ""
+      },
+      {
+        "host": "localhost",
+        "ports": ""
+      }
     ]
   },
   "instanceObjects": [

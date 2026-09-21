@@ -112,7 +112,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.2.2 (2026-09-21)
 * (@GermanBluefox) Updated packages
 
 ### 6.2.1 (2026-09-17)
@@ -128,9 +128,6 @@ Now they could be found in `cloud.X.devices.NAME`:
 
 ### 6.0.5 (2026-06-01)
 * (bluefox) Corrected the command object to be writable
-
-### 6.0.4 (2026-05-17)
-* (bluefox) Respect the types of states if writing from visu app
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
