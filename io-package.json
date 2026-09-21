@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.2.3",
+    "version": "6.2.4",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.2.4": {
+        "en": "Updated packages",
+        "de": "Neue Pakete",
+        "ru": "Обновленные пакеты",
+        "pt": "Pacotes novos",
+        "nl": "Bijgewerkte pakketten",
+        "fr": "Packages mis à jour",
+        "it": "Pacchi nuovi",
+        "es": "Paquetes nuevos",
+        "pl": "Zaktualizowane pakiety",
+        "uk": "Оновлені пакети",
+        "zh-cn": "更新的软件包"
+      },
       "6.2.1": {
         "en": "Updated packages\nClear subscriptions on cloud disconnection",
         "de": "Neue Pakete\nAbos bei Cloud-Abbruch löschen",
