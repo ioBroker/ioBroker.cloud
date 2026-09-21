@@ -368,15 +368,12 @@ export class CloudAdapter extends Adapter {
             }
         } else {
             webObj = (await this.getForeignObjectAsync(`system.adapter.${data.instance}`)) as
-                | ioBroker.InstanceObject
-                | null
-                | undefined;
+                ioBroker.InstanceObject | null | undefined;
         }
 
         if (webObj) {
             const native = webObj.native as
-                | { bind?: string; port: string | number; auth?: boolean; secure: boolean }
-                | undefined;
+                { bind?: string; port: string | number; auth?: boolean; secure: boolean } | undefined;
             const addresses: string[] = [];
             if (native?.bind === '0.0.0.0') {
                 // Read the host information from system configuration
@@ -803,11 +800,7 @@ export class CloudAdapter extends Adapter {
         this.log.debug(`Received IFTTT object: ${JSON.stringify(data)}`);
         let id: string | undefined;
         let dataObj:
-            | { id: string; val: number | boolean | string; ack?: boolean }
-            | string
-            | number
-            | boolean
-            | undefined;
+            { id: string; val: number | boolean | string; ack?: boolean } | string | number | boolean | undefined;
         if (typeof data === 'object' && data.id && data.data !== undefined) {
             id = data.id;
             if (typeof data.data === 'string' && data.data[0] === '{') {

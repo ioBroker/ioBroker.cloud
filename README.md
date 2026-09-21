@@ -113,8 +113,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 
 ## Changelog
 ### **WORK IN PROGRESS**
-* Added remote shell (SSH jump host) support with a per-instance host/port allow-list
-* Added `info.sshAvailable` and a custom settings page that hides the remote-shell options when no SSH server is present
+* (@GermanBluefox) Updated packages
 
 ### 6.2.1 (2026-09-17)
 * (@GermanBluefox) Updated packages

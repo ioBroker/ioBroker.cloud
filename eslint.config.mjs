@@ -14,7 +14,7 @@ export default [
         },
     },
     {
-        ignores: ['build/*', 'test/*', 'build/**/*', 'admin/**/*'],
+        ignores: ['build/*', 'test/*', 'build/**/*', 'admin/**/*', 'src-admin/**/*', 'tasks-admin.mjs'],
     },
     {
         // disable temporary the rule 'jsdoc/require-param' and enable 'jsdoc/require-jsdoc'
