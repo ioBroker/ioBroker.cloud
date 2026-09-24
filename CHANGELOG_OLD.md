@@ -1,4 +1,7 @@
 # Older changes
+## 6.0.5 (2026-06-01)
+* (bluefox) Corrected the command object to be writable
+
 ## 6.0.4 (2026-05-17)
 * (bluefox) Respect the types of states if writing from visu app
 

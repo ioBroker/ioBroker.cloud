@@ -112,7 +112,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.2.5 (2026-09-24)
 * (@GermanBluefox) A POST body that arrives as a buffer is decoded instead of stringified, so the telemetry of the visu apps is no longer lost on its way through the cloud
 * (@GermanBluefox) An empty body for a reported value, and a command without `deviceName`/`name`, are logged instead of being dropped silently
 
@@ -129,9 +129,6 @@ Now they could be found in `cloud.X.devices.NAME`:
 
 ### 6.1.2 (2026-06-13)
 * (@GermanBluefox) Added support of credentials manager
-
-### 6.0.5 (2026-06-01)
-* (bluefox) Corrected the command object to be writable
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
