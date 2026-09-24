@@ -295,10 +295,22 @@ class CloudAdapter extends adapter_core_1.Adapter {
                             }
                         }
                     }
+                    else {
+                        // A report names the device and the value it belongs to. What arrives
+                        // without them is no command this adapter can carry out, and dropping it in
+                        // silence is what let a lost payload look like a working connection.
+                        this.log.warn(`Ignored command without "deviceName"/"name": ${state.val}`);
+                    }
                 }
                 catch {
                     this.log.warn(`Cannot parse command: ${state.val}`);
                 }
+            }
+            else if (state && (state.val === '' || state.val === null)) {
+                // The shape a lost payload takes: the request arrived, the value did not. Nothing
+                // writes this state but an app reporting into it.
+                this.log.warn('Received an empty command: the value of the app did not arrive. A cloud that ' +
+                    'forwards a POST without reading its body does exactly that.');
             }
         }
         else if (this.socket) {
@@ -992,6 +1004,40 @@ class CloudAdapter extends adapter_core_1.Adapter {
      */
     static VIS_STATE = /^vis\.\d+\.([^.]+)\.(battery\.level|battery\.state|brightness|currentLocation|alive|instanceId)$/;
     /**
+     * The text of a request body, whatever shape it survived the way here in.
+     *
+     * The cloud reads the payload of a POST and passes it on as it holds it: a `Buffer` over a
+     * socket that carries binary, and the `{type: 'Buffer', data: [...]}` of its JSON form over one
+     * that does not. Stringifying either of those yields a description of the bytes instead of the
+     * bytes themselves, and what a visu app reported is lost behind a friendly 200 - the value
+     * never reaches `onStateChange()`, because the object parsed there carries no `deviceName`.
+     *
+     * An object that really is an object keeps being stringified: a caller sending JSON as an
+     * object means the JSON, not a description of it.
+     */
+    static requestBodyToText(body) {
+        if (typeof body === 'string') {
+            return body;
+        }
+        if (body === undefined || body === null) {
+            return '';
+        }
+        if (Buffer.isBuffer(body)) {
+            return body.toString('utf8');
+        }
+        if (ArrayBuffer.isView(body)) {
+            return Buffer.from(body.buffer, body.byteOffset, body.byteLength).toString('utf8');
+        }
+        if (body instanceof ArrayBuffer) {
+            return Buffer.from(body).toString('utf8');
+        }
+        const serializedBuffer = body;
+        if (serializedBuffer.type === 'Buffer' && Array.isArray(serializedBuffer.data)) {
+            return Buffer.from(serializedBuffer.data).toString('utf8');
+        }
+        return JSON.stringify(body);
+    }
+    /**
      * The definition of one state a visu app reports into, or null when the id is not one of them.
      *
      * The same six definitions the web adapter holds: an app reaches the installation through
@@ -1144,18 +1190,19 @@ class CloudAdapter extends adapter_core_1.Adapter {
                     return;
                 }
                 // Read post
-                const body = typeof options.body === 'string'
-                    ? options.body
-                    : options.body === undefined || options.body === null
-                        ? ''
-                        : JSON.stringify(options.body);
+                const body = CloudAdapter.requestBodyToText(options.body);
                 // One of the six states a visu app reports into. Talking to the installation
                 // directly the app meets the web adapter, which creates them; through the cloud the
                 // request ends here instead, so the same definitions have to exist on this side as
                 // well - otherwise a device can never report anything but the values of states that
                 // happen to exist already.
                 const visCommon = CloudAdapter.visStateCommon(stateName);
-                if (visCommon && !body) {
+                // The command state is the other half of the same report: the app posts
+                // `{value, deviceName, name}` into it and `onStateChange()` turns that into
+                // `devices.*`. An empty body becomes an empty value there, which is dropped
+                // without a word - so it is refused here just like a vis state.
+                const isAppReport = !!visCommon || stateName.endsWith('.remote.command');
+                if (isAppReport && !body) {
                     // A reported value always carries its value in the body, so an empty one means
                     // the payload was lost on the way - a cloud that forwards a POST without
                     // reading it does exactly that. Writing it anyway would put `NaN` into a
