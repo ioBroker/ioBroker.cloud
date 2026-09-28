@@ -47,6 +47,21 @@ const Net = __importStar(require("node:net"));
 global.WebSocket = ws_1.default;
 const socket_io_client_1 = __importDefault(require("socket.io-client"));
 const TEXT_PING_TIMEOUT = 'Ping timeout';
+/**
+ * The two indicators a visu app reports, and how long each may go unheard.
+ *
+ * They answer different questions and used to be one: `alive` says the device still reports at all,
+ * which the apps now do from background rounds every 15 minutes, so it has to outlive a round that
+ * a doze window delayed. `onScreen` says the visualization is in front of the user, refreshed every
+ * 45 seconds while it is. The device's `statusStates.onlineId` points at `alive`, so that is what
+ * the online dot follows.
+ */
+const ALIVE_NAME = 'If the device still reports';
+const ON_SCREEN_NAME = 'If the visualization is open on screen';
+const ALIVE_EXPIRE = 40 * 60;
+const ON_SCREEN_EXPIRE = 120;
+/** The name `alive` carried while it only ever meant "the app is on screen". */
+const OUTDATED_ALIVE_NAME = 'If app is running and connected';
 class CloudAdapter extends adapter_core_1.Adapter {
     redirectRunning = false; // is redirect in progress?
     socket = null;
@@ -155,6 +170,28 @@ class CloudAdapter extends adapter_core_1.Adapter {
         }
         this.ioSocket?.send(this.socket, 'objectChange', id, obj);
     }
+    /**
+     * Makes sure one of the two indicators exists, and corrects a name this adapter itself wrote.
+     *
+     * A tree created by an earlier version has `alive` under a name that promised more than it
+     * delivered. It is corrected here - but only while it is still the text this adapter wrote,
+     * never one the user picked.
+     */
+    async ensureIndicator(id, name, role) {
+        const obj = await this.getObjectAsync(id);
+        if (!obj) {
+            await this.setObjectAsync(id, {
+                type: 'state',
+                common: { name, write: false, read: true, type: 'boolean', role },
+                native: {},
+            });
+            return;
+        }
+        if (obj.common?.name === OUTDATED_ALIVE_NAME && name !== obj.common.name) {
+            obj.common.name = name;
+            await this.setObjectAsync(id, obj);
+        }
+    }
     async onStateChange(id, state) {
         if (id.endsWith('remote.command')) {
             // this is the command from the app in form {"deviceName": "some.id", "value": "value", "name": "valueName"}, like {"deviceName": "samsung", "value": "123.1;23.12", "valueName": "currentLocation"}
@@ -178,21 +215,17 @@ class CloudAdapter extends adapter_core_1.Adapter {
                                     },
                                     native: {},
                                 });
-                                await this.setObjectAsync(`${deviceId}.alive`, {
-                                    type: 'state',
-                                    common: {
-                                        name: 'If app is running and connected',
-                                        write: false,
-                                        read: true,
-                                        type: 'boolean',
-                                        role: 'indicator.reachable',
-                                    },
-                                    native: {},
-                                });
+                            }
+                            // Both indicators are ensured on their own rather than only for a
+                            // device that is new: a tree from an earlier version has a device but
+                            // no `onScreen`, and its `alive` still carries the old name.
+                            await this.ensureIndicator(`${deviceId}.alive`, ALIVE_NAME, 'indicator.reachable');
+                            await this.ensureIndicator(`${deviceId}.onScreen`, ON_SCREEN_NAME, 'indicator');
+                            if (!channelObj) {
                                 await this.setStateAsync(`${deviceId}.alive`, {
                                     val: true,
                                     ack: true,
-                                    expire: 60,
+                                    expire: ALIVE_EXPIRE,
                                 });
                             }
                             this.checkedNames.add(deviceId);
@@ -255,13 +288,16 @@ class CloudAdapter extends adapter_core_1.Adapter {
                             }
                             this.checkedNames.add(id);
                         }
-                        if (data.name === 'alive') {
-                            await this.setStateAsync(`${deviceId}.alive`, {
+                        if (data.name === 'alive' || data.name === 'onScreen') {
+                            // `alive` waits for a background round, which comes every 15 minutes
+                            // and may arrive late out of a doze window; `onScreen` waits for the
+                            // foreground heartbeat, which comes every 45 seconds.
+                            await this.setStateAsync(`${deviceId}.${data.name}`, {
                                 val: data.value === true ||
                                     data.value === 'true' ||
                                     data.value === '1' ||
                                     data.value === 1,
-                                expire: 60,
+                                expire: data.name === 'alive' ? ALIVE_EXPIRE : ON_SCREEN_EXPIRE,
                                 ack: true,
                             });
                         }
@@ -1002,7 +1038,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
      * they are created from the definitions below, not from anything the request carries. A client
      * writing a value has no business deciding what an object in the tree looks like.
      */
-    static VIS_STATE = /^vis\.\d+\.([^.]+)\.(battery\.level|battery\.state|brightness|currentLocation|alive|instanceId)$/;
+    static VIS_STATE = /^vis\.\d+\.([^.]+)\.(battery\.level|battery\.state|brightness|currentLocation|alive|instanceId|onScreen)$/;
     /**
      * The text of a request body, whatever shape it survived the way here in.
      *
@@ -1096,9 +1132,17 @@ class CloudAdapter extends adapter_core_1.Adapter {
                 };
             case 'alive':
                 return {
-                    name: 'If app is running and connected',
+                    name: ALIVE_NAME,
                     type: 'boolean',
                     role: 'indicator.reachable',
+                    read: true,
+                    write: false,
+                };
+            case 'onScreen':
+                return {
+                    name: ON_SCREEN_NAME,
+                    type: 'boolean',
+                    role: 'indicator',
                     read: true,
                     write: false,
                 };
@@ -1191,7 +1235,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
                 }
                 // Read post
                 const body = CloudAdapter.requestBodyToText(options.body);
-                // One of the six states a visu app reports into. Talking to the installation
+                // One of the seven states a visu app reports into. Talking to the installation
                 // directly the app meets the web adapter, which creates them; through the cloud the
                 // request ends here instead, so the same definitions have to exist on this side as
                 // well - otherwise a device can never report anything but the values of states that
@@ -1227,6 +1271,13 @@ class CloudAdapter extends adapter_core_1.Adapter {
                     send404();
                 }
                 else {
+                    // A tree that already exists keeps the name it was created with, and `alive`
+                    // was created under one that promised more than it delivers. It is corrected
+                    // here - but only while it is still the text this adapter wrote.
+                    if (visCommon && obj.common?.name === OUTDATED_ALIVE_NAME) {
+                        obj.common.name = visCommon.name;
+                        await this.setForeignObjectAsync(stateName, obj);
+                    }
                     let data;
                     try {
                         const maybeObject = JSON.parse(body);
