@@ -184,7 +184,7 @@ export class CloudAdapter extends Adapter {
         }
         if (obj.common?.name === OUTDATED_ALIVE_NAME && name !== obj.common.name) {
             obj.common.name = name;
-            await this.setObjectAsync(id, obj as ioBroker.SettableObject);
+            await this.setObjectAsync(id, obj);
         }
     }
 
