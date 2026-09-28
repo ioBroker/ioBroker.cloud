@@ -43,7 +43,7 @@
     "@types/ws": "^8.18.1",
     "blockly": "^13.3.0",
     "esbuild": "^0.28.2",
-    "typescript": "~6.0.3"
+    "typescript": "~7.0.2"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.cloud/issues"
