@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.2.5",
+    "version": "6.2.6",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.2.6": {
+        "en": "Added new App state: onScreen",
+        "de": "Neuer App-Status: OnScreen",
+        "ru": "Добавлено новое состояние приложения: OnScreen",
+        "pt": "Novo estado do app: na tela",
+        "nl": "Nieuwe status van de app toegevoegd: OnScreen",
+        "fr": "Nouvel état de l'app : OnScreen",
+        "it": "Nuovo stato app: OnScreen",
+        "es": "Se ha añadido un nuevo estado: En pantalla",
+        "pl": "Dodano nowy stan aplikacji: OnScreen",
+        "uk": "Додано новий стан програми: на екрані",
+        "zh-cn": "添加了新的应用程序状态：OnScreen"
+      },
       "6.2.5": {
         "en": "A POST body that arrives as a buffer is decoded instead of stringified, so the telemetry of the visu apps is no longer lost on its way through the cloud\nAn empty body for a reported value, and a command without `deviceName`/`name`, are logged instead of being dropped silently",
         "de": "Ein POST-Text als Puffer wird dekodiert statt stringifiziert, sodass die Telemetrie der Visu-Apps nicht mehr verloren geht.\nEin leerer Text für einen Wert und ein Befehl ohne `DeviceName`/`Name` werden geloggt und nicht gelöscht",
@@ -106,19 +119,6 @@
         "pl": "Poprawiono obiekt polecenia do zapisu",
         "uk": "Виправлено об'єкт команд, який повинен бути жорстким",
         "zh-cn": "更正命令对象为可写"
-      },
-      "6.0.4": {
-        "en": "Respect the types of states if writing from visu app",
-        "de": "Überprüfen Sie die Arten von Zuständen, wenn Sie von visu app schreiben",
-        "ru": "Уважайте типы государств, если пишете из приложения visu",
-        "pt": "Respeitar os tipos de estados se escrever a partir do aplicativo visu",
-        "nl": "Respecteer de soorten staten als het schrijven van visu app",
-        "fr": "Respecter les types d'états si l'écriture de visu app",
-        "it": "Rispettare i tipi di stati se la scrittura da app visu",
-        "es": "Respetar los tipos de estados si escribe de la aplicación visu",
-        "pl": "Szanuj typy stanów, jeśli pisanie z aplikacji visu",
-        "uk": "Повага типів станів, якщо написання від додатку visu",
-        "zh-cn": "如果使用 visu app 写作, 则尊重状态类型"
       }
     },
     "authors": [

@@ -1,4 +1,7 @@
 # Older changes
+## 6.1.2 (2026-06-13)
+* (@GermanBluefox) Added support of credentials manager
+
 ## 6.0.5 (2026-06-01)
 * (bluefox) Corrected the command object to be writable
 
