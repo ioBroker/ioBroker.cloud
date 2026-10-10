@@ -101,5 +101,21 @@
     "tooltip_language": "Możesz zdefiniować języki, aby szybko przełączać się pomiędzy US Alexa Skill i DE Alexa Skill.",
     "tooltip_noCommon": "Jeśli jest włączona, ustawienia będą przechowywane tylko dla tej instancji. Tak więc w innym przypadku można ustawić inne nazwy.",
     "tooltip_responseOID": "Dla każdego polecenia zostanie wygenerowana odpowiedź tekstowa. Możesz tu zdefiniować identyfikator obiektu, do którego należy zapisać ten tekst. Na przykład. sayit.0.tts.text.",
-    "tooltip_restartOnDisconnect": "Rozwiązano problem braku połączenia z Alexa po utracie połączenia z chmurą. Dzięki tej opcji można ponownie uruchomić adapter po każdym rozłączeniu i będzie działać."
+    "tooltip_restartOnDisconnect": "Rozwiązano problem braku połączenia z Alexa po utracie połączenia z chmurą. Dzięki tej opcji można ponownie uruchomić adapter po każdym rozłączeniu i będzie działać.",
+    "Test aura": "Testuj aura",
+    "Checks whether aura can be opened via the cloud (served by the web instance at /aura/)": "Sprawdza, czy aura można otworzyć przez chmurę (serwowane przez instancję web pod /aura/)",
+    "Aura is reachable": "Aura jest osiągalna",
+    "Aura is not reachable": "Aura jest nieosiągalna",
+    "Test web": "Testuj web",
+    "Checks whether the web instance can be opened via the cloud": "Sprawdza, czy instancję web można otworzyć przez chmurę",
+    "Web is reachable": "Web jest osiągalny",
+    "Web is not reachable": "Web jest nieosiągalny",
+    "Test admin": "Testuj admin",
+    "Checks whether the admin instance can be opened via the cloud": "Sprawdza, czy instancję admin można otworzyć przez chmurę",
+    "Admin is reachable": "Admin jest osiągalny",
+    "Admin is not reachable": "Admin jest nieosiągalny",
+    "Test lovelace": "Testuj lovelace",
+    "Checks whether the lovelace instance can be opened via the cloud": "Sprawdza, czy instancję lovelace można otworzyć przez chmurę",
+    "Lovelace is reachable": "Lovelace jest osiągalny",
+    "Lovelace is not reachable": "Lovelace jest nieosiągalny"
 }

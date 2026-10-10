@@ -101,5 +101,21 @@
     "tooltip_language": "Vous pouvez définir les langues pour passer rapidement entre les compétences américaines Alexa et DE Alexa.",
     "tooltip_noCommon": "Si activé, les paramètres seront stockés uniquement pour cette instance. Dans un autre cas, les autres noms pourraient être définis.",
     "tooltip_responseOID": "Pour chaque commande, la réponse textuelle sera générée. Vous pouvez définir ici l'ID de l'objet, où ce texte doit être écrit. Par exemple. sayit.0.tts.text.",
-    "tooltip_restartOnDisconnect": "Solution de contournement pour la connexion manquante à Alexa après la connexion au cloud a été perdue. Avec cette option, vous pouvez redémarrer l'adaptateur après chaque déconnexion et cela fonctionnera."
+    "tooltip_restartOnDisconnect": "Solution de contournement pour la connexion manquante à Alexa après la connexion au cloud a été perdue. Avec cette option, vous pouvez redémarrer l'adaptateur après chaque déconnexion et cela fonctionnera.",
+    "Test aura": "Tester aura",
+    "Checks whether aura can be opened via the cloud (served by the web instance at /aura/)": "Vérifie si aura peut être ouvert via le cloud (servi par l'instance web sous /aura/)",
+    "Aura is reachable": "Aura est accessible",
+    "Aura is not reachable": "Aura n'est pas accessible",
+    "Test web": "Tester web",
+    "Checks whether the web instance can be opened via the cloud": "Vérifie si l'instance web peut être ouverte via le cloud",
+    "Web is reachable": "Web est accessible",
+    "Web is not reachable": "Web n'est pas accessible",
+    "Test admin": "Tester admin",
+    "Checks whether the admin instance can be opened via the cloud": "Vérifie si l'instance admin peut être ouverte via le cloud",
+    "Admin is reachable": "Admin est accessible",
+    "Admin is not reachable": "Admin n'est pas accessible",
+    "Test lovelace": "Tester lovelace",
+    "Checks whether the lovelace instance can be opened via the cloud": "Vérifie si l'instance lovelace peut être ouverte via le cloud",
+    "Lovelace is reachable": "Lovelace est accessible",
+    "Lovelace is not reachable": "Lovelace n'est pas accessible"
 }

@@ -101,5 +101,21 @@
     "tooltip_language": "你可以定义的语言开关快我们之间Alexa的技能和DE Alexa的技能。",
     "tooltip_noCommon": "如果启用的设置将仅存储为这个实例。 所以在另一实例中的其他名字可以被设定。",
     "tooltip_responseOID": "对于每一命令案文的响应将会产生。 你可以在这里定义的对象标识，在此案文必须是书面的。 E.g。 sayit的。0.合成的。的文本。",
-    "tooltip_restartOnDisconnect": "解决方法缺失的连接到Alexa的连接后云已丢失。 这个选择你可以重新启动器之后，每个断路，它会工作。"
+    "tooltip_restartOnDisconnect": "解决方法缺失的连接到Alexa的连接后云已丢失。 这个选择你可以重新启动器之后，每个断路，它会工作。",
+    "Test aura": "测试 aura",
+    "Checks whether aura can be opened via the cloud (served by the web instance at /aura/)": "检查是否可以通过云打开 aura（由 web 实例在 /aura/ 下提供）",
+    "Aura is reachable": "Aura 可访问",
+    "Aura is not reachable": "Aura 无法访问",
+    "Test web": "测试 web",
+    "Checks whether the web instance can be opened via the cloud": "检查是否可以通过云打开 web 实例",
+    "Web is reachable": "Web 可访问",
+    "Web is not reachable": "Web 无法访问",
+    "Test admin": "测试 admin",
+    "Checks whether the admin instance can be opened via the cloud": "检查是否可以通过云打开 admin 实例",
+    "Admin is reachable": "Admin 可访问",
+    "Admin is not reachable": "Admin 无法访问",
+    "Test lovelace": "测试 lovelace",
+    "Checks whether the lovelace instance can be opened via the cloud": "检查是否可以通过云打开 lovelace 实例",
+    "Lovelace is reachable": "Lovelace 可访问",
+    "Lovelace is not reachable": "Lovelace 无法访问"
 }

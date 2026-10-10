@@ -101,5 +101,21 @@
     "tooltip_language": "Ви можете визначити мови для швидкого перемикання між американською та німецькою мовами Alexa Skill.",
     "tooltip_noCommon": "Якщо ввімкнено, налаштування будуть збережені лише для цього екземпляра. Тож в іншому екземплярі можна буде встановити інші назви.",
     "tooltip_responseOID": "Для кожної команди буде згенеровано текстову відповідь. Тут ви можете визначити ідентифікатор об'єкта, куди цей текст має бути записано. Наприклад, sayit.0.tts.text.",
-    "tooltip_restartOnDisconnect": "Тимчасове рішення для втрати з’єднання з Alexa після втрати з’єднання з хмарою. За допомогою цієї опції ви можете перезапускати адаптер після кожного відключення, і він працюватиме."
+    "tooltip_restartOnDisconnect": "Тимчасове рішення для втрати з’єднання з Alexa після втрати з’єднання з хмарою. За допомогою цієї опції ви можете перезапускати адаптер після кожного відключення, і він працюватиме.",
+    "Test aura": "Перевірити aura",
+    "Checks whether aura can be opened via the cloud (served by the web instance at /aura/)": "Перевіряє, чи можна відкрити aura через хмару (віддається веб-екземпляром за /aura/)",
+    "Aura is reachable": "Aura доступна",
+    "Aura is not reachable": "Aura недоступна",
+    "Test web": "Перевірити web",
+    "Checks whether the web instance can be opened via the cloud": "Перевіряє, чи можна відкрити веб-екземпляр через хмару",
+    "Web is reachable": "Web доступний",
+    "Web is not reachable": "Web недоступний",
+    "Test admin": "Перевірити admin",
+    "Checks whether the admin instance can be opened via the cloud": "Перевіряє, чи можна відкрити екземпляр admin через хмару",
+    "Admin is reachable": "Admin доступний",
+    "Admin is not reachable": "Admin недоступний",
+    "Test lovelace": "Перевірити lovelace",
+    "Checks whether the lovelace instance can be opened via the cloud": "Перевіряє, чи можна відкрити екземпляр lovelace через хмару",
+    "Lovelace is reachable": "Lovelace доступний",
+    "Lovelace is not reachable": "Lovelace недоступний"
 }

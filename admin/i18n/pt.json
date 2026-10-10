@@ -101,5 +101,21 @@
     "tooltip_language": "Você pode definir os idiomas para mudar rapidamente entre a Alexa Skill dos EUA e a habilidade de DE Alexa.",
     "tooltip_noCommon": "Se ativado, as configurações serão armazenadas somente para esta instância. Então, na outra instância, os outros nomes poderiam ser definidos.",
     "tooltip_responseOID": "Para cada comando, a resposta do texto será gerada. Você pode definir aqui o ID do objeto, onde este texto deve ser escrito. Por exemplo. sayit.0.tts.text.",
-    "tooltip_restartOnDisconnect": "Solução de problemas por conexão perdida com Alexa após a conexão à nuvem ter sido perdida. Com esta opção, você pode reiniciar o adaptador após cada desconexão e funcionará."
+    "tooltip_restartOnDisconnect": "Solução de problemas por conexão perdida com Alexa após a conexão à nuvem ter sido perdida. Com esta opção, você pode reiniciar o adaptador após cada desconexão e funcionará.",
+    "Test aura": "Testar aura",
+    "Checks whether aura can be opened via the cloud (served by the web instance at /aura/)": "Verifica se o aura pode ser aberto através da nuvem (servido pela instância web em /aura/)",
+    "Aura is reachable": "Aura está acessível",
+    "Aura is not reachable": "Aura não está acessível",
+    "Test web": "Testar web",
+    "Checks whether the web instance can be opened via the cloud": "Verifica se a instância web pode ser aberta através da nuvem",
+    "Web is reachable": "Web está acessível",
+    "Web is not reachable": "Web não está acessível",
+    "Test admin": "Testar admin",
+    "Checks whether the admin instance can be opened via the cloud": "Verifica se a instância admin pode ser aberta através da nuvem",
+    "Admin is reachable": "Admin está acessível",
+    "Admin is not reachable": "Admin não está acessível",
+    "Test lovelace": "Testar lovelace",
+    "Checks whether the lovelace instance can be opened via the cloud": "Verifica se a instância lovelace pode ser aberta através da nuvem",
+    "Lovelace is reachable": "Lovelace está acessível",
+    "Lovelace is not reachable": "Lovelace não está acessível"
 }

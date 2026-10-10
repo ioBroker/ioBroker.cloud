@@ -101,5 +101,21 @@
     "tooltip_language": "Можно выбрать язык, что бы быстро переключаться между US Alexa Skill и DE Alexa Skill",
     "tooltip_noCommon": "Если выбрана эта опция, то настройки будут сохраняться только для этой инстанции. Что бы в другой инстанции можно было выбрать другие имена.",
     "tooltip_responseOID": "Для каждой команды будет генерироваться текстовый ответ. Вы можете определить здесь ID объекта , где этот текст должен быть записан. Например sayit.0.tts.text.",
-    "tooltip_restartOnDisconnect": "Временное решение для проблемы с пропажей соединения с Alexa, после воссоединения с облаком. Этим можно перестартовать драйвер после потери соединения."
+    "tooltip_restartOnDisconnect": "Временное решение для проблемы с пропажей соединения с Alexa, после воссоединения с облаком. Этим можно перестартовать драйвер после потери соединения.",
+    "Test aura": "Проверить aura",
+    "Checks whether aura can be opened via the cloud (served by the web instance at /aura/)": "Проверяет, можно ли открыть aura через облако (раздаётся веб-экземпляром по /aura/)",
+    "Aura is reachable": "Aura доступна",
+    "Aura is not reachable": "Aura недоступна",
+    "Test web": "Проверить web",
+    "Checks whether the web instance can be opened via the cloud": "Проверяет, можно ли открыть веб-экземпляр через облако",
+    "Web is reachable": "Web доступен",
+    "Web is not reachable": "Web недоступен",
+    "Test admin": "Проверить admin",
+    "Checks whether the admin instance can be opened via the cloud": "Проверяет, можно ли открыть экземпляр admin через облако",
+    "Admin is reachable": "Admin доступен",
+    "Admin is not reachable": "Admin недоступен",
+    "Test lovelace": "Проверить lovelace",
+    "Checks whether the lovelace instance can be opened via the cloud": "Проверяет, можно ли открыть экземпляр lovelace через облако",
+    "Lovelace is reachable": "Lovelace доступен",
+    "Lovelace is not reachable": "Lovelace недоступен"
 }

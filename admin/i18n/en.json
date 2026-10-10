@@ -111,5 +111,21 @@
     "Ports": "Ports",
     "e.g. 127.0.0.1, localhost, 192.168.*, 192.168.1.0/24, 192.168.1.10-192.168.1.50": "e.g. 127.0.0.1, localhost, 192.168.*, 192.168.1.0/24, 192.168.1.10-192.168.1.50",
     "e.g. 22 or 22, 8081 or 8000-8100. Empty, * or all = any port": "e.g. 22 or 22, 8081 or 8000-8100. Empty, * or all = any port",
-    "SSH server on this machine": "SSH server on this machine"
+    "SSH server on this machine": "SSH server on this machine",
+    "Test aura": "Test aura",
+    "Checks whether aura can be opened via the cloud (served by the web instance at /aura/)": "Checks whether aura can be opened via the cloud (served by the web instance at /aura/)",
+    "Aura is reachable": "Aura is reachable",
+    "Aura is not reachable": "Aura is not reachable",
+    "Test web": "Test web",
+    "Checks whether the web instance can be opened via the cloud": "Checks whether the web instance can be opened via the cloud",
+    "Web is reachable": "Web is reachable",
+    "Web is not reachable": "Web is not reachable",
+    "Test admin": "Test admin",
+    "Checks whether the admin instance can be opened via the cloud": "Checks whether the admin instance can be opened via the cloud",
+    "Admin is reachable": "Admin is reachable",
+    "Admin is not reachable": "Admin is not reachable",
+    "Test lovelace": "Test lovelace",
+    "Checks whether the lovelace instance can be opened via the cloud": "Checks whether the lovelace instance can be opened via the cloud",
+    "Lovelace is reachable": "Lovelace is reachable",
+    "Lovelace is not reachable": "Lovelace is not reachable"
 }

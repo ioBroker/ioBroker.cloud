@@ -101,5 +101,21 @@
     "tooltip_language": "Je kunt de talen definiëren om snel te schakelen tussen US Alexa Skill en DE Alexa Skill.",
     "tooltip_noCommon": "Indien ingeschakeld, worden de instellingen alleen voor deze instantie opgeslagen. Dus in het andere geval kunnen de andere namen worden ingesteld.",
     "tooltip_responseOID": "Voor elke opdracht wordt het tekstantwoord gegenereerd. U kunt hier de Object-ID definiëren, waar deze tekst naartoe moet worden geschreven. Bijv. sayit.0.tts.text.",
-    "tooltip_restartOnDisconnect": "Oplossing voor ontbrekende verbinding met Alexa nadat de verbinding met de cloud verloren was gegaan. Met deze optie kunt u de adapter opnieuw opstarten na elke verbreking en het zal werken."
+    "tooltip_restartOnDisconnect": "Oplossing voor ontbrekende verbinding met Alexa nadat de verbinding met de cloud verloren was gegaan. Met deze optie kunt u de adapter opnieuw opstarten na elke verbreking en het zal werken.",
+    "Test aura": "Aura testen",
+    "Checks whether aura can be opened via the cloud (served by the web instance at /aura/)": "Controleert of aura via de cloud kan worden geopend (geleverd door de webinstantie op /aura/)",
+    "Aura is reachable": "Aura is bereikbaar",
+    "Aura is not reachable": "Aura is niet bereikbaar",
+    "Test web": "Web testen",
+    "Checks whether the web instance can be opened via the cloud": "Controleert of de webinstantie via de cloud kan worden geopend",
+    "Web is reachable": "Web is bereikbaar",
+    "Web is not reachable": "Web is niet bereikbaar",
+    "Test admin": "Admin testen",
+    "Checks whether the admin instance can be opened via the cloud": "Controleert of de admin-instantie via de cloud kan worden geopend",
+    "Admin is reachable": "Admin is bereikbaar",
+    "Admin is not reachable": "Admin is niet bereikbaar",
+    "Test lovelace": "Lovelace testen",
+    "Checks whether the lovelace instance can be opened via the cloud": "Controleert of de lovelace-instantie via de cloud kan worden geopend",
+    "Lovelace is reachable": "Lovelace is bereikbaar",
+    "Lovelace is not reachable": "Lovelace is niet bereikbaar"
 }

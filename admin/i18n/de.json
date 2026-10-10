@@ -111,5 +111,21 @@
     "Ports": "Ports",
     "e.g. 127.0.0.1, localhost, 192.168.*, 192.168.1.0/24, 192.168.1.10-192.168.1.50": "z. B. 127.0.0.1, localhost, 192.168.*, 192.168.1.0/24, 192.168.1.10-192.168.1.50",
     "e.g. 22 or 22, 8081 or 8000-8100. Empty, * or all = any port": "z. B. 22 oder 22, 8081 oder 8000-8100. Leer, * oder all = beliebiger Port",
-    "SSH server on this machine": "SSH-Server auf diesem Rechner"
+    "SSH server on this machine": "SSH-Server auf diesem Rechner",
+    "Test aura": "Aura testen",
+    "Checks whether aura can be opened via the cloud (served by the web instance at /aura/)": "Prüft, ob aura über die Cloud geöffnet werden kann (von der Webinstanz unter /aura/ ausgeliefert)",
+    "Aura is reachable": "Aura ist erreichbar",
+    "Aura is not reachable": "Aura ist nicht erreichbar",
+    "Test web": "Web testen",
+    "Checks whether the web instance can be opened via the cloud": "Prüft, ob die Webinstanz über die Cloud geöffnet werden kann",
+    "Web is reachable": "Web ist erreichbar",
+    "Web is not reachable": "Web ist nicht erreichbar",
+    "Test admin": "Admin testen",
+    "Checks whether the admin instance can be opened via the cloud": "Prüft, ob die Admin-Instanz über die Cloud geöffnet werden kann",
+    "Admin is reachable": "Admin ist erreichbar",
+    "Admin is not reachable": "Admin ist nicht erreichbar",
+    "Test lovelace": "Lovelace testen",
+    "Checks whether the lovelace instance can be opened via the cloud": "Prüft, ob die Lovelace-Instanz über die Cloud geöffnet werden kann",
+    "Lovelace is reachable": "Lovelace ist erreichbar",
+    "Lovelace is not reachable": "Lovelace ist nicht erreichbar"
 }

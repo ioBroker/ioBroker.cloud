@@ -607,6 +607,44 @@ class CloudAdapter extends adapter_core_1.Adapter {
                     }
                     break;
                 }
+                case 'testWeb':
+                case 'testAdmin':
+                case 'testLovelace':
+                case 'testAura': {
+                    // Answers the "Test ..." buttons: the report opens in a copy dialog, so the user can
+                    // paste it into a forum post or an issue as it is.
+                    const message = obj.message && typeof obj.message === 'object' ? obj.message : {};
+                    const instance = typeof obj.message === 'string' ? obj.message : message.instance;
+                    let result;
+                    let name;
+                    if (obj.command === 'testWeb') {
+                        name = 'Web';
+                        result = await this.testWeb(instance);
+                    }
+                    else if (obj.command === 'testAdmin') {
+                        name = 'Admin';
+                        result = await this.testProInstance('admin', instance, !!message.pro);
+                    }
+                    else if (obj.command === 'testLovelace') {
+                        name = 'Lovelace';
+                        result = await this.testProInstance('lovelace', instance, !!message.pro);
+                    }
+                    else {
+                        name = 'Aura';
+                        result = await this.testAura(instance);
+                    }
+                    const { ok, report } = result;
+                    if (obj.callback) {
+                        this.sendTo(obj.from, obj.command, {
+                            copyDialog: {
+                                title: `${name} is ${ok ? 'reachable' : 'not reachable'}`,
+                                text: report,
+                                type: 'text',
+                            },
+                        }, obj.callback);
+                    }
+                    break;
+                }
                 default:
                     this.log.warn(`Unknown command_: ${obj.command}`);
                     break;
@@ -638,6 +676,216 @@ class CloudAdapter extends adapter_core_1.Adapter {
             this.log.error(`Unknown instance for ${name} "${obj?._id || ''}"`);
         }
         return conn;
+    }
+    /**
+     * Starts the report of one of the "Test ..." buttons. The lines follow the format of aura's own
+     * backend check, so a user can paste either one into a forum post the same way.
+     */
+    static createCheckReport() {
+        const lines = [];
+        let ok = true;
+        return {
+            add: (level, text, hint) => {
+                if (level === 'FAIL') {
+                    ok = false;
+                }
+                lines.push(`[${level.padEnd(4)}] ${text}`);
+                if (hint) {
+                    lines.push(`         → ${hint}`);
+                }
+            },
+            isOk: () => ok,
+            lines,
+        };
+    }
+    finishCheckReport(title, okText, report) {
+        const ok = report.isOk();
+        const header = `${title} — ${ok ? okText : 'Something is wrong — see FAIL below.'}\ncloud ${this.version}, ${new Date().toLocaleString()}\n`;
+        return { ok, report: `${header}\n${report.lines.join('\n')}` };
+    }
+    /**
+     * Checks that the cloud can use a web, admin or lovelace instance: it exists, has neither authentication
+     * nor HTTPS (the cloud requests it locally by plain HTTP), is enabled and runs.
+     *
+     * @param report the report to write into
+     * @param instance the instance as selected in the settings, e.g. `web.0`
+     * @param name which kind of instance it is
+     * @returns the address of the instance, or null if the cloud cannot use it
+     */
+    async checkCloudInstance(report, instance, name) {
+        const label = name[0].toUpperCase() + name.substring(1);
+        let id = instance || '';
+        if (id && !id.startsWith('system.adapter.')) {
+            id = `system.adapter.${id}`;
+        }
+        const shortName = id.replace('system.adapter.', '');
+        if (!id) {
+            report.add('FAIL', `No ${name} instance selected`, `Select the ${name} instance in the cloud settings.`);
+            return null;
+        }
+        const obj = (await this.getForeignObjectAsync(id).catch(() => null));
+        if (!obj?.common) {
+            report.add('FAIL', `${label} instance ${shortName} does not exist`);
+        }
+        else if (obj.native.auth) {
+            report.add('FAIL', `${label} instance ${shortName} has authentication enabled`, `Create an extra ${name} instance without authentication for the cloud.`);
+        }
+        else if (obj.native.secure) {
+            report.add('FAIL', `${label} instance ${shortName} uses HTTPS`, `Create an extra ${name} instance without HTTPS for the cloud.`);
+        }
+        else if (!obj.common.enabled) {
+            report.add('FAIL', `${label} instance ${shortName} is not enabled`, `Enable the ${name} instance.`);
+        }
+        else {
+            const server = this.getConnectionString(obj, name);
+            const alive = await this.getForeignStateAsync(`${id}.alive`).catch(() => null);
+            if (alive?.val) {
+                report.add('OK', `${label} instance ${shortName} (${obj.common.version}) runs on ${server}`);
+                return server;
+            }
+            report.add('FAIL', `${label} instance ${shortName} is enabled, but not running`, `Check the log of the ${name} instance.`);
+        }
+        return null;
+    }
+    /**
+     * Requests a page the way the cloud does and then the script bundle it loads - without the
+     * bundle the page stays blank, even though it answered.
+     *
+     * @param report the report to write into
+     * @param url the page, e.g. `http://127.0.0.1:8082/aura/index.html`
+     * @param what how the page is called in the report
+     * @param hint what to do if the page or its bundle is missing
+     */
+    async checkCloudPage(report, url, what, hint) {
+        let html;
+        try {
+            const response = await axios_1.default.get(url, {
+                responseType: 'text',
+                timeout: 5000,
+                validateStatus: status => status < 500,
+            });
+            html = typeof response.data === 'string' ? response.data : '';
+            if (response.status !== 200 || !html.includes('<html')) {
+                report.add('FAIL', `${what} is not delivered: ${url} (HTTP ${response.status})`, hint);
+                return;
+            }
+        }
+        catch (e) {
+            report.add('FAIL', `Cannot request ${url}: ${e.code || e.message}`, 'Nothing listens there.');
+            return;
+        }
+        report.add('OK', `${what} is delivered: ${url}`);
+        // the socket scripts are generated by the instance itself, they say nothing about the files
+        const script = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)]
+            .map(m => m[1])
+            .find(src => !src.includes('_socket/') && !src.includes('socket.io'));
+        if (!script) {
+            return;
+        }
+        const bundleUrl = new URL(script, url).href;
+        if (!bundleUrl.startsWith(new URL(url).origin)) {
+            return;
+        }
+        const bundle = await axios_1.default
+            .head(bundleUrl, { timeout: 5000, validateStatus: () => true })
+            .catch(e => ({ status: e.code || 'no response' }));
+        if (bundle.status === 200) {
+            report.add('OK', 'Its script bundle is delivered as well');
+        }
+        else {
+            report.add('FAIL', `Its script bundle ${bundleUrl} is not delivered (${bundle.status})`, hint);
+        }
+    }
+    /**
+     * Checks whether the web instance answers the cloud. Everything besides admin and lovelace -
+     * vis, vis-2, aura, ... - reaches the cloud through it.
+     *
+     * @param webInstance the web instance selected in the settings (may not be saved yet), e.g. `web.0`
+     */
+    async testWeb(webInstance) {
+        const report = CloudAdapter.createCheckReport();
+        const server = await this.checkCloudInstance(report, webInstance || this.config.instance, 'web');
+        if (server) {
+            await this.checkCloudPage(report, `${server}/`, 'The start page of web', 'Check the log of the web instance.');
+        }
+        return this.finishCheckReport('web cloud check', 'web can be opened via the cloud.', report);
+    }
+    /**
+     * Checks whether the admin or lovelace instance can be opened through the cloud. Both are offered
+     * only on iobroker.pro.
+     *
+     * @param name which of the two
+     * @param instance the instance selected in the settings (may not be saved yet), e.g. `admin.0`
+     * @param pro whether the settings point to iobroker.pro
+     */
+    async testProInstance(name, instance, pro) {
+        const report = CloudAdapter.createCheckReport();
+        if (!pro) {
+            report.add('FAIL', `${name} access via the cloud is only possible with iobroker.pro`, 'Use a pro account or an APP-KEY starting with "@pro_".');
+        }
+        const server = await this.checkCloudInstance(report, instance, name);
+        if (server) {
+            await this.checkCloudPage(report, `${server}/`, `The ${name} page`, name === 'admin'
+                ? 'Check the log of the admin instance. "iobroker upload admin" restores missing files.'
+                : 'Check the log of the lovelace instance.');
+        }
+        return this.finishCheckReport(`${name} cloud check`, `${name} can be opened via the cloud.`, report);
+    }
+    /**
+     * Checks whether aura can be opened through the cloud.
+     *
+     * Like vis, aura reaches the cloud through the web instance: web publishes aura's uploaded `www`
+     * folder at `/aura/`, and that is the path the cloud requests. So aura works via the cloud only
+     * if an aura instance is installed and the web instance of this adapter really delivers
+     * `/aura/` - the page and its bundle.
+     *
+     * @param webInstance the web instance selected in the settings (may not be saved yet), e.g. `web.0`
+     */
+    async testAura(webInstance) {
+        const report = CloudAdapter.createCheckReport();
+        const webName = (webInstance || this.config.instance || '').replace('system.adapter.', '');
+        const server = await this.checkCloudInstance(report, webName, 'web');
+        // aura instances
+        const view = await this.getObjectViewAsync('system', 'instance', {
+            startkey: 'system.adapter.aura.',
+            endkey: 'system.adapter.aura.香',
+        }).catch(() => null);
+        const auraInstances = (view?.rows || []).map(row => row.value).filter(obj => obj?.common);
+        if (!auraInstances.length) {
+            report.add('FAIL', 'No aura instance is installed', 'Install the aura adapter and create an instance.');
+        }
+        for (const auraObj of auraInstances) {
+            const auraName = auraObj._id.replace('system.adapter.', '');
+            const alive = await this.getForeignStateAsync(`${auraObj._id}.alive`).catch(() => null);
+            if (!auraObj.common.enabled) {
+                report.add('WARN', `${auraName} (${auraObj.common.version}) is not enabled`);
+            }
+            else if (!alive?.val) {
+                report.add('WARN', `${auraName} (${auraObj.common.version}) is enabled, but not running`);
+            }
+            else {
+                report.add('OK', `${auraName} (${auraObj.common.version}) runs, own frontend on port ${auraObj.native.port}`);
+            }
+            // Aura's own server talks to this web instance for its data; through the cloud the page
+            // comes from the web instance above, so a different one only matters for local access.
+            if (auraObj.native.webInstance) {
+                if (webName && auraObj.native.webInstance !== webName) {
+                    report.add('INFO', `${auraName} uses ${auraObj.native.webInstance} as backend, the cloud uses ${webName}`, 'Both work, but aura shows the same data only if both serve the same ioBroker.');
+                }
+            }
+            else {
+                report.add('INFO', `${auraName} detects its web instance automatically (socket port ${auraObj.native.socketPort})`);
+            }
+            if (typeof auraObj.native.backendCheckReport === 'string' &&
+                auraObj.native.backendCheckReport.includes('[FAIL]')) {
+                report.add('WARN', `The last backend check of ${auraName} found a problem:`, auraObj.native.backendCheckReport.split('\n').join('\n           '));
+            }
+        }
+        // aura served by the web instance - exactly the path the cloud requests
+        if (server && auraInstances.length) {
+            await this.checkCloudPage(report, `${server}/aura/index.html`, 'aura', 'The www folder of aura is not uploaded. Run "iobroker upload aura" and restart the web instance.');
+        }
+        return this.finishCheckReport('aura cloud check', 'aura can be opened via the cloud.', report);
     }
     sendDataToIFTTT(obj) {
         if (!obj) {
