@@ -788,8 +788,10 @@ export class CloudAdapter extends Adapter {
     }
 
     /**
-     * Checks that the cloud can use a web, admin or lovelace instance: it exists, has neither authentication
-     * nor HTTPS (the cloud requests it locally by plain HTTP), is enabled and runs.
+     * Checks that the cloud can use a web, admin or lovelace instance: it exists, runs on the host of
+     * this adapter, has neither authentication nor HTTPS (the cloud requests it locally by plain
+     * HTTP), is enabled and runs. Every problem found is reported, not only the first one, so the
+     * user can fix all of them in one go.
      *
      * @param report the report to write into
      * @param instance the instance as selected in the settings, e.g. `web.0`
@@ -817,34 +819,61 @@ export class CloudAdapter extends Adapter {
             | undefined;
         if (!obj?.common) {
             report.add('FAIL', `${label} instance ${shortName} does not exist`);
-        } else if (obj.native.auth) {
+            return null;
+        }
+
+        let usable = true;
+        // getConnectionString() addresses the instance as 127.0.0.1 (or its bind address) - that is
+        // the host of this adapter, so an instance on another host is never reached.
+        if (obj.common.host && obj.common.host !== this.host) {
+            usable = false;
+            const bind = obj.native.bind as string | undefined;
+            const onlyLocal = bind === '127.0.0.1' || bind === 'localhost' || bind === '::1';
+            report.add(
+                'FAIL',
+                `${label} instance ${shortName} runs on host "${obj.common.host}", the cloud adapter on "${this.host}"`,
+                `The cloud requests it at ${!bind || bind === '0.0.0.0' ? '127.0.0.1' : bind}:${obj.native.port} on its own host. Move one of them, so that both run on the same host${
+                    onlyLocal ? ` - besides, ${shortName} listens only on localhost of "${obj.common.host}"` : ''
+                }.`,
+            );
+        }
+        if (obj.native.auth) {
+            usable = false;
             report.add(
                 'FAIL',
                 `${label} instance ${shortName} has authentication enabled`,
                 `Create an extra ${name} instance without authentication for the cloud.`,
             );
-        } else if (obj.native.secure) {
+        }
+        if (obj.native.secure) {
+            usable = false;
             report.add(
                 'FAIL',
                 `${label} instance ${shortName} uses HTTPS`,
                 `Create an extra ${name} instance without HTTPS for the cloud.`,
             );
-        } else if (!obj.common.enabled) {
+        }
+        if (!obj.common.enabled) {
+            usable = false;
             report.add('FAIL', `${label} instance ${shortName} is not enabled`, `Enable the ${name} instance.`);
         } else {
-            const server = this.getConnectionString(obj, name);
             const alive = await this.getForeignStateAsync(`${id}.alive`).catch(() => null);
-            if (alive?.val) {
-                report.add('OK', `${label} instance ${shortName} (${obj.common.version}) runs on ${server}`);
-                return server;
+            if (!alive?.val) {
+                usable = false;
+                report.add(
+                    'FAIL',
+                    `${label} instance ${shortName} is enabled, but not running`,
+                    `Check the log of the ${name} instance.`,
+                );
             }
-            report.add(
-                'FAIL',
-                `${label} instance ${shortName} is enabled, but not running`,
-                `Check the log of the ${name} instance.`,
-            );
         }
-        return null;
+        if (!usable) {
+            return null;
+        }
+
+        const server = this.getConnectionString(obj, name);
+        report.add('OK', `${label} instance ${shortName} (${obj.common.version}) runs on ${server}`);
+        return server;
     }
 
     /**
