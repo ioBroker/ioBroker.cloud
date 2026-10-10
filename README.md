@@ -112,7 +112,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.2.7 (2026-10-10)
 * (@GermanBluefox) Added buttons to check if the applications are running and reachable
 
 ### 6.2.6 (2026-09-28)
@@ -128,10 +128,6 @@ Now they could be found in `cloud.X.devices.NAME`:
 ### 6.2.1 (2026-09-17)
 * (@GermanBluefox) Updated packages
 * (@GermanBluefox) Clear subscriptions on cloud disconnection
-
-### 6.1.3 (2026-08-26)
-- (copilot) Adapter requires node.js >= 22 now
-- (copilot) Migrated blockly to TypeScript
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

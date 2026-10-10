@@ -1,4 +1,8 @@
 # Older changes
+## 6.1.3 (2026-08-26)
+- (copilot) Adapter requires node.js >= 22 now
+- (copilot) Migrated blockly to TypeScript
+
 ## 6.1.2 (2026-06-13)
 * (@GermanBluefox) Added support of credentials manager
 

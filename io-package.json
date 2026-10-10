@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.2.6",
+    "version": "6.2.7",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.2.7": {
+        "en": "Added buttons to check if the applications are running and reachable",
+        "de": "Neue Buttons, um zu prüfen, ob Apps laufen und erreichbar sind",
+        "ru": "Добавлены кнопки для проверки того, запущены ли приложения и доступны ли они",
+        "pt": "Botões adicionados para verificar se o app está em execução",
+        "nl": "Knoppen toegevoegd om te controleren of de toepassingen actief en bereikbaar zijn",
+        "fr": "Ajout de boutons pour vérifier si les applications fonctionnent et sont joignables",
+        "it": "Aggiunti pulsanti per verificare se le app sono attive",
+        "es": "Se han añadido botones para comprobar si las aplicaciones funcionan y son accesibles",
+        "pl": "Dodano przyciski, aby sprawdzić, czy aplikacje są uruchomione i dostępne",
+        "uk": "Додані кнопки, щоб перевірити, чи програми запущені та доступні",
+        "zh-cn": "添加了用于检查应用程序是否正在运行且可访问的按钮"
+      },
       "6.2.6": {
         "en": "Added new App state: onScreen",
         "de": "Neuer App-Status: OnScreen",
@@ -106,19 +119,6 @@
         "pl": "Dodano wsparcie menedżera mandatów",
         "uk": "Додано підтримку менеджера облікових записів",
         "zh-cn": "证书管理器的支持增加"
-      },
-      "6.0.5": {
-        "en": "Corrected the command object to be writable",
-        "de": "Korrektur des Befehlsobjekts, das schreibbar ist",
-        "ru": "Исправлен командный объект, подлежащий написанию",
-        "pt": "Corrigido o objeto de comando a ser gravável",
-        "nl": "Het commando-object gecorrigeerd om te schrijven",
-        "fr": "Correction de l'objet de commande à écrire",
-        "it": "Corretto l'oggetto di comando da usare",
-        "es": "Corregido el objeto de comando para ser writable",
-        "pl": "Poprawiono obiekt polecenia do zapisu",
-        "uk": "Виправлено об'єкт команд, який повинен бути жорстким",
-        "zh-cn": "更正命令对象为可写"
       }
     },
     "authors": [
