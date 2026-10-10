@@ -14,3 +14,4 @@ nbproject
 src-admin/node_modules
 src-admin/build
 src-admin/.__mf__temp
+*.tgz
