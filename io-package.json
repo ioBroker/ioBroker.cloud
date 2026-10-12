@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.2.7",
+    "version": "6.2.8",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.2.8": {
+        "en": "The states `alive` and `onScreen` of an app device are corrected to type boolean if an earlier version created them as string, so values written to them are no longer refused",
+        "de": "Die Zustände `alive` und `onScreen` einer App wurden auf Boolean korrigiert, wenn sie früher als String erzeugt wurden, sodass Werte nicht mehr abgewiesen werden",
+        "ru": "Состояния `alive` и `OnScreen` устройства приложения исправлены и теперь имеют тип boolean, если в более ранней версии они были созданы в виде строки, поэтому записанные в них значения больше не отклоняются",
+        "pt": "Se uma versão anterior os criou como string, os estados `alive` e `onScreen` de um app são corrigidos para que os valores gravados neles não sejam mais recusados",
+        "nl": "De statussen `alive` en `OnScreen` van een app-apparaat worden gecorrigeerd om boolean te typen als ze in een eerdere versie als tekenreeks zijn aangemaakt, zodat waarden die naar hen worden geschreven niet langer worden geweigerd",
+        "fr": "Les états « alive » et « OnScreen » d'une application sont corrigés en booléen si une version précédente les créait sous forme de chaîne. Les valeurs qui y sont écrites ne sont plus refusées",
+        "it": "Gli stati «alive» e «onScreen» di un'app sono di tipo booleano se una versione precedente li creava come stringa, quindi i valori non vengono più rifiutati",
+        "es": "Los estados «vivo» y «en pantalla» de un dispositivo de aplicación se corrigen para que sean booleanos si una versión anterior los creó como cadena, de modo que los valores que se les escriben ya no se rechazan",
+        "pl": "Stany „live” i „OnScreen” urządzenia aplikacji są korygowane do typu boolean, jeśli wcześniejsza wersja utworzyła je jako ciąg znaków, więc wartości zapisane do nich nie są już odrzucane",
+        "uk": "Стани `live` і `onScreen` пристрою додатка виправляються на тип булевого, якщо попередня версія створила їх як рядок, тому значення, записані на них, більше не відхиляються",
+        "zh-cn": "如果早期版本将应用设备的 “活着” 和 “onScreen” 状态创建为字符串，则将它们更正为布尔类型，因此写入它们的值不再被拒绝"
+      },
       "6.2.7": {
         "en": "Added buttons to check if the applications are running and reachable",
         "de": "Neue Buttons, um zu prüfen, ob Apps laufen und erreichbar sind",
@@ -106,19 +119,6 @@
         "pl": "Adapter wymaga teraz node.js >= 22\nMigracja blokowa do TypeScript",
         "uk": "Адаптер тепер вимагає node.js >= 22\nБлоково перенесено на TypeScript",
         "zh-cn": "适配器现在需要 node.js 版本 >= 22。\n已将 Blockly 迁移到 TypeScript"
-      },
-      "6.1.2": {
-        "en": "Added support of credentials manager",
-        "de": "Zusätzliche Unterstützung des Anmeldermanagers",
-        "ru": "Добавлена поддержка менеджера по учетным данным",
-        "pt": "Adicionado suporte ao gestor de credenciais",
-        "nl": "Toegevoegde ondersteuning van credentials manager",
-        "fr": "Soutien supplémentaire du gestionnaire des pouvoirs",
-        "it": "Aggiunto supporto di credenziali manager",
-        "es": "Añadido el apoyo del administrador de credenciales",
-        "pl": "Dodano wsparcie menedżera mandatów",
-        "uk": "Додано підтримку менеджера облікових записів",
-        "zh-cn": "证书管理器的支持增加"
       }
     },
     "authors": [

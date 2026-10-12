@@ -112,7 +112,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.2.8 (2026-10-12)
 * (@GermanBluefox) The states `alive` and `onScreen` of an app device are corrected to type boolean if an earlier version created them as string, so values written to them are no longer refused
 
 ### 6.2.7 (2026-10-10)
@@ -127,10 +127,6 @@ Now they could be found in `cloud.X.devices.NAME`:
 
 ### 6.2.4 (2026-09-21)
 * (@GermanBluefox) Updated packages
-
-### 6.2.1 (2026-09-17)
-* (@GermanBluefox) Updated packages
-* (@GermanBluefox) Clear subscriptions on cloud disconnection
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
