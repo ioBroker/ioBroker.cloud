@@ -178,6 +178,10 @@ export class CloudAdapter extends Adapter {
      * A tree created by an earlier version has `alive` under a name that promised more than it
      * delivered. It is corrected here - but only while it is still the text this adapter wrote,
      * never one the user picked.
+     *
+     * An indicator the app reported before this adapter knew it was created from the first value
+     * the app sent - mostly `"true"` - so as a `string`, and every boolean written to it is refused
+     * by the controller. The type is not the user's to pick, so it is always corrected.
      */
     private async ensureIndicator(id: string, name: string, role: string): Promise<void> {
         const obj = await this.getObjectAsync(id);
@@ -189,8 +193,20 @@ export class CloudAdapter extends Adapter {
             });
             return;
         }
+        let changed = false;
         if (obj.common?.name === OUTDATED_ALIVE_NAME && name !== obj.common.name) {
             obj.common.name = name;
+            changed = true;
+        }
+        if (obj.common && obj.common.type !== 'boolean') {
+            obj.common.type = 'boolean';
+            // the role of the generic path is replaced, one the user picked is kept
+            if (!obj.common.role || obj.common.role === 'state') {
+                obj.common.role = role;
+            }
+            changed = true;
+        }
+        if (changed) {
             await this.setObjectAsync(id, obj);
         }
     }
@@ -1773,9 +1789,21 @@ export class CloudAdapter extends Adapter {
                     // A tree that already exists keeps the name it was created with, and `alive`
                     // was created under one that promised more than it delivers. It is corrected
                     // here - but only while it is still the text this adapter wrote.
-                    if (visCommon && obj.common?.name === OUTDATED_ALIVE_NAME) {
-                        obj.common.name = visCommon.name;
-                        await this.setForeignObjectAsync(stateName, obj);
+                    // The type is corrected as well: one created from a first value of `"true"`
+                    // would store every later value as text.
+                    if (visCommon && obj.common) {
+                        let changed = false;
+                        if (obj.common.name === OUTDATED_ALIVE_NAME) {
+                            obj.common.name = visCommon.name;
+                            changed = true;
+                        }
+                        if (obj.common.type !== visCommon.type) {
+                            obj.common.type = visCommon.type;
+                            changed = true;
+                        }
+                        if (changed) {
+                            await this.setForeignObjectAsync(stateName, obj);
+                        }
                     }
 
                     let data: ioBroker.SettableState;

@@ -112,6 +112,9 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) The states `alive` and `onScreen` of an app device are corrected to type boolean if an earlier version created them as string, so values written to them are no longer refused
+
 ### 6.2.7 (2026-10-10)
 * (@GermanBluefox) Added buttons to check if the applications are running and reachable
 
