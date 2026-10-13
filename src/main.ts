@@ -2152,6 +2152,10 @@ ${afterList.join('\n')}`,
                         }
                     } else if (
                         url.startsWith('/adapter/') ||
+                        // legacy (materialize) adapter settings load these files from admin via ../../js/ and ../../css/
+                        url.startsWith('/js/') ||
+                        url.startsWith('/css/') ||
+                        url.startsWith('/lib/js/jquery.ui.touch-punch') ||
                         url.startsWith('/lib/js/ace-') ||
                         url.startsWith('/lib/js/cron') ||
                         url.startsWith('/lib/js/jqGrid')
