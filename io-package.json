@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.2.8",
+    "version": "6.2.9",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.2.9": {
+        "en": "Corrected the loading of materialized configurations on ioBroker.pro",
+        "de": "Das Laden materieller Konfigurationen auf ioBroker.Pro wurde korrigiert",
+        "ru": "Исправлена загрузка материализованных конфигураций на IOBroker.pro",
+        "pt": "Corrigiu a carga de configurações reais no IObroker.pro",
+        "nl": "Het laden van gematerialiseerde configuraties op IOBroker.pro is gecorrigeerd",
+        "fr": "Correction du chargement des configurations matérialisées sur IObroker.pro",
+        "it": "Corretto il caricamento delle configurazioni su IObroker.pro",
+        "es": "Se corrigió la carga de configuraciones concretas en IOBroker.pro",
+        "pl": "Poprawiono ładowanie zmaterializowanych konfiguracji na iOBroker.pro",
+        "uk": "Виправлено завантаження матеріалізованих конфігурацій на Iobroker.pro",
+        "zh-cn": "更正了在 iobroker.pro 上加载实体化配置的问题"
+      },
       "6.2.8": {
         "en": "The states `alive` and `onScreen` of an app device are corrected to type boolean if an earlier version created them as string, so values written to them are no longer refused",
         "de": "Die Zustände `alive` und `onScreen` einer App wurden auf Boolean korrigiert, wenn sie früher als String erzeugt wurden, sodass Werte nicht mehr abgewiesen werden",
@@ -106,19 +119,6 @@
         "pl": "Zaktualizowane pakiety\nWyczyść subskrypcje podczas odłączania w chmurze",
         "uk": "Оновлені пакети\nОчистити підписки при відключенні хмари",
         "zh-cn": "更新的软件包\n断开云连接时清除订阅"
-      },
-      "6.1.3": {
-        "en": "Adapter requires node.js >= 22 now\nMigrated blockly to TypeScript",
-        "de": "Der Adapter benötigt jetzt Node.js >= 22.\nBlockly wurde auf TypeScript migriert.",
-        "ru": "Для работы адаптера требуется Node.js версии >= 22.\nПерешёл с Blockly на TypeScript.",
-        "pt": "O adaptador agora requer Node.js >= 22.\nMigrei o Blockly para TypeScript.",
-        "nl": "De adapter vereist nu Node.js versie 22 of hoger.\nBlockly gemigreerd naar TypeScript.",
-        "fr": "L'adaptateur nécessite désormais Node.js >= 22.\nMigration de Blockly vers TypeScript",
-        "it": "L'adattatore ora richiede Node.js >= 22\nMigrazione a blocchi a TypeScript",
-        "es": "El adaptador ahora requiere node.js >= 22.\nSe migró Blockly a TypeScript.",
-        "pl": "Adapter wymaga teraz node.js >= 22\nMigracja blokowa do TypeScript",
-        "uk": "Адаптер тепер вимагає node.js >= 22\nБлоково перенесено на TypeScript",
-        "zh-cn": "适配器现在需要 node.js 版本 >= 22。\n已将 Blockly 迁移到 TypeScript"
       }
     },
     "authors": [

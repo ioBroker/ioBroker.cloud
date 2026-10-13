@@ -1,4 +1,7 @@
 # Older changes
+## 6.2.4 (2026-09-21)
+* (@GermanBluefox) Updated packages
+
 ## 6.2.1 (2026-09-17)
 * (@GermanBluefox) Updated packages
 * (@GermanBluefox) Clear subscriptions on cloud disconnection
