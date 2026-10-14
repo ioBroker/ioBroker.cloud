@@ -1833,6 +1833,10 @@ ${afterList.join('\n')}`);
                     // legacy (materialize) adapter settings load these files from admin via ../../js/ and ../../css/
                     url.startsWith('/js/') ||
                     url.startsWith('/css/') ||
+                    // Material Icons font, referenced by admin's css/adapter.css as ../lib/fonts/material.woff2
+                    url.startsWith('/lib/fonts/') ||
+                    // web adapter has an older materialize.css without the Material Icons font-face
+                    url.startsWith('/lib/css/materialize.css') ||
                     url.startsWith('/lib/js/jquery.ui.touch-punch') ||
                     url.startsWith('/lib/js/ace-') ||
                     url.startsWith('/lib/js/cron') ||
