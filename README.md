@@ -112,7 +112,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### 6.2.9 (2026-10-13)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Corrected the loading of materialized configurations on ioBroker.pro
 
 ### 6.2.8 (2026-10-12)
