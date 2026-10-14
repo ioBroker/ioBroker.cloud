@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.2.9",
+    "version": "6.2.10",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.2.10": {
+        "en": "Corrected the loading of materialized configurations on ioBroker.pro",
+        "de": "Das Laden materieller Konfigurationen auf ioBroker.Pro wurde korrigiert",
+        "ru": "Исправлена загрузка материализованных конфигураций на IOBroker.pro",
+        "pt": "Corrigiu a carga de configurações reais no IObroker.pro",
+        "nl": "Het laden van gematerialiseerde configuraties op IOBroker.pro is gecorrigeerd",
+        "fr": "Correction du chargement des configurations matérialisées sur IObroker.pro",
+        "it": "Corretto il caricamento delle configurazioni su IObroker.pro",
+        "es": "Se corrigió la carga de configuraciones concretas en IOBroker.pro",
+        "pl": "Poprawiono ładowanie zmaterializowanych konfiguracji na iOBroker.pro",
+        "uk": "Виправлено завантаження матеріалізованих конфігурацій на Iobroker.pro",
+        "zh-cn": "更正了在 iobroker.pro 上加载实体化配置的问题"
+      },
       "6.2.8": {
         "en": "The states `alive` and `onScreen` of an app device are corrected to type boolean if an earlier version created them as string, so values written to them are no longer refused",
         "de": "Die Zustände `alive` und `onScreen` einer App wurden auf Boolean korrigiert, wenn sie früher als String erzeugt wurden, sodass Werte nicht mehr abgewiesen werden",
