@@ -1,1 +1,16 @@
-{}
+{
+    "ssh_add": "Dodaj miejsce docelowe",
+    "ssh_allowed": "Dozwolone miejsca docelowe",
+    "ssh_available": "Serwer SSH osiągalny pod adresem 127.0.0.1:22",
+    "ssh_checking": "Sprawdzam serwer SSH na tym komputerze...",
+    "ssh_delete": "Usuwać",
+    "ssh_enable": "Włącz zdalną powłokę (host skoku SSH)",
+    "ssh_hint_install": "Zainstaluj i uruchom serwer SSH (sshd na porcie 22) na tym komputerze, aby móc korzystać ze zdalnej powłoki.",
+    "ssh_host": "Host / IP / zakres / CIDR",
+    "ssh_host_ph": "127.0.0.1, 192.168.*, 192.168.1.0/24, 192.168.1.10-192.168.1.50",
+    "ssh_not_available": "Nie znaleziono serwera SSH pod adresem 127.0.0.1:22",
+    "ssh_note": "Każdy wiersz zawiera hosta i znajdujące się na nim porty. Puste porty = dowolny port. Brak wierszy = nic nie jest dozwolone.",
+    "ssh_only_pro": "Zdalna powłoka jest dostępna tylko na iobroker.pro.",
+    "ssh_ports": "Porty",
+    "ssh_ports_ph": "22, 8000-8100 lub puste dla dowolnego"
+}

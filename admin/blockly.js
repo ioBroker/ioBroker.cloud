@@ -146,6 +146,22 @@
     ifttt_value3: "значение 3"
   };
 
+  // src-blockly/i18n/uk.json
+  var uk_default = {
+    ifttt: "Надіслати текст в IFTTT",
+    ifttt_event: "подія",
+    ifttt_log: "рівень журналу",
+    ifttt_log_debug: "налагодження",
+    ifttt_log_error: "помилка",
+    ifttt_log_info: "інфо",
+    ifttt_log_none: "немає",
+    ifttt_log_warn: "попередження",
+    ifttt_tooltip: "Надіслати в IFTTT",
+    ifttt_value1: "значення 1",
+    ifttt_value2: "значення 2",
+    ifttt_value3: "значення 3"
+  };
+
   // src-blockly/i18n/zh-cn.json
   var zh_cn_default = {
     ifttt: "发短到过",
@@ -179,6 +195,7 @@
     pl: pl_default,
     pt: pt_default,
     ru: ru_default,
+    uk: uk_default,
     "zh-cn": zh_cn_default
   };
   var iftttWords = {};

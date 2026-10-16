@@ -1136,7 +1136,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
                 // simulate scheduled restart
                 this.timeouts.terminate = setTimeout(() => {
                     this.timeouts.terminate = null;
-                    this.terminate ? this.terminate(-100) : process.exit(-100);
+                    this.terminate(-100);
                 }, 10000);
             }
             else {
@@ -1250,12 +1250,12 @@ class CloudAdapter extends adapter_core_1.Adapter {
                         if (err) {
                             this.log.error(`[setForeignObject]: ${err}`);
                         }
-                        this.terminate ? this.terminate() : process.exit();
+                        this.terminate();
                     });
                 }, 5000);
             }
             else {
-                this.terminate ? this.terminate() : process.exit();
+                this.terminate();
             }
         });
     };

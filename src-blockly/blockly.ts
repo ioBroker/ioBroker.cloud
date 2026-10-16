@@ -21,6 +21,7 @@ import nl from './i18n/nl.json';
 import pl from './i18n/pl.json';
 import pt from './i18n/pt.json';
 import ru from './i18n/ru.json';
+import uk from './i18n/uk.json';
 import zhCn from './i18n/zh-cn.json';
 
 import type { Block } from 'blockly/core';
@@ -45,6 +46,7 @@ const LANGUAGES: Record<string, Record<string, string>> = {
     pl,
     pt,
     ru,
+    uk,
     'zh-cn': zhCn,
 };
 

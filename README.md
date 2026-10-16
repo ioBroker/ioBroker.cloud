@@ -112,6 +112,12 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) The adapter is stopped with `terminate()` only, `process.exit()` is no longer used (compact mode)
+* (@GermanBluefox) Added the missing translations and the Ukrainian words for the blockly block
+* (@GermanBluefox) Corrected the responsive sizes of the settings dialog
+* (@GermanBluefox) Removed the unused dependency `cookie-parser`
+
 ### 6.2.10 (2026-10-14)
 * (@GermanBluefox) Corrected the loading of materialized configurations on ioBroker.pro
 
