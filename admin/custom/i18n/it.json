@@ -1,16 +1,1 @@
-{
-    "ssh_add": "Aggiungi destinazione",
-    "ssh_allowed": "Destinazioni consentite",
-    "ssh_available": "Server SSH raggiungibile su 127.0.0.1:22",
-    "ssh_checking": "Verifica della presenza di un server SSH su questa macchina...",
-    "ssh_delete": "Eliminare",
-    "ssh_enable": "Abilita shell remota (host salto SSH)",
-    "ssh_hint_install": "Installa e avvia un server SSH (sshd sulla porta 22) su questa macchina per utilizzare la shell remota.",
-    "ssh_host": "Host/IP/intervallo/CIDR",
-    "ssh_host_ph": "127.0.0.1, 192.168.*, 192.168.1.0/24, 192.168.1.10-192.168.1.50",
-    "ssh_not_available": "Nessun server SSH trovato su 127.0.0.1:22",
-    "ssh_note": "Ogni riga consente un host e le porte su di esso. Porte vuote = qualsiasi porta. Nessuna riga = nulla è consentito.",
-    "ssh_only_pro": "La shell remota è disponibile solo su iobroker.pro.",
-    "ssh_ports": "Porti",
-    "ssh_ports_ph": "22, 8000-8100 o vuoto per qualsiasi"
-}
+{}

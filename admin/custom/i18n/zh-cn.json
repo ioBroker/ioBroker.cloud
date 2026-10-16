@@ -1,16 +1,1 @@
-{
-    "ssh_add": "添加目的地",
-    "ssh_allowed": "允许的目的地",
-    "ssh_available": "SSH 服务器可在 127.0.0.1:22 上访问",
-    "ssh_checking": "正在检查此计算机上的 SSH 服务器...",
-    "ssh_delete": "删除",
-    "ssh_enable": "启用远程shell（SSH跳转主机）",
-    "ssh_hint_install": "在此计算机上安装并启动 SSH 服务器（端口 22 上的 sshd）以使用远程 shell。",
-    "ssh_host": "主机/IP/范围/CIDR",
-    "ssh_host_ph": "127.0.0.1、192.168.*、192.168.1.0/24、192.168.1.10-192.168.1.50",
-    "ssh_not_available": "在 127.0.0.1:22 上找不到 SSH 服务器",
-    "ssh_note": "每行允许一个主机及其上的端口。空端口 = 任何端口。没有行=什么都不允许。",
-    "ssh_only_pro": "远程 shell 仅在 iobroker.pro 上可用。",
-    "ssh_ports": "港口",
-    "ssh_ports_ph": "22、8000-8100 或空任何"
-}
+{}

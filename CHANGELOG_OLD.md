@@ -1,4 +1,8 @@
 # Older changes
+## 6.2.5 (2026-09-24)
+* (@GermanBluefox) A POST body that arrives as a buffer is decoded instead of stringified, so the telemetry of the visu apps is no longer lost on its way through the cloud
+* (@GermanBluefox) An empty body for a reported value, and a command without `deviceName`/`name`, are logged instead of being dropped silently
+
 ## 6.2.4 (2026-09-21)
 * (@GermanBluefox) Updated packages
 

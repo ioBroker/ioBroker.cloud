@@ -1,16 +1,1 @@
-{
-    "ssh_add": "Bestemming toevoegen",
-    "ssh_allowed": "Toegestane bestemmingen",
-    "ssh_available": "SSH-server bereikbaar op 127.0.0.1:22",
-    "ssh_checking": "Controleren of er een SSH-server op deze machine aanwezig is...",
-    "ssh_delete": "Verwijderen",
-    "ssh_enable": "Schakel externe shell in (SSH jump host)",
-    "ssh_hint_install": "Installeer en start een SSH-server (sshd op poort 22) op deze machine om de externe shell te gebruiken.",
-    "ssh_host": "Host / IP / bereik / CIDR",
-    "ssh_host_ph": "127.0.0.1, 192.168.*, 192.168.1.0/24, 192.168.1.10-192.168.1.50",
-    "ssh_not_available": "Geen SSH-server gevonden op 127.0.0.1:22",
-    "ssh_note": "Elke rij staat een host en de poorten erop toe. Lege poorten = elke poort. Geen rijen = niets toegestaan.",
-    "ssh_only_pro": "De externe shell is alleen beschikbaar op iobroker.pro.",
-    "ssh_ports": "Poorten",
-    "ssh_ports_ph": "22, 8000-8100 of leeg voor elk"
-}
+{}

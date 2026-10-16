@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.2.10",
+    "version": "6.2.11",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.2.11": {
+        "en": "The adapter is stopped with `terminate()` only, `process.exit()` is no longer used (compact mode)\nAdded the missing translations and the Ukrainian words for the blockly block\nCorrected the responsive sizes of the settings dialog\nRemoved the unused dependency `cookie-parser`",
+        "de": "Der Adapter wird nur mit `terminate () `gestoppt, `process.exit ()` nicht mehr benutzt (Kompaktmodus)\nFehlende Übersetzungen und ukrainische Wörter für Blockly hinzugefügt\nDie Größe des Einstellungsdialogs wurde korrigiert\nUnbenutzter Cookie-Parser entfernt",
+        "ru": "Адаптер останавливается только с помощью `terminate () `, `process.exit ()` больше не используется (компактный режим)\nДобавлены недостающие переводы и украинские слова для блока blockly\nИсправлены адаптивные размеры диалогового окна настроек\nУдалена неиспользуемая зависимость `cookie-parser`",
+        "pt": "O adaptador só para com `terminate () `, `process.exit ()` não é mais usado (modo compacto)\nAdicionou as traduções que faltam e as palavras em ucraniano\nCorrigido o tamanho responsivo do diálogo\nRemovida a dependência não usada `cookie-parser`",
+        "nl": "De adapter wordt alleen gestopt met `terminate () `, `process.exit ()` wordt niet meer gebruikt (compacte modus)\nDe ontbrekende vertalingen en de Oekraïense woorden voor het blok met blokken toegevoegd\nDe responsieve grootte van het instellingenvenster is gecorrigeerd\nDe ongebruikte afhankelijkheid `cookie-parser` verwijderd",
+        "fr": "L'adaptateur est arrêté avec `terminate () `, `process.exit ()` n'est plus utilisé (mode compact)\nAjout des traductions manquantes et des mots ukrainiens pour le blockly block\nLa taille réactive de la boîte de dialogue des paramètres a été corrigée\nSuppression de la dépendance « cookie-parser »",
+        "it": "L'adattatore si ferma solo con `terminate () `, `process.exit ()` non è più usato (compact mode)\nAggiunte le traduzioni mancanti e le parole ucraine per il blocco\nCorretto il reattivo delle impostazioni\nRimossa la dipendenza inusata cookie-parser",
+        "es": "El adaptador se detiene solo con `terminate () `, ya no se usa `process.exit ()` (modo compacto)\nHa añadido las traducciones que faltaban y las palabras en ucraniano para el bloque\nSe corrigió el tamaño de respuesta del cuadro de ajustes\nSe eliminó la dependencia no utilizada «cookie-parser»",
+        "pl": "Adapter jest zatrzymywany tylko za pomocą „()”, „process.exit ()” nie jest już używany (tryb kompaktowy)\nDodano brakujące tłumaczenia i ukraińskie słowa dla bloku blokowego\nPoprawiono responsywne rozmiary okna dialogowego ustawień\nUsunięto nieużywaną zależność `cookie-parser`",
+        "uk": "Адаптер зупиняється лише за допомогою `terminate () `, `process.exit ()` більше не використовується (компактний режим)\nДодано відсутні переклади та українські слова для блоку блоклі\nВиправлено відповідні розміри діалогового вікна налаштувань\nВилучено невикористану залежність `cookie-parser`",
+        "zh-cn": "仅使用 `terminate () `停止适配器，不再使用 `process.exit () `（紧凑模式）\n为区块添加了缺失的翻译和乌克兰语单词\n更正了设置对话框的响应大小\n移除了未使用的依赖项 “cookie-parser”"
+      },
       "6.2.10": {
         "en": "Corrected the loading of materialized configurations on ioBroker.pro",
         "de": "Das Laden materieller Konfigurationen auf ioBroker.Pro wurde korrigiert",
@@ -106,19 +119,6 @@
         "pl": "Zaktualizowane pakiety",
         "uk": "Оновлені пакети",
         "zh-cn": "更新的软件包"
-      },
-      "6.2.1": {
-        "en": "Updated packages\nClear subscriptions on cloud disconnection",
-        "de": "Neue Pakete\nAbos bei Cloud-Abbruch löschen",
-        "ru": "Обновленные пакеты\nОтменить подписку при отключении от облака",
-        "pt": "Pacotes novos\nLimpe assinaturas ao desconectar a nuvem",
-        "nl": "Bijgewerkte pakketten\nDuidelijke abonnementen bij het verbreken van de verbinding met de cloud",
-        "fr": "Packages mis à jour\nAbonnements clairs en cas de déconnexion au cloud",
-        "it": "Pacchi nuovi\nAbbonamenti chiari su cloud disconnection",
-        "es": "Paquetes nuevos\nBorrar suscripciones al desconectarse a la nube",
-        "pl": "Zaktualizowane pakiety\nWyczyść subskrypcje podczas odłączania w chmurze",
-        "uk": "Оновлені пакети\nОчистити підписки при відключенні хмари",
-        "zh-cn": "更新的软件包\n断开云连接时清除订阅"
       }
     },
     "authors": [

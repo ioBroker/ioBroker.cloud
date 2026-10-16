@@ -112,7 +112,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.2.11 (2026-10-16)
 * (@GermanBluefox) The adapter is stopped with `terminate()` only, `process.exit()` is no longer used (compact mode)
 * (@GermanBluefox) Added the missing translations and the Ukrainian words for the blockly block
 * (@GermanBluefox) Corrected the responsive sizes of the settings dialog
@@ -129,10 +129,6 @@ Now they could be found in `cloud.X.devices.NAME`:
 
 ### 6.2.6 (2026-09-28)
 * (@GermanBluefox) Added new App state: onScreen
-
-### 6.2.5 (2026-09-24)
-* (@GermanBluefox) A POST body that arrives as a buffer is decoded instead of stringified, so the telemetry of the visu apps is no longer lost on its way through the cloud
-* (@GermanBluefox) An empty body for a reported value, and a command without `deviceName`/`name`, are logged instead of being dropped silently
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
