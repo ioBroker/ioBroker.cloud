@@ -15,7 +15,7 @@
         "@iobroker/json-config": "8.2.3",
         "@module-federation/runtime": "^2.1.0",
         "@module-federation/vite": "^1.23.5",
-        "@mui/icons-material": "^7.3.9",
+        "@mui/icons-material": "^9.5.0",
         "@mui/material": "^7.3.9",
         "@originjs/vite-plugin-federation": "^1.4.1",
         "@types/react": "^18.3.28",
