@@ -78,6 +78,8 @@ class CloudAdapter extends adapter_core_1.Adapter {
     adminServer = 'http://localhost:8081';
     lovelaceServer = 'http://localhost:8091';
     webSupportsConfig = false;
+    /** The `defaultUser` of the instances the cloud forwards to */
+    instanceUsers = {};
     checkedNames = new Set();
     objCache = {};
     login = '';
@@ -151,6 +153,9 @@ class CloudAdapter extends adapter_core_1.Adapter {
                 this.log.info(`Reconnect because web instance ${obj?.common?.enabled ? 'started' : 'stopped'}`);
                 this.startConnect(true);
             }
+            else {
+                this.reconnectOnNewSocketUser('web', obj);
+            }
         }
         else if (id === this.config.allowAdmin) {
             const _adminServer = this.getConnectionString(obj, 'admin');
@@ -159,6 +164,9 @@ class CloudAdapter extends adapter_core_1.Adapter {
                 this.log.info(`Reconnect because admin instance ${obj?.common?.enabled ? 'started' : 'stopped'}`);
                 this.startConnect(true);
             }
+            else {
+                this.reconnectOnNewSocketUser('admin', obj);
+            }
         }
         else if (id === this.config.lovelace) {
             const _lovelaceServer = this.getConnectionString(obj, 'lovelace');
@@ -166,6 +174,9 @@ class CloudAdapter extends adapter_core_1.Adapter {
                 this.lovelaceServer = _lovelaceServer;
                 this.log.info(`Reconnect because lovelace instance ${obj?.common?.enabled ? 'started' : 'stopped'}`);
                 this.startConnect(true);
+            }
+            else {
+                this.reconnectOnNewSocketUser('lovelace', obj);
             }
         }
         this.ioSocket?.send(this.socket, 'objectChange', id, obj);
@@ -206,6 +217,44 @@ class CloudAdapter extends adapter_core_1.Adapter {
         }
         if (changed) {
             await this.setObjectAsync(id, obj);
+        }
+    }
+    /**
+     * The user the commands on the socket of the cloud run as.
+     *
+     * All clients of the cloud share this one socket, and nothing tells a client of the web instance from one of
+     * admin, so there can be only one user. The web instance decides, as it is what the cloud shows. Without a web
+     * instance the socket serves the instance that is left. Lovelace has a connection of its own and is not limited
+     * by this user. No instance at all leaves the choice to the socket classes, which take admin.
+     */
+    get socketUser() {
+        return this.instanceUsers.web || this.instanceUsers.admin || this.instanceUsers.lovelace;
+    }
+    /**
+     * The user a web server runs its requests as, if they are not authenticated - and the requests of the cloud are not.
+     *
+     * @param obj the object of the instance
+     */
+    static getInstanceUser(obj) {
+        if (!obj?.native) {
+            return undefined;
+        }
+        // The web servers take admin if nothing is defined
+        const user = obj.native.defaultUser || 'admin';
+        return user.startsWith('system.user.') ? user : `system.user.${user}`;
+    }
+    /**
+     * The rights of a socket are calculated when it connects, so a new user requires a new connection.
+     *
+     * @param name which instance changed
+     * @param obj the new object of this instance
+     */
+    reconnectOnNewSocketUser(name, obj) {
+        const before = this.socketUser;
+        this.instanceUsers[name] = CloudAdapter.getInstanceUser(obj);
+        if (before !== this.socketUser) {
+            this.log.info(`Reconnect because commands from the cloud must now run as ${this.socketUser}`);
+            this.startConnect(true);
         }
     }
     async onStateChange(id, state) {
@@ -1151,6 +1200,9 @@ class CloudAdapter extends adapter_core_1.Adapter {
             this.cloudConnected = true;
             void this.setState('info.connection', this.cloudConnected, true);
             this.checkPing();
+            if (this.instanceUsers.admin && this.instanceUsers.admin !== this.socketUser) {
+                this.log.warn(`Admin is accessible via cloud as ${this.instanceUsers.admin}, but it shares the connection with the web instance: its objects, states and files run as ${this.socketUser}`);
+            }
         }
         else {
             this.log.debug('Connection not changed: was cloudConnected');
@@ -1279,6 +1331,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
             apikey: this.apikey,
             uuid: this.uuid,
             version: this.version,
+            defaultUser: this.socketUser,
         }, this, this.lovelaceServer);
         this.ioSocket.on('connect', this.onConnect);
         this.ioSocket.on('disconnect', this.onDisconnect);
@@ -1694,18 +1747,21 @@ ${afterList.join('\n')}`);
         }
         if (this.config.allowAdmin) {
             const obj = await this.getForeignObjectAsync(this.config.allowAdmin).catch(() => null);
+            this.instanceUsers.admin = CloudAdapter.getInstanceUser(obj);
             if (obj) {
                 this.adminServer = this.getConnectionString(obj, 'admin');
             }
         }
         if (this.config.lovelace) {
             const obj = await this.getForeignObjectAsync(this.config.lovelace).catch(() => null);
+            this.instanceUsers.lovelace = CloudAdapter.getInstanceUser(obj);
             if (obj) {
                 this.lovelaceServer = this.getConnectionString(obj, 'lovelace');
             }
         }
         if (this.config.instance) {
             const obj = await this.getForeignObjectAsync(this.config.instance).catch(() => null);
+            this.instanceUsers.web = CloudAdapter.getInstanceUser(obj);
             if (obj) {
                 this.webSupportsConfig = obj.common.version.split('.')[0] >= '7';
                 this.server = this.getConnectionString(obj, 'web');
