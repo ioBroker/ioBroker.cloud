@@ -123,7 +123,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.3.0 (2026-11-09)
 * (@GermanBluefox) Commands from the cloud run as the "access as" user of the web instance and no longer always as admin. If this user is restricted, the pages of web and admin only have its rights via cloud
 
 ### 6.2.11 (2026-10-16)
@@ -140,9 +140,6 @@ Now they could be found in `cloud.X.devices.NAME`:
 
 ### 6.2.7 (2026-10-10)
 * (@GermanBluefox) Added buttons to check if the applications are running and reachable
-
-### 6.2.6 (2026-09-28)
-* (@GermanBluefox) Added new App state: onScreen
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

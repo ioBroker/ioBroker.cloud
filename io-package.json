@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "cloud",
-    "version": "6.2.11",
+    "version": "6.3.0",
     "titleLang": {
       "en": "Cloud connection",
       "de": "Cloud-Verbindung",
@@ -29,6 +29,19 @@
       "zh-cn": "连接你的ioBroker服务器的ioBroker云"
     },
     "news": {
+      "6.3.0": {
+        "en": "Commands from the cloud run as the \"access as\" user of the web instance and no longer always as admin. If this user is restricted, the pages of web and admin only have its rights via cloud",
+        "de": "Befehle aus der Cloud laufen als Nutzer der Webinstanz und nicht mehr als Admin. Ist dieser Nutzer gesperrt, haben Web- und Admin-Rechte nur via Cloud",
+        "ru": "Команды из облака запускаются от имени пользователя веб-экземпляра «от имени пользователя», а не от имени администратора. Если этот пользователь ограничен, права доступа к веб-страницам и страницам администратора доступны только через облако",
+        "pt": "Os comandos da nuvem são executados como usuário da instância web e nem sempre como admin. Se esse usuário é restrito, as páginas web e admin só têm acesso via nuvem",
+        "nl": "Opdrachten uit de cloud worden uitgevoerd als „access as” -gebruiker van de webinstance en niet langer altijd als beheerder. Als deze gebruiker beperkt is, hebben de pagina's van web en admin alleen rechten via de cloud",
+        "fr": "Les commandes du cloud s'exécutent en tant qu'utilisateur de l'instance Web et non plus en tant qu'admin. Si cet utilisateur est limité, les pages Web et admin n'ont leurs droits que sur le cloud",
+        "it": "I comandi dal cloud sono eseguiti come utente dell'istanza web e non più come admin. Se questo utente è limitato, le pagine web e admin hanno diritti solo via cloud",
+        "es": "Los comandos de la nube se ejecutan como usuario de la instancia web y no siempre como administrador. Si este usuario está restringido, las páginas web y admin solo tienen derechos en la nube",
+        "pl": "Polecenia z chmury działają jako użytkownik „dostępu jako” instancji internetowej i nie zawsze jako administrator. Jeśli ten użytkownik jest ograniczony, strony internetowe i administracyjne mają swoje prawa tylko za pośrednictwem chmury",
+        "uk": "Команди з хмари виконуються як «доступ як» користувач веб-екземпляра і більше не завжди як адміністратор. Якщо цей користувач обмежений, сторінки веб-сайту та адміністратора мають свої права лише через хмару",
+        "zh-cn": "来自云的命令以 Web 实例的 “访问身份” 用户身份运行，不再总是以管理员身份运行。如果此用户受到限制，则网页和管理员页面只能通过云拥有其权限"
+      },
       "6.2.11": {
         "en": "The adapter is stopped with `terminate()` only, `process.exit()` is no longer used (compact mode)\nAdded the missing translations and the Ukrainian words for the blockly block\nCorrected the responsive sizes of the settings dialog\nRemoved the unused dependency `cookie-parser`",
         "de": "Der Adapter wird nur mit `terminate () `gestoppt, `process.exit ()` nicht mehr benutzt (Kompaktmodus)\nFehlende Übersetzungen und ukrainische Wörter für Blockly hinzugefügt\nDie Größe des Einstellungsdialogs wurde korrigiert\nUnbenutzter Cookie-Parser entfernt",
@@ -106,19 +119,6 @@
         "pl": "Ciało POST, które pojawia się jako bufor, jest dekodowane zamiast stringifikowane, więc telemetria aplikacji visu nie jest już tracona w drodze przez chmurę\nPusta treść dla zgłoszonej wartości i polecenie bez `DeviceName`/`name` są rejestrowane zamiast cichego upuszczania",
         "uk": "Тіло POST, яке надходить у вигляді буфера, розшифровується замість строгіфікації, тому телеметрія програм visu більше не втрачається на шляху через хмару\nПорожнє тіло для повідомленого значення та команда без `DeviceName`/`name` реєструються замість того, щоб їх було скинуто безшумно",
         "zh-cn": "作为缓冲区到达的 POST 正文是经过解码而不是字符串化的，因此 visu 应用程序的遥测不会在穿过云的途中丢失\n报告值的空正文和没有 `deviceName`/`name`的命令会被记录下来，而不是静默删除"
-      },
-      "6.2.4": {
-        "en": "Updated packages",
-        "de": "Neue Pakete",
-        "ru": "Обновленные пакеты",
-        "pt": "Pacotes novos",
-        "nl": "Bijgewerkte pakketten",
-        "fr": "Packages mis à jour",
-        "it": "Pacchi nuovi",
-        "es": "Paquetes nuevos",
-        "pl": "Zaktualizowane pakiety",
-        "uk": "Оновлені пакети",
-        "zh-cn": "更新的软件包"
       }
     },
     "authors": [
