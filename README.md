@@ -124,7 +124,7 @@ Now they could be found in `cloud.X.devices.NAME`:
 
 ## Changelog
 ### **WORK IN PROGRESS**
-* (@GermanBluefox) Commands from the cloud run as the "access as" user of the web instance and no longer always as admin
+* (@GermanBluefox) Commands from the cloud run as the "access as" user of the web instance and no longer always as admin. If this user is restricted, the pages of web and admin only have its rights via cloud
 
 ### 6.2.11 (2026-10-16)
 * (@GermanBluefox) The adapter is stopped with `terminate()` only, `process.exit()` is no longer used (compact mode)
