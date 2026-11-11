@@ -40,13 +40,15 @@ exports.CloudAdapter = void 0;
 const adapter_core_1 = require("@iobroker/adapter-core"); // Get common this utils
 const socketCloud_1 = __importDefault(require("./lib/socketCloud"));
 const sshTunnel_1 = require("./lib/sshTunnel");
+const cloudSocket_1 = require("./lib/cloudSocket");
 const axios_1 = __importDefault(require("axios"));
 const ws_1 = __importDefault(require("ws"));
 const Net = __importStar(require("node:net"));
-// @ts-expect-error Give to socket.io the old ws lib and not the Node.js `undici`
+// @ts-expect-error Give to socket.io 1.7 the old ws lib and not the Node.js `undici`
 global.WebSocket = ws_1.default;
-const socket_io_client_1 = __importDefault(require("socket.io-client"));
 const TEXT_PING_TIMEOUT = 'Ping timeout';
+/** After so many failed attempts in a row with socket.io 4, the adapter goes back to the cloud of today */
+const FAILED_ATTEMPTS_BEFORE_FALLBACK = 3;
 /**
  * The two indicators a visu app reports, and how long each may go unheard.
  *
@@ -65,10 +67,18 @@ const OUTDATED_ALIVE_NAME = 'If app is running and connected';
 class CloudAdapter extends adapter_core_1.Adapter {
     redirectRunning = false; // is redirect in progress?
     socket = null;
+    /** The address with socket.io 1.7 to go back to, if the cloud cannot be reached with socket.io 4 */
+    fallbackCloudUrl = '';
+    /** Failed connection attempts in a row with socket.io 4 */
+    failedAttempts = 0;
     ioSocket = null;
     sshTunnel = null;
     sshAvailable = false;
     pingTimer = null;
+    /** `sentBytes()` when the last ping went out */
+    sentAtPing = 0;
+    /** `sentBytes()` when the ping went out that got the last pong: all before it has reached the cloud */
+    sentAtAnsweredPing = 0;
     cloudConnected = false;
     connectTimer = null;
     uuid = null;
@@ -635,7 +645,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
                             engine: obj.message.engine,
                         };
                         axios_1.default
-                            .post(`${this.config.cloudUrl.replace(/:(\d+)$/, ':3001')}/api/v1/polly`, params, {
+                            .post(`${(0, cloudSocket_1.toHttpUrl)(this.config.cloudUrl).replace(/:(\d+)$/, ':3001')}/api/v1/polly`, params, {
                             headers: {
                                 'Content-Type': 'application/json',
                             },
@@ -1014,19 +1024,29 @@ class CloudAdapter extends adapter_core_1.Adapter {
     pingConnection = () => {
         if (!this.timeouts.detectDisconnect) {
             if (this.cloudConnected && this.ioSocket) {
+                // what was sent before the ping has to reach the cloud first (a big answer may take long)
+                this.sentAtPing = (0, cloudSocket_1.sentBytes)(this.socket);
+                const sent = this.sentAtPing - this.sentAtAnsweredPing;
+                const timeout = (0, cloudSocket_1.pongTimeout)(this.config.pingTimeout, sent);
+                if (timeout > this.config.pingTimeout) {
+                    this.log.debug(`Waiting up to ${timeout} ms for the pong: ${sent} bytes sent since the last one`);
+                }
                 // cannot use "ping" because reserved by socket.io
                 this.ioSocket.send(this.socket, 'pingg');
                 this.timeouts.detectDisconnect = setTimeout(() => {
                     this.timeouts.detectDisconnect = null;
                     this.log.error(TEXT_PING_TIMEOUT);
                     this.onDisconnect(TEXT_PING_TIMEOUT);
-                }, this.config.pingTimeout);
+                }, timeout);
             }
         }
     };
     checkPing() {
         if (this.cloudConnected) {
-            this.pingTimer ||= setInterval(this.pingConnection, 30000);
+            if (!this.pingTimer) {
+                this.sentAtAnsweredPing = (0, cloudSocket_1.sentBytes)(this.socket);
+                this.pingTimer = setInterval(this.pingConnection, 30000);
+            }
         }
         else {
             if (this.pingTimer) {
@@ -1195,6 +1215,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
         }
     };
     onConnect = () => {
+        this.failedAttempts = 0;
         if (!this.cloudConnected) {
             this.log.info('Connection changed: connect');
             this.cloudConnected = true;
@@ -1225,7 +1246,6 @@ class CloudAdapter extends adapter_core_1.Adapter {
         this.log.info(`Server asked to wait for ${seconds || 60} seconds`);
         if (this.socket) {
             this.socket.disconnect();
-            // @ts-expect-error It is allowed to call without any arguments. Types are wrong
             this.socket.off();
             this.socket = null;
         }
@@ -1249,11 +1269,11 @@ class CloudAdapter extends adapter_core_1.Adapter {
         }
         else if (data.notSave) {
             this.redirectRunning = true;
-            this.log.info(`Adapter redirected temporally to "${data.url}" ${this.config.cloudUrl.includes('https://iobroker.pro:') ? 'in 30 seconds' : 'in one minute'}. Reason: ${data && data.reason ? data.reason : 'command from server'}`);
+            this.failedAttempts = 0;
+            this.log.info(`Adapter redirected temporally to "${data.url}" ${(0, cloudSocket_1.isProUrl)(this.config.cloudUrl) ? 'in 30 seconds' : 'in one minute'}. Reason: ${data && data.reason ? data.reason : 'command from server'}`);
             this.config.cloudUrl = data.url;
             if (this.socket) {
                 this.socket.disconnect();
-                // @ts-expect-error It is allowed to call without any arguments. Types are wrong
                 this.socket.off();
             }
             this.startConnect();
@@ -1271,9 +1291,9 @@ class CloudAdapter extends adapter_core_1.Adapter {
                                 this.log.error(`redirectAdapter [setForeignObject]: ${err}`);
                             }
                             this.config.cloudUrl = data.url;
+                            this.failedAttempts = 0;
                             if (this.socket) {
                                 this.socket.disconnect();
-                                // @ts-expect-error It is allowed to call without any arguments. Types are wrong
                                 this.socket.off();
                             }
                             this.startConnect();
@@ -1311,6 +1331,28 @@ class CloudAdapter extends adapter_core_1.Adapter {
             }
         });
     };
+    /**
+     * Goes back to the cloud of today, if the cloud with socket.io 4 cannot be reached.
+     *
+     * The adapter only gets there by a redirect or by its settings. If that cloud is down, the cloud of today takes
+     * the adapter again - or redirects it anew, as long as it wants. So socket.io 4 can be switched off on the server
+     * at any time.
+     *
+     * @param protocol the protocol of the attempt that failed
+     */
+    fallBackIfUnreachable(protocol) {
+        if (protocol !== 'socket.io-4' || !this.fallbackCloudUrl) {
+            return;
+        }
+        this.failedAttempts++;
+        if (this.failedAttempts < FAILED_ATTEMPTS_BEFORE_FALLBACK) {
+            return;
+        }
+        this.log.warn(`Cannot reach ${this.config.cloudUrl} with socket.io 4 after ${this.failedAttempts} attempts, going back to ${this.fallbackCloudUrl}`);
+        this.failedAttempts = 0;
+        this.config.cloudUrl = this.fallbackCloudUrl;
+        this.startConnect(true);
+    }
     // this is a bug of socket.io
     // sometimes auto-reconnect does not work.
     startConnect(immediately) {
@@ -1321,7 +1363,7 @@ class CloudAdapter extends adapter_core_1.Adapter {
             clearInterval(this.connectTimer);
             this.connectTimer = null;
         }
-        this.connectTimer = setInterval(() => this.connect(), this.config.cloudUrl.includes('https://iobroker.pro:') ? 30000 : 60000); // on pro there are not so many users as on net.
+        this.connectTimer = setInterval(() => this.connect(), (0, cloudSocket_1.isProUrl)(this.config.cloudUrl) ? 30000 : 60000); // on pro there are not so many users as on net.
         if (immediately) {
             void this.connect();
         }
@@ -1767,28 +1809,27 @@ ${afterList.join('\n')}`);
                 this.server = this.getConnectionString(obj, 'web');
             }
         }
-        this.log.debug(`Connection attempt to ${this.config.cloudUrl} ...`);
+        const protocol = (0, cloudSocket_1.getCloudProtocol)(this.config.cloudUrl);
+        this.log.debug(`Connection attempt to ${this.config.cloudUrl} (${protocol}) ...`);
         if (this.socket) {
             this.socket.disconnect();
-            // @ts-expect-error It is allowed to call without any arguments. Types are wrong
             this.socket.off();
         }
-        this.socket = (0, socket_io_client_1.default)(this.config.cloudUrl, {
-            transports: ['websocket'],
-            autoConnect: true,
+        this.socket = (0, cloudSocket_1.createCloudSocket)(this.config.cloudUrl, {
             reconnection: !this.config.restartOnDisconnect,
             rejectUnauthorized: !this.config.allowSelfSignedCertificate,
-            randomizationFactor: 0.9,
-            reconnectionDelay: 60000,
             timeout: parseInt(this.config.connectionTimeout, 10) || 10000,
-            reconnectionDelayMax: 120000,
         });
         if (this.server || this.lovelaceServer || this.adminServer) {
             this.initConnect();
         }
-        this.socket.on('connect_error', (error) => this.log.error(`Error while connecting to cloud: ${error}`));
+        this.socket.on('connect_error', (error) => {
+            this.log.error(`Error while connecting to cloud: ${error}`);
+            this.fallBackIfUnreachable(protocol);
+        });
         // cannot use "pong" because reserved by socket.io
         this.socket.on('pongg', ( /*error*/) => {
+            this.sentAtAnsweredPing = this.sentAtPing;
             if (this.timeouts.detectDisconnect) {
                 clearTimeout(this.timeouts.detectDisconnect);
                 this.timeouts.detectDisconnect = null;
@@ -2369,8 +2410,8 @@ ${afterList.join('\n')}`);
             this.apikey = this.config.apikey;
         }
         if (this.apikey?.startsWith('@pro_')) {
-            if (!this.config.cloudUrl.startsWith('https://iobroker.pro:')) {
-                this.config.cloudUrl = 'https://iobroker.pro:10555';
+            if (!(0, cloudSocket_1.isProUrl)(this.config.cloudUrl)) {
+                this.config.cloudUrl = cloudSocket_1.LEGACY_URL_PRO;
             }
         }
         else {
@@ -2395,7 +2436,14 @@ ${afterList.join('\n')}`);
         await this.setStateAsync('info.connection', false, true);
         // Signal whether an SSH server is reachable here, so the admin GUI can guide the remote-shell setup.
         void this.checkSshAvailability();
-        this.config.cloudUrl = this.config.cloudUrl || 'https://iobroker.net:10555';
+        this.config.cloudUrl = this.config.cloudUrl || cloudSocket_1.LEGACY_URL_NET;
+        // A configured socket.io 1.7 address stays the one to go back to, e.g. an own cloud
+        if ((0, cloudSocket_1.getCloudProtocol)(this.config.cloudUrl) === 'socket.io-1') {
+            this.fallbackCloudUrl = this.config.cloudUrl;
+        }
+        else {
+            this.fallbackCloudUrl = this.apikey?.startsWith('@pro_') ? cloudSocket_1.LEGACY_URL_PRO : cloudSocket_1.LEGACY_URL_NET;
+        }
         if (!this.apikey) {
             return this.log.error('No api-key found. Please get one on https://iobroker.net');
         }
