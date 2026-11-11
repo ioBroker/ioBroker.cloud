@@ -8,6 +8,8 @@ import {
     isProUrl,
     LEGACY_URL_NET,
     LEGACY_URL_PRO,
+    pongTimeout,
+    sentBytes,
     toHttpUrl,
 } from './lib/cloudSocket';
 import axios from 'axios';
@@ -68,6 +70,10 @@ export class CloudAdapter extends Adapter {
     private sshAvailable = false;
 
     private pingTimer: NodeJS.Timeout | null = null;
+    /** `sentBytes()` when the last ping went out */
+    private sentAtPing = 0;
+    /** `sentBytes()` when the ping went out that got the last pong: all before it has reached the cloud */
+    private sentAtAnsweredPing = 0;
     private cloudConnected = false;
     private connectTimer: NodeJS.Timeout | null = null;
     private uuid: string | null = null;
@@ -1205,6 +1211,14 @@ export class CloudAdapter extends Adapter {
     pingConnection = (): void => {
         if (!this.timeouts.detectDisconnect) {
             if (this.cloudConnected && this.ioSocket) {
+                // what was sent before the ping has to reach the cloud first (a big answer may take long)
+                this.sentAtPing = sentBytes(this.socket);
+                const sent = this.sentAtPing - this.sentAtAnsweredPing;
+                const timeout = pongTimeout(this.config.pingTimeout, sent);
+                if (timeout > this.config.pingTimeout) {
+                    this.log.debug(`Waiting up to ${timeout} ms for the pong: ${sent} bytes sent since the last one`);
+                }
+
                 // cannot use "ping" because reserved by socket.io
                 this.ioSocket.send(this.socket as any as SocketClient, 'pingg');
 
@@ -1212,14 +1226,17 @@ export class CloudAdapter extends Adapter {
                     this.timeouts.detectDisconnect = null;
                     this.log.error(TEXT_PING_TIMEOUT);
                     this.onDisconnect(TEXT_PING_TIMEOUT);
-                }, this.config.pingTimeout);
+                }, timeout);
             }
         }
     };
 
     checkPing(): void {
         if (this.cloudConnected) {
-            this.pingTimer ||= setInterval(this.pingConnection, 30000);
+            if (!this.pingTimer) {
+                this.sentAtAnsweredPing = sentBytes(this.socket);
+                this.pingTimer = setInterval(this.pingConnection, 30000);
+            }
         } else {
             if (this.pingTimer) {
                 clearInterval(this.pingTimer);
@@ -2095,6 +2112,7 @@ ${afterList.join('\n')}`,
 
         // cannot use "pong" because reserved by socket.io
         this.socket.on('pongg', (/*error*/) => {
+            this.sentAtAnsweredPing = this.sentAtPing;
             if (this.timeouts.detectDisconnect) {
                 clearTimeout(this.timeouts.detectDisconnect);
                 this.timeouts.detectDisconnect = null;

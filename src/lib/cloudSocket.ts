@@ -79,8 +79,64 @@ export function createCloudSocket(url: string, options: CloudSocketOptions): Clo
         timeout: options.timeout,
     };
 
-    if (getCloudProtocol(url) === 'socket.io-4') {
-        return io(toHttpUrl(url), common);
+    const socket: CloudSocket =
+        getCloudProtocol(url) === 'socket.io-4' ? io(toHttpUrl(url), common) : legacyIo(url, common);
+    countSent((socket as any).io);
+    return socket;
+}
+
+/** The bytes a manager of socket.io has sent, over all its connections */
+const sentByManager = new WeakMap<object, { bytes: number }>();
+
+/**
+ * Counts what goes out: every packet of engine.io (`packetCreate`, both clients). The manager has a new engine with
+ * every connection; a manager that is used again is not counted twice.
+ *
+ * @param manager `io` of the socket
+ */
+function countSent(manager: any): void {
+    if (!manager?.on || sentByManager.has(manager)) {
+        return;
     }
-    return legacyIo(url, common);
+    const counter = { bytes: 0 };
+    sentByManager.set(manager, counter);
+    manager.on('open', () =>
+        manager.engine?.on('packetCreate', (packet: { data?: unknown }) => {
+            const data = packet?.data;
+            // a string by its length is near enough: JSON is mostly ASCII
+            counter.bytes +=
+                typeof data === 'string' ? data.length : (data as ArrayBuffer | undefined)?.byteLength || 0;
+        }),
+    );
+}
+
+/**
+ * The bytes the socket has sent so far: its packets, as they went to the WebSocket. Only the difference between
+ * two calls tells something.
+ *
+ * @param socket socket of either client
+ */
+export function sentBytes(socket: CloudSocket | null | undefined): number {
+    return sentByManager.get((socket as any)?.io)?.bytes || 0;
+}
+
+/** The slowest upload the pong is waited for: 1 Mbit/s */
+export const SLOWEST_UPLOAD = 128 * 1024;
+/** Longer the cloud does not wait for the pong of engine.io either (ping interval 50 s + ping timeout 110 s) */
+export const MAX_PONG_TIMEOUT = 160_000;
+
+/**
+ * How long to wait for the pong of the cloud to a ping.
+ *
+ * The ping goes out behind all the adapter has sent before. A big answer takes long on a slow upload (all objects
+ * for vis-2: 30 MB, 20 s with 12 Mbit/s): its pong would come too late, the adapter would disconnect for nothing -
+ * and send it all again. So the ping timeout is longer by what was sent since the last pong, as fast as the slowest
+ * upload. How much of it is still on its way cannot be told: on Windows the system takes it all at once.
+ *
+ * @param pingTimeout the ping timeout of the settings in ms
+ * @param sentSinceLastPong bytes sent since the ping that got the last pong
+ */
+export function pongTimeout(pingTimeout: number, sentSinceLastPong: number): number {
+    const upload = Math.ceil((Math.max(0, sentSinceLastPong) / SLOWEST_UPLOAD) * 1000);
+    return Math.max(pingTimeout, Math.min(MAX_PONG_TIMEOUT, pingTimeout + upload));
 }

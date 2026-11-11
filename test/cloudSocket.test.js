@@ -15,9 +15,13 @@ const {
     createCloudSocket,
     getCloudProtocol,
     isProUrl,
+    pongTimeout,
+    sentBytes,
     toHttpUrl,
     LEGACY_URL_NET,
     LEGACY_URL_PRO,
+    MAX_PONG_TIMEOUT,
+    SLOWEST_UPLOAD,
 } = require('../build/lib/cloudSocket');
 
 const OPTIONS = { reconnection: false, rejectUnauthorized: true, timeout: 5000 };
@@ -75,6 +79,31 @@ describe('cloudSocket: the protocol by the address', () => {
     });
 });
 
+describe('cloudSocket: the pong after a big answer', () => {
+    it('waits the ping timeout of the settings when little was sent', () => {
+        assert.equal(pongTimeout(5000, 0), 5000);
+        assert.equal(pongTimeout(5000, SLOWEST_UPLOAD), 6000);
+        assert.equal(pongTimeout(5000, -1), 5000, 'a new manager counts from 0 again');
+    });
+
+    it('waits as long as the slowest upload needs for what was sent', () => {
+        // all objects for vis-2 of a big system: 30 MB (2026-11-11, 20 s with 12 Mbit/s and a ping timeout of 5 s)
+        assert.equal(pongTimeout(5000, 10 * SLOWEST_UPLOAD), 15000);
+        assert.equal(pongTimeout(5000, 30 * 1024 * 1024), MAX_PONG_TIMEOUT);
+    });
+
+    it('waits not longer than the cloud waits for the pong of engine.io', () => {
+        assert.equal(pongTimeout(5000, 1e10), MAX_PONG_TIMEOUT);
+        assert.equal(pongTimeout(200_000, 0), 200_000, 'a longer ping timeout of the settings stays');
+    });
+
+    it('counts nothing for a socket it does not know', () => {
+        assert.equal(sentBytes(null), 0);
+        assert.equal(sentBytes(undefined), 0);
+        assert.equal(sentBytes({}), 0);
+    });
+});
+
 describe('cloudSocket: socket.io 4 against a real server', () => {
     let httpServer;
     let server;
@@ -83,7 +112,8 @@ describe('cloudSocket: socket.io 4 against a real server', () => {
 
     beforeEach(async () => {
         httpServer = http.createServer();
-        server = new Server(httpServer, { transports: ['websocket'] });
+        // as the cloud: 100 MB per message
+        server = new Server(httpServer, { transports: ['websocket'], maxHttpBufferSize: 1e8 });
         await new Promise(resolve => httpServer.listen(0, '127.0.0.1', resolve));
         url = `ws://127.0.0.1:${httpServer.address().port}`;
     });
@@ -167,5 +197,50 @@ describe('cloudSocket: socket.io 4 against a real server', () => {
         const [error] = await once(client, 'connect_error');
         assert.ok(error);
         assert.equal(client.connected, false);
+    });
+
+    it('counts what it sends: events and answers, text and binary', async function () {
+        this.timeout(10000);
+        const size = 20 * 1024 * 1024;
+        const connected = once(server, 'connection');
+        client = createCloudSocket(url, OPTIONS);
+        const [serverSocket] = await connected;
+        await once(client, 'connect');
+        const start = sentBytes(client);
+
+        const received = once(serverSocket, 'big');
+        client.emit('big', 'x'.repeat(size));
+        const afterEvent = sentBytes(client);
+        assert.ok(afterEvent - start >= size && afterEvent - start < size + 100, `event: ${afterEvent - start}`);
+        const [text] = await received;
+        assert.equal(text.length, size);
+
+        const body = Buffer.alloc(1024 * 1024);
+        client.on('html', (path, callback) => callback(null, 200, {}, body));
+        await ask(serverSocket, 'html', '/a.png');
+        const answer = sentBytes(client) - afterEvent;
+        assert.ok(answer >= body.length && answer < body.length + 200, `binary answer: ${answer}`);
+    });
+
+    it('counts what it sends with socket.io 1.7 too', async () => {
+        // the server of socket.io 4 speaks engine.io 3 as well: no old dependencies for the test
+        const oldHttp = http.createServer();
+        const oldServer = new Server(oldHttp, { transports: ['websocket'], allowEIO3: true });
+        await new Promise(resolve => oldHttp.listen(0, '127.0.0.1', resolve));
+        const received = new Promise(resolve => oldServer.on('connection', socket => socket.on('big', resolve)));
+        client = createCloudSocket(`http://127.0.0.1:${oldHttp.address().port}`, OPTIONS);
+        try {
+            await once(client, 'connect');
+            const start = sentBytes(client);
+
+            client.emit('big', 'x'.repeat(100_000));
+            const sent = sentBytes(client) - start;
+            assert.ok(sent >= 100_000 && sent < 100_100, `sent: ${sent}`);
+            assert.equal((await received).length, 100_000);
+        } finally {
+            client.disconnect();
+            client = null;
+            await new Promise(resolve => oldServer.close(() => resolve()));
+        }
     });
 });
