@@ -30,12 +30,12 @@ function toHttpUrl(url) {
     return url.replace(/^ws(s?):\/\//i, 'http$1://');
 }
 /**
- * Is it an address of ioBroker.pro, whatever protocol it names?
+ * Is it an address of ioBroker.pro? It only has to contain "iobroker.pro", whatever protocol and port it names
  *
  * @param url address of the cloud
  */
 function isProUrl(url) {
-    return /^(https|wss):\/\/iobroker\.pro:/i.test(url);
+    return url.toLowerCase().includes('iobroker.pro');
 }
 /**
  * Connects with the protocol the address names.

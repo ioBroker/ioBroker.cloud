@@ -66,11 +66,12 @@ describe('cloudSocket: the protocol by the address', () => {
     it('knows the addresses of ioBroker.pro', () => {
         assert.equal(isProUrl('https://iobroker.pro:10555'), true);
         assert.equal(isProUrl('wss://iobroker.pro:10556'), true);
+        assert.equal(isProUrl('wss://iobroker.pro:10656'), true);
+        assert.equal(isProUrl('https://iobroker.pro'), true);
+        assert.equal(isProUrl('WSS://ioBroker.pro:10656'), true);
         assert.equal(isProUrl('https://iobroker.net:10555'), false);
         assert.equal(isProUrl('wss://iobroker.net:10556'), false);
-        // as before: without a port it is not taken as the address of pro
-        assert.equal(isProUrl('https://iobroker.pro'), false);
-        assert.equal(isProUrl('https://iobroker.pro.example.com:10555'), false);
+        assert.equal(isProUrl(''), false);
     });
 });
 

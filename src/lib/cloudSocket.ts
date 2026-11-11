@@ -53,12 +53,12 @@ export function toHttpUrl(url: string): string {
 }
 
 /**
- * Is it an address of ioBroker.pro, whatever protocol it names?
+ * Is it an address of ioBroker.pro? It only has to contain "iobroker.pro", whatever protocol and port it names
  *
  * @param url address of the cloud
  */
 export function isProUrl(url: string): boolean {
-    return /^(https|wss):\/\/iobroker\.pro:/i.test(url);
+    return url.toLowerCase().includes('iobroker.pro');
 }
 
 /**
