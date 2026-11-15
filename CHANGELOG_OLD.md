@@ -1,4 +1,7 @@
 # Older changes
+## 6.2.7 (2026-10-10)
+* (@GermanBluefox) Added buttons to check if the applications are running and reachable
+
 ## 6.2.6 (2026-09-28)
 * (@GermanBluefox) Added new App state: onScreen
 
