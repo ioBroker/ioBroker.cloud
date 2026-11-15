@@ -40,6 +40,7 @@ exports.CloudAdapter = void 0;
 const adapter_core_1 = require("@iobroker/adapter-core"); // Get common this utils
 const socketCloud_1 = __importDefault(require("./lib/socketCloud"));
 const sshTunnel_1 = require("./lib/sshTunnel");
+const appKey_1 = require("./lib/appKey");
 const cloudSocket_1 = require("./lib/cloudSocket");
 const axios_1 = __importDefault(require("axios"));
 const ws_1 = __importDefault(require("ws"));
@@ -71,6 +72,8 @@ class CloudAdapter extends adapter_core_1.Adapter {
     fallbackCloudUrl = '';
     /** Failed connection attempts in a row with socket.io 4 */
     failedAttempts = 0;
+    /** Failed requests for the app-key in a row (no network, server down) */
+    appKeyAttempts = 0;
     ioSocket = null;
     sshTunnel = null;
     sshAvailable = false;
@@ -2234,6 +2237,20 @@ ${afterList.join('\n')}`);
             this.startConnect();
         });
     }
+    /**
+     * Logs why the app-key could not be got and returns how long to wait before the next try: 10 seconds, then twice
+     * as long each time, at most 5 minutes. The adapter keeps trying - after a lost connection it has to come back by
+     * itself, however long the network or the server is away.
+     *
+     * @param url the address that did not answer
+     * @param error what axios rejected with
+     */
+    nextAppKeyRetry(url, error) {
+        const delay = (0, appKey_1.appKeyRetryDelay)(this.appKeyAttempts);
+        this.appKeyAttempts++;
+        this.log.warn(`Cannot reach "${url}" (${(0, appKey_1.failureReason)(error)}): no connection or server offline. Retry in ${delay / 1000} seconds`);
+        return delay;
+    }
     _createAppKey(cb) {
         this.log.info('Create new APP-KEY...');
         const url = `https://${this.config.server}:3001/api/v1/appkeys`;
@@ -2242,9 +2259,11 @@ ${afterList.join('\n')}`);
             headers: {
                 Authorization: `Basic ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
             },
+            timeout: appKey_1.APP_KEY_TIMEOUT,
             validateStatus: (status) => status < 400,
         })
             .then(response => {
+            this.appKeyAttempts = 0;
             const body = response.data;
             if (body?.key?.[0]) {
                 this.log.info(`New APP-KEY is ${body.key[0]}`);
@@ -2255,12 +2274,11 @@ ${afterList.join('\n')}`);
             }
         })
             .catch(error => {
-            if (error.code === 'ECONNREFUSED') {
-                this.log.warn('Server is offline or no connection. Retry in 10 seconds');
+            if ((0, appKey_1.isTemporaryError)(error)) {
                 this.timeouts.createAppKey = setTimeout(() => {
                     this.timeouts.createAppKey = null;
                     this._createAppKey(cb);
-                }, 10000);
+                }, this.nextAppKeyRetry(url, error));
             }
             else if (error.response?.status === 401) {
                 return cb(`Invalid user name or password or server (may be it is ${this.config.server === 'iobroker.pro' ? 'iobroker.net' : 'iobroker.pro'})`);
@@ -2302,9 +2320,11 @@ ${afterList.join('\n')}`);
         axios_1.default
             .get(url, {
             headers: { Authorization: `Basic ${Buffer.from(`${login}:${password}`).toString('base64')}` },
+            timeout: appKey_1.APP_KEY_TIMEOUT,
             validateStatus: status => status < 400,
         })
             .then(response => {
+            this.appKeyAttempts = 0;
             const body = response.data;
             if (body?.[0]?.key) {
                 cb(null, body[0].key);
@@ -2318,12 +2338,11 @@ ${afterList.join('\n')}`);
             }
         })
             .catch(error => {
-            if (error.code === 'ECONNREFUSED') {
-                this.log.warn('Server is offline or no connection. Retry in 10 seconds');
+            if ((0, appKey_1.isTemporaryError)(error)) {
                 this.timeouts.readAppKey = setTimeout(() => {
                     this.timeouts.readAppKey = null;
                     this._readAppKeyFromCloud(server, login, password, cb);
-                }, 10000);
+                }, this.nextAppKeyRetry(url, error));
             }
             else if (error.response && error.response.status === 401) {
                 return cb(`Invalid user name or password or server (may be it is ${this.config.server === 'iobroker.pro' ? 'iobroker.net' : 'iobroker.pro'})`);
@@ -2404,7 +2423,15 @@ ${afterList.join('\n')}`);
             else if (this.config.server === 'iobroker.net') {
                 this.config.cloudUrl = this.config.cloudUrl.replace('iobroker.pro', 'iobroker.net');
             }
-            this.apikey = await this.readAppKeyFromCloud();
+            // no network or the server down: readAppKeyFromCloud tries again until it gets an answer
+            try {
+                this.apikey = await this.readAppKeyFromCloud();
+            }
+            catch (error) {
+                // an answer that waiting does not change (wrong login): the settings have to be fixed
+                this.log.error(`${error instanceof Error ? error.message : String(error)}. Not connecting to the cloud`);
+                return;
+            }
         }
         else {
             this.apikey = this.config.apikey;
