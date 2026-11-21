@@ -36,7 +36,7 @@
     "@iobroker/testing": "^6.3.1",
     "@iobroker/types": "^7.2.5",
     "@iobroker/ws-server": "^4.5.2",
-    "@tsconfig/node22": "^22.0.6",
+    "@tsconfig/node22": "^22.0.7",
     "@types/node": "^22.20.5",
     "@types/ws": "^8.18.2",
     "blockly": "^13.4.0",
